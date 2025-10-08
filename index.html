@@ -193,11 +193,6 @@
   </div>
 
 <script>
-// ===== Auto redirect to mobile site =====
-if (window.innerWidth <= 768) {
-  window.location.href = "/school-schedule/Mobile/index.html";
-}
-
 // ===== Feather icons =====
 feather.replace();
 
@@ -335,7 +330,6 @@ fetch("/day.json?_=" + Date.now()) // fetch from same site, avoid caching
     console.error("Error loading current day:", err);
     clockDisplay.textContent = "Loading Day...";
   });
-  
   // Redirect mobile users to the GitHub Pages mobile site
   if (window.innerWidth <= 768) {
     window.location.href = "https://mlndmaster-studios.github.io/school-schedule/Mobile/";
