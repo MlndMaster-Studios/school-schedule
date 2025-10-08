@@ -331,10 +331,11 @@ fetch("/day.json?_=" + Date.now()) // fetch from same site, avoid caching
     clockDisplay.textContent = "Loading Day...";
   });
 
-// ===== Auto redirect mobile =====
-if (window.innerWidth <= 768) {
-  window.location.href = "https://mlndmaster-studios.github.io/school-schedule/mobile";
-}
+<script>
+  // Redirect mobile users to the GitHub Pages mobile site
+  if (window.innerWidth <= 768) {
+    window.location.href = "https://mlndmaster-studios.github.io/school-schedule/Mobile/";
+  }
 </script>
 </body>
 </html>
