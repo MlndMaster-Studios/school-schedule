@@ -8,12 +8,17 @@ body {
   padding: 2rem;
   overflow-x: hidden;
 }
+
 @keyframes gradientShift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
-h1, h2, h3 { font-weight: 600; }
+
+h1, h2, h3 {
+  font-weight: 600;
+}
+
 h1 span {
   background: linear-gradient(270deg, #8b5cf6, #4f46e5, #0f172a);
   background-size: 600% 600%;
@@ -21,12 +26,18 @@ h1 span {
   -webkit-text-fill-color: transparent;
   animation: textGradient 8s ease infinite;
 }
+
 @keyframes textGradient {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
-p { color: #c3c1ff; margin-top: 4px; margin-bottom: 8px; }
+
+p {
+  color: #c3c1ff;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
 
 /* ===== Schedule Rows ===== */
 .schedule-row {
@@ -39,15 +50,20 @@ p { color: #c3c1ff; margin-top: 4px; margin-bottom: 8px; }
   transform: translateY(20px);
   animation: fadeInUp 0.6s forwards;
 }
+
 .schedule-row:nth-child(1) { animation-delay: 0.1s; }
 .schedule-row:nth-child(2) { animation-delay: 0.2s; }
 .schedule-row:nth-child(3) { animation-delay: 0.3s; }
 .schedule-row:nth-child(4) { animation-delay: 0.4s; }
+
 @keyframes fadeInUp {
-  to { opacity: 1; transform: translateY(0); }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* ===== Schedule Cards ===== */
+/* ===== Schedule Cards – frosted glass + subtle neon hover ===== */
 .schedule-card {
   position: relative;
   background: rgba(30, 41, 59, 0.55);
@@ -66,6 +82,7 @@ p { color: #c3c1ff; margin-top: 4px; margin-bottom: 8px; }
   --mouseX: 0;
   --mouseY: 0;
 }
+
 .schedule-card:hover {
   box-shadow: 0 8px 16px rgba(139, 92, 246, 0.15), 0 12px 24px rgba(0,0,0,0.1);
   border-color: rgba(139, 92, 246, 0.25);
@@ -73,13 +90,20 @@ p { color: #c3c1ff; margin-top: 4px; margin-bottom: 8px; }
   outline-offset: -2px;
   transform: translateY(-6px) translateX(calc(var(--mouseX) * 0.03)) translateY(calc(var(--mouseY) * 0.03));
 }
+
 .schedule-card h3 {
   color: #e0d7ff;
   text-shadow: 0 0 4px rgba(139,92,246,0.15);
   transition: all 0.3s ease;
 }
-.schedule-card:hover h3 { text-shadow: 0 0 6px rgba(139,92,246,0.25); }
-.schedule-card p { color: #c3c1ff; }
+
+.schedule-card:hover h3 {
+  text-shadow: 0 0 6px rgba(139,92,246,0.25);
+}
+
+.schedule-card p {
+  color: #c3c1ff;
+}
 
 /* ===== Dropdown Menu & Button ===== */
 #dayDropdownBtn {
@@ -93,12 +117,18 @@ p { color: #c3c1ff; margin-top: 4px; margin-bottom: 8px; }
   transition: all 0.3s ease;
   animation: buttonGradient 8s ease infinite;
 }
+
 @keyframes buttonGradient {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
-#dayDropdownBtn:hover { filter: brightness(1.1); box-shadow: 0 5px 15px rgba(139,92,246,0.4); }
+
+#dayDropdownBtn:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 5px 15px rgba(139,92,246,0.4);
+}
+
 #dayDropdown {
   background: rgba(30,41,59,0.95);
   border-radius: 12px;
@@ -106,22 +136,45 @@ p { color: #c3c1ff; margin-top: 4px; margin-bottom: 8px; }
   box-shadow: 0 10px 20px rgba(139,92,246,0.3);
   z-index: 50;
 }
-.dropdown-item { transition: all 0.2s ease; }
+
+.dropdown-item {
+  transition: all 0.2s ease;
+}
+
 .dropdown-item:hover {
   background: linear-gradient(135deg, #8b5cf6, #4f46e5);
   color: #fff;
 }
 
 /* ===== Scrollbar ===== */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, #8b5cf6, #4f46e5); border-radius: 3px; }
-::-webkit-scrollbar-track { background: #0f172a; }
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #8b5cf6, #4f46e5);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
 
 /* ===== Responsive Layout ===== */
-@media (max-width: 640px) { .schedule-row { grid-template-columns: 1fr; } }
+@media (max-width: 640px) {
+  .schedule-row {
+    grid-template-columns: 1fr;
+  }
+}
 
-/* ===== Letter Day Clock ===== */
-.day-clock-wrapper { display: flex; justify-content: center; margin-bottom: 2rem; }
+/* ===== Letter Day Clock (Top Center Card) ===== */
+.day-clock-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
 .day-clock-card {
   background: rgba(30, 41, 59, 0.55);
   backdrop-filter: blur(15px) saturate(180%);
@@ -129,16 +182,18 @@ p { color: #c3c1ff; margin-top: 4px; margin-bottom: 8px; }
   border-radius: 20px;
   padding: 1.25rem 2rem;
   text-align: center;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
   transition: all 0.3s ease;
   max-width: 280px;
   width: 100%;
 }
+
 .day-clock-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 24px rgba(139,92,246,0.35);
-  border-color: rgba(139,92,246,0.4);
+  box-shadow: 0 10px 24px rgba(139, 92, 246, 0.35);
+  border-color: rgba(139, 92, 246, 0.4);
 }
+
 .day-clock-card h2 {
   font-size: 1.75rem;
   font-weight: 600;
@@ -149,17 +204,51 @@ p { color: #c3c1ff; margin-top: 4px; margin-bottom: 8px; }
   animation: textShift 6s ease infinite;
   margin-bottom: 0.25rem;
 }
-.day-clock-card p { color: #c3c1ff; font-size: 0.9rem; opacity: 0.9; }
-@keyframes textShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
+.day-clock-card p {
+  color: #c3c1ff;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+@keyframes textShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
 /* ===== Mobile Schedule Reordering ===== */
 @media (max-width: 640px) {
-  .schedule-day { display: grid; grid-template-columns: 1fr; gap: 1rem; }
-  .schedule-row { display: contents; }
-  .schedule-card { width: 100%; }
+  .schedule-day {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Remove the per-row layout on mobile */
+  .schedule-row {
+    display: contents;
+  }
+
+  /* Ensure each schedule card stays full-width */
+  .schedule-card {
+    width: 100%;
+  }
 }
+/* ===== Mobile schedule layout fix ===== */
 @media (max-width: 768px) {
-  .schedule-day { display: flex; flex-direction: column; gap: 1rem; }
-  .schedule-row { display: contents; }
-  .schedule-card { width: 100%; max-width: 100%; margin: 0 auto; }
+  .schedule-day {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* space between cards */
+  }
+
+  .schedule-row {
+    display: contents; /* makes all inner cards act like direct children of .schedule-day */
+  }
+
+  .schedule-card {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
 }
