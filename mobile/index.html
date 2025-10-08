@@ -1,165 +1,345 @@
-/* ===== Body & Fonts ===== */
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Arial", sans-serif;
-  background: linear-gradient(135deg, #0b0f25, #1b1f3e, #3b3f7a, #4f46e5);
-  background-size: 300% 300%;
-  animation: gradientShift 30s ease infinite;
-  color: #e2e8f0;
-  padding: 2rem;
-  overflow-x: hidden;
-}
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-h1, h2, h3 { font-weight: 600; }
-h1 span {
-  background: linear-gradient(270deg, #8b5cf6, #4f46e5, #0f172a);
-  background-size: 600% 600%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: textGradient 8s ease infinite;
-}
-@keyframes textGradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-p { color: #c3c1ff; margin-top: 4px; margin-bottom: 8px; }
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Semester 1 Schedule</title>
+  <link rel="icon" href="tab-icon.png" type="image/png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-900 text-gray-200 min-h-screen relative">
+ <!-- Clock -->
+<div class="day-clock-wrapper">
+  <div class="day-clock-card">
+    <h2 id="school-day">Loading Day...</h2>
+    <p id="dateText"></p>
+  </div>
+</div>
+  <!-- Canvas for particle background -->
+  <canvas id="bgCanvas" class="fixed top-0 left-0 w-full h-full -z-10"></canvas>
 
-/* ===== Schedule Rows ===== */
-.schedule-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1rem;
-  align-items: stretch;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: fadeInUp 0.6s forwards;
-}
-.schedule-row:nth-child(1) { animation-delay: 0.1s; }
-.schedule-row:nth-child(2) { animation-delay: 0.2s; }
-.schedule-row:nth-child(3) { animation-delay: 0.3s; }
-.schedule-row:nth-child(4) { animation-delay: 0.4s; }
-@keyframes fadeInUp {
-  to { opacity: 1; transform: translateY(0); }
+  <div class="container mx-auto px-4 py-8 max-w-7xl relative z-10">
+
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold text-white">Semester <span class="text-purple-500">1</span></h1>
+      <span class="text-gray-300 font-medium">Liam Quinn</span>
+    </header>
+
+    <!-- Day Dropdown -->
+    <div class="mb-6 relative w-64">
+      <button id="dayDropdownBtn" class="w-full bg-slate-800 px-4 py-2 rounded-lg text-white font-medium text-left">
+        Select Day ▾
+      </button>
+      <div id="dayDropdown" class="absolute w-full bg-slate-800 rounded-lg mt-1 hidden shadow-lg">
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="A">A Day</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="B">B Day</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="C">C Day</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="D">D Day</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="E">E Day</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="F">F Day</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="G">G Day</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="WED">Wednesday</div>
+      </div>
+    </div>
+
+    <!-- Schedules -->
+    <div id="schedule-container">
+      <!-- Each day uses the same row structure (2 cards per row; last centered if alone) -->
+
+      <!-- A Day -->
+      <div class="schedule-day" id="A-day">
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>A Class</h3><p class="time">8:20–9:23</p><p class="subject">Chemistry</p><p class="details">SC202</p></div>
+          <div class="schedule-card"><h3>Lunch & Formation</h3><p class="time">11:40–12:52</p><p class="subject">Advisory-TUE</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>B Class</h3><p class="time">9:30–10:28</p><p class="subject">FREE</p></div>
+          <div class="schedule-card"><h3>D Class</h3><p class="time">12:57–1:55</p><p class="subject">Modern U.S. History</p><p class="details">MB123</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>C Class</h3><p class="time">10:35–11:33</p><p class="subject">Spanish II</p><p class="details">MB416</p></div>
+          <div class="schedule-card"><h3>E Class</h3><p class="time">2:02–3:05</p><p class="subject">English II</p><p class="details">MB314</p></div>
+        </div>
+      </div>
+
+      <!-- B Day -->
+      <div class="schedule-day hidden" id="B-day">
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>B Class</h3><p class="time">8:20–9:23</p><p class="subject">FREE</p></div>
+          <div class="schedule-card"><h3>D Class</h3><p class="time">11:10–12:08</p><p class="subject">Modern U.S. History</p><p class="details">MB123</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>C Class</h3><p class="time">9:30–10:28</p><p class="subject">Spanish II</p><p class="details">MB416</p></div>
+          <div class="schedule-card"><h3>Formation</h3><p class="time">12:13–12:52</p><p class="subject">Advisory-TUE</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>Lunch</h3><p class="time">10:35–11:03</p></div>
+          <div class="schedule-card"><h3>E Class</h3><p class="time">12:57–1:55</p><p class="subject">English II</p><p class="details">MB314</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>F Class</h3><p class="time">2:02–3:05</p><p class="subject">Sophomore Service</p><p class="details">LH125</p></div>
+        </div>
+      </div>
+
+      <!-- C Day -->
+      <div class="schedule-day hidden" id="C-day">
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>C Class</h3><p class="time">8:20–9:23</p><p class="subject">Spanish II</p><p class="details">MB416</p></div>
+          <div class="schedule-card"><h3>E Class</h3><p class="time">11:10–12:08</p><p class="subject">English II</p><p class="details">MB314</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>D Class</h3><p class="time">9:30–10:28</p><p class="subject">Modern U.S. History</p><p class="details">MB123</p></div>
+          <div class="schedule-card"><h3>Formation</h3><p class="time">12:13–12:52</p><p class="subject">Advisory-TUE</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>Lunch</h3><p class="time">10:35–11:03</p></div>
+          <div class="schedule-card"><h3>F Class</h3><p class="time">12:57–1:55</p><p class="subject">Sophomore Service</p><p class="details">LH125</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>G Class</h3><p class="time">2:02–3:05</p><p class="subject">Geometry</p><p class="details">LH323</p></div>
+        </div>
+      </div>
+
+      <!-- D Day -->
+      <div class="schedule-day hidden" id="D-day">
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>D Class</h3><p class="time">8:20–9:23</p><p class="subject">Modern U.S. History</p><p class="details">MB123</p></div>
+          <div class="schedule-card"><h3>F Class</h3><p class="time">11:10–12:08</p><p class="subject">Sophomore Service</p><p class="details">LH125</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>E Class</h3><p class="time">9:30–10:28</p><p class="subject">English II</p><p class="details">MB314</p></div>
+          <div class="schedule-card"><h3>Formation</h3><p class="time">12:13–12:52</p><p class="subject">Advisory-TUE</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>Lunch</h3><p class="time">10:35–11:03</p></div>
+          <div class="schedule-card"><h3>G Class</h3><p class="time">12:57–1:55</p><p class="subject">Geometry</p><p class="details">LH323</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>A Class</h3><p class="time">2:02–3:05</p><p class="subject">Chemistry</p><p class="details">SC202</p></div>
+        </div>
+      </div>
+
+      <!-- E Day -->
+      <div class="schedule-day hidden" id="E-day">
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>E Class</h3><p class="time">8:20–9:23</p><p class="subject">English II</p><p class="details">MB314</p></div>
+          <div class="schedule-card"><h3>Lunch & Formation</h3><p class="time">11:40–12:52</p><p class="subject">Advisory-TUE</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>F Class</h3><p class="time">9:30–10:28</p><p class="subject">Sophomore Service</p><p class="details">LH125</p></div>
+          <div class="schedule-card"><h3>A Class</h3><p class="time">12:57–1:55</p><p class="subject">Chemistry</p><p class="details">SC202</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>G Class</h3><p class="time">10:35–11:33</p><p class="subject">Geometry</p><p class="details">LH323</p></div>
+          <div class="schedule-card"><h3>B Class</h3><p class="time">2:02–3:05</p><p class="subject">FREE</p></div>
+        </div>
+      </div>
+
+      <!-- F Day -->
+      <div class="schedule-day hidden" id="F-day">
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>F Class</h3><p class="time">8:20–9:23</p><p class="subject">Sophomore Service</p><p class="details">LH125</p></div>
+          <div class="schedule-card"><h3>Lunch & Formation</h3><p class="time">11:40–12:52</p><p class="subject">Advisory-TUE</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>G Class</h3><p class="time">9:30–10:28</p><p class="subject">Geometry</p><p class="details">LH323</p></div>
+          <div class="schedule-card"><h3>B Class</h3><p class="time">12:57–1:55</p><p class="subject">FREE</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>A Class</h3><p class="time">10:35–11:33</p><p class="subject">Chemistry</p><p class="details">SC202</p></div>
+          <div class="schedule-card"><h3>C Class</h3><p class="time">2:02–3:05</p><p class="subject">Spanish II</p><p class="details">MB416</p></div>
+        </div>
+      </div>
+
+      <!-- G Day -->
+      <div class="schedule-day hidden" id="G-day">
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>G Class</h3><p class="time">8:20–9:23</p><p class="subject">Geometry</p><p class="details">LH323</p></div>
+          <div class="schedule-card"><h3>Lunch & Formation</h3><p class="time">11:40–12:52</p><p class="subject">Advisory-TUE</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>A Class</h3><p class="time">9:30–10:28</p><p class="subject">Chemistry</p><p class="details">SC202</p></div>
+          <div class="schedule-card"><h3>C Class</h3><p class="time">12:57–1:55</p><p class="subject">Spanish II</p><p class="details">MB416</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>B Class</h3><p class="time">10:35–11:33</p><p class="subject">FREE</p></div>
+          <div class="schedule-card"><h3>D Class</h3><p class="time">2:02–3:05</p><p class="subject">Modern U.S. History</p><p class="details">MB123</p></div>
+        </div>
+      </div>
+
+      <!-- Wednesday Delayed Start -->
+      <div class="schedule-day hidden" id="WED-day">
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>Class 1</h3><p class="time">8:50–9:53</p><p>Announcements & First Period</p></div>
+          <div class="schedule-card"><h3>Class 2</h3><p class="time">10:00–10:58</p><p>Second Period Class</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>Lunch or Class</h3><p class="time">11:05–12:03</p><p>Third Period Class - Lunch 2 Group</p></div>
+          <div class="schedule-card"><h3>Lunch or Class</h3><p class="time">11:40–12:38</p><p>Third Period Class - Lunch 1 Group</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>Break</h3><p class="time">12:38–12:57</p></div>
+          <div class="schedule-card"><h3>Class 4</h3><p class="time">12:57–1:55</p><p>Fourth Period Class</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>Class 5</h3><p class="time">2:02–3:05</p><p>Examen & Fifth Period Class</p></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+// ===== Auto redirect to mobile site =====
+if (window.innerWidth <= 768) {
+  window.location.href = "/school-schedule/Mobile/index.html";
 }
 
-/* ===== Schedule Cards ===== */
-.schedule-card {
-  position: relative;
-  background: rgba(30, 41, 59, 0.55);
-  backdrop-filter: blur(12px) saturate(150%);
-  border-radius: 16px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  border: 1px solid rgba(139, 92, 246, 0.15);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  transition: all 0.25s ease-in-out;
-  overflow: hidden;
-  z-index: 1;
-  will-change: transform, box-shadow, border-color;
-  --mouseX: 0;
-  --mouseY: 0;
-}
-.schedule-card:hover {
-  box-shadow: 0 8px 16px rgba(139, 92, 246, 0.15), 0 12px 24px rgba(0,0,0,0.1);
-  border-color: rgba(139, 92, 246, 0.25);
-  outline: 1px solid rgba(139,92,246,0.2);
-  outline-offset: -2px;
-  transform: translateY(-6px) translateX(calc(var(--mouseX) * 0.03)) translateY(calc(var(--mouseY) * 0.03));
-}
-.schedule-card h3 {
-  color: #e0d7ff;
-  text-shadow: 0 0 4px rgba(139,92,246,0.15);
-  transition: all 0.3s ease;
-}
-.schedule-card:hover h3 { text-shadow: 0 0 6px rgba(139,92,246,0.25); }
-.schedule-card p { color: #c3c1ff; }
+// ===== Feather icons =====
+feather.replace();
 
-/* ===== Dropdown Menu & Button ===== */
-#dayDropdownBtn {
-  cursor: pointer;
-  background: linear-gradient(135deg, #8b5cf6, #4f46e5);
-  background-size: 400% 400%;
-  color: #fff;
-  font-weight: 500;
-  border-radius: 12px;
-  padding: 0.5rem 1rem;
-  transition: all 0.3s ease;
-  animation: buttonGradient 8s ease infinite;
-}
-@keyframes buttonGradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-#dayDropdownBtn:hover { filter: brightness(1.1); box-shadow: 0 5px 15px rgba(139,92,246,0.4); }
-#dayDropdown {
-  background: rgba(30,41,59,0.95);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 10px 20px rgba(139,92,246,0.3);
-  z-index: 50;
-}
-.dropdown-item { transition: all 0.2s ease; }
-.dropdown-item:hover {
-  background: linear-gradient(135deg, #8b5cf6, #4f46e5);
-  color: #fff;
+// ===== Day Dropdown =====
+const dayBtn = document.getElementById("dayDropdownBtn");
+const dropdown = document.getElementById("dayDropdown");
+const items = document.querySelectorAll(".dropdown-item");
+const days = document.querySelectorAll(".schedule-day");
+
+dayBtn.addEventListener("click", () => {
+  dropdown.classList.toggle("hidden");
+});
+
+items.forEach(item => {
+  item.addEventListener("click", () => {
+    const day = item.dataset.day;
+    days.forEach(d => d.classList.add("hidden"));
+    document.getElementById(day + "-day").classList.remove("hidden");
+    dayBtn.textContent = item.textContent + " ▾";
+    dropdown.classList.add("hidden");
+  });
+});
+
+// ===== Smooth Card Cursor-Follow Effect =====
+const cards = document.querySelectorAll(".schedule-card");
+let mouse = { x: 0, y: 0 };
+window.addEventListener("mousemove", e => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+});
+
+function animateCards() {
+  cards.forEach(card => {
+    const rect = card.getBoundingClientRect();
+    const cardX = rect.left + rect.width / 2;
+    const cardY = rect.top + rect.height / 2;
+
+    const deltaX = mouse.x - cardX;
+    const deltaY = mouse.y - cardY;
+
+    const currentX = parseFloat(card.dataset.tx || 0);
+    const currentY = parseFloat(card.dataset.ty || 0);
+
+    const easedX = currentX + (deltaX * 0.03);
+    const easedY = currentY + (deltaY * 0.03);
+
+    card.dataset.tx = easedX;
+    card.dataset.ty = easedY;
+
+    card.style.setProperty("--mouseX", easedX);
+    card.style.setProperty("--mouseY", easedY);
+  });
+
+  requestAnimationFrame(animateCards);
 }
 
-/* ===== Scrollbar ===== */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, #8b5cf6, #4f46e5); border-radius: 3px; }
-::-webkit-scrollbar-track { background: #0f172a; }
+animateCards();
 
-/* ===== Responsive Layout ===== */
-@media (max-width: 640px) { .schedule-row { grid-template-columns: 1fr; } }
+cards.forEach(card => {
+  card.addEventListener("mouseleave", () => {
+    card.dataset.tx = 0;
+    card.dataset.ty = 0;
+  });
+});
 
-/* ===== Letter Day Clock ===== */
-.day-clock-wrapper { display: flex; justify-content: center; margin-bottom: 2rem; }
-.day-clock-card {
-  background: rgba(30, 41, 59, 0.55);
-  backdrop-filter: blur(15px) saturate(180%);
-  border: 1px solid rgba(139, 92, 246, 0.25);
-  border-radius: 20px;
-  padding: 1.25rem 2rem;
-  text-align: center;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.35);
-  transition: all 0.3s ease;
-  max-width: 280px;
-  width: 100%;
-}
-.day-clock-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 24px rgba(139,92,246,0.35);
-  border-color: rgba(139,92,246,0.4);
-}
-.day-clock-card h2 {
-  font-size: 1.75rem;
-  font-weight: 600;
-  background: linear-gradient(90deg, #a78bfa, #4f46e5, #60a5fa);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-size: 200% 200%;
-  animation: textShift 6s ease infinite;
-  margin-bottom: 0.25rem;
-}
-.day-clock-card p { color: #c3c1ff; font-size: 0.9rem; opacity: 0.9; }
-@keyframes textShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+// ===== Mouse-following particles =====
+const canvas = document.getElementById("bgCanvas");
+const ctx = canvas.getContext("2d");
+let particles = [];
+const particleCount = 60;
 
-/* ===== Mobile Schedule Reordering ===== */
-@media (max-width: 640px) {
-  .schedule-day { display: grid; grid-template-columns: 1fr; gap: 1rem; }
-  .schedule-row { display: contents; }
-  .schedule-card { width: 100%; }
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 }
-@media (max-width: 768px) {
-  .schedule-day { display: flex; flex-direction: column; gap: 1rem; }
-  .schedule-row { display: contents; }
-  .schedule-card { width: 100%; max-width: 100%; margin: 0 auto; }
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+class Particle {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.size = Math.random() * 3 + 1;
+    this.speedX = Math.random() * 2 - 1;
+    this.speedY = Math.random() * 2 - 1;
+    this.color = `rgba(139,92,246,${Math.random() * 0.5 + 0.2})`;
+  }
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    if(this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+    if(this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+  }
+  draw() {
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+    ctx.fill();
+  }
 }
+
+for(let i = 0; i < particleCount; i++){
+  particles.push(new Particle(Math.random()*canvas.width, Math.random()*canvas.height));
+}
+
+window.addEventListener('mousemove', e => {
+  particles.push(new Particle(e.x + Math.random()*20-10, e.y + Math.random()*20-10));
+  if(particles.length > particleCount) particles.shift();
+});
+
+function animateParticles() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p => {
+    p.update();
+    p.draw();
+  });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// ===== Fetch Current Day from Neocities =====
+const clockDisplay = document.getElementById("school-day");
+
+fetch("/day.json?_=" + Date.now()) // fetch from same site, avoid caching
+  .then(res => res.json())
+  .then(data => {
+    if(clockDisplay && data.currentDay) {
+      clockDisplay.textContent = data.currentDay + " Day";
+    } else {
+      clockDisplay.textContent = "Day not found";
+      console.warn("⚠️ currentDay missing from day.json");
+    }
+  })
+  .catch(err => {
+    console.error("Error loading current day:", err);
+    clockDisplay.textContent = "Loading Day...";
+  });
+
+// ===== Auto redirect mobile =====
+if (window.innerWidth <= 768) {
+  window.location.href = "https://semester-1-schedule-mobile.neocities.org";
+}
+</script>
+</body>
+</html>
