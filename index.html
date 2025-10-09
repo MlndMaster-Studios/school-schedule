@@ -248,7 +248,6 @@ function animateCards() {
 
   requestAnimationFrame(animateCards);
 }
-
 animateCards();
 
 cards.forEach(card => {
@@ -313,120 +312,77 @@ function animateParticles() {
 }
 animateParticles();
 
+// ===== School Day Clock =====
+const clockDisplay = document.getElementById("school-day");
+
+// Snake schedule order
+const scheduleOrder = ["A","F","D","B","G","E","C"];
+
+// Manual overrides or paused days
+// Format: "YYYY-MM-DD": "PAUSE" or "A"/"B"/...
+const scheduleOverrides = {
+  "2025-10-17": "PAUSE",
+  "2025-10-16": "PAUSE"
+};
+
+// Starting point reference: Oct 9, 2025 = G Day
+const startDate = new Date("2025-10-09T00:00:00");
+
+// Calculate current letter day
+function calculateDay(today = new Date()) {
+  today.setHours(0,0,0,0); // Normalize
+  const dayMS = 1000*60*60*24;
+
+  let current = new Date(startDate);
+  let index = scheduleOrder.indexOf("G"); // starting day
+
+  while(current < today) {
+    const yyyy_mm_dd = current.toISOString().slice(0,10);
+    const dayOfWeek = current.getDay();
+    
+    // Skip Sat/Sun
+    if(dayOfWeek !== 0 && dayOfWeek !== 6) {
+      // Check override
+      if(scheduleOverrides[yyyy_mm_dd] === "PAUSE") {
+        // do nothing, pause
+      } else if(scheduleOverrides[yyyy_mm_dd]) {
+        index = scheduleOrder.indexOf(scheduleOverrides[yyyy_mm_dd]);
+      } else {
+        index = (index + 1) % scheduleOrder.length;
+      }
+    }
+    current = new Date(current.getTime() + dayMS);
+  }
+
+  const todayStr = today.toISOString().slice(0,10);
+  const todayOverride = scheduleOverrides[todayStr];
+  if(todayOverride === "PAUSE") return "No Classes 🎉";
+  if(todayOverride && todayOverride !== "PAUSE") return todayOverride + " Day";
+
+  return scheduleOrder[index] + " Day";
+}
+
+// Update display
+function updateDayDisplay() {
+  if(clockDisplay) clockDisplay.textContent = calculateDay();
+}
+
+// Initial display
+updateDayDisplay();
+
+// Auto-update every day at 12:01 AM
+setInterval(() => {
+  const now = new Date();
+  if(now.getHours() === 0 && now.getMinutes() === 1) {
+    updateDayDisplay();
+  }
+}, 60*1000);
+
 // ===== Redirect mobile users =====
 if (window.innerWidth <= 768) {
   window.location.href = "https://mlndmaster-studios.github.io/school-schedule/mobile/";
 }
-
-// ===== Automatic School Day Clock =====
-const sequence = ['A','F','D','B','G','E','C'];
-const referenceDateStr = '2025-10-09'; // Known: 2025-10-09 is G day
-const referenceLetter = 'G';
-
-const overrides = {
-  // Add days off or special cases here, for example:
-  // "2025-10-10": "No Classes",
-  // "2025-10-14": "F"
-};
-
-function toYMD(d) {
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2,'0');
-  const dd = String(d.getDate()).padStart(2,'0');
-  return `${yyyy}-${mm}-${dd}`;
-}
-function parseYMD(s) {
-  const [y,m,d] = s.split('-').map(Number);
-  return new Date(y, m-1, d);
-}
-function isWeekendDateObj(d) {
-  const day = d.getDay();
-  return day === 0 || day === 6;
-}
-function isLetter(val) {
-  return typeof val === 'string' && sequence.includes(val.toUpperCase());
-}
-
-function computeLetterForDate(targetDate) {
-  const refDate = parseYMD(referenceDateStr);
-  let currentIndex = sequence.indexOf(referenceLetter);
-  const refStr = toYMD(refDate);
-  const ov = {...overrides};
-  const targetStr = toYMD(targetDate);
-  const forward = (+targetDate) >= (+refDate);
-  let iterDate = new Date(refDate.getTime());
-
-  if (ov[refStr] !== undefined && isLetter(ov[refStr])) {
-    currentIndex = sequence.indexOf(ov[refStr].toUpperCase());
-  }
-
-  while (toYMD(iterDate) !== targetStr) {
-    iterDate.setDate(iterDate.getDate() + (forward ? 1 : -1));
-    const iterStr = toYMD(iterDate);
-
-    if (ov[iterStr] !== undefined) {
-      if (isLetter(ov[iterStr])) currentIndex = sequence.indexOf(ov[iterStr].toUpperCase());
-      continue;
-    }
-    if (isWeekendDateObj(iterDate)) continue;
-
-    if (forward) {
-      currentIndex = (currentIndex + 1) % sequence.length;
-    } else {
-      currentIndex = (currentIndex - 1 + sequence.length) % sequence.length;
-    }
-  }
-
-  if (ov[targetStr] !== undefined) {
-    return isLetter(ov[targetStr]) ? ov[targetStr].toUpperCase() : 'NO_CLASSES';
-  }
-
-  return sequence[currentIndex];
-}
-
-const dayDisplayEl = document.getElementById('school-day');
-const dateTextEl = document.getElementById('dateText');
-
-function renderForDate(d) {
-  const letter = computeLetterForDate(d);
-  const dateStr = toYMD(d);
-
-  if (letter === 'NO_CLASSES') {
-    dayDisplayEl.textContent = 'No Classes Today 🎉';
-  } else {
-    dayDisplayEl.textContent = `${letter} Day`;
-  }
-
-  if (dateTextEl) {
-    const opts = { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' };
-    dateTextEl.textContent = d.toLocaleDateString(undefined, opts);
-  }
-}
-
-function msUntilNext0001() {
-  const now = new Date();
-  const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 1, 0, 0);
-  return tomorrow - now;
-}
-
-let nextTimeoutId = null;
-function scheduleNextUpdate() {
-  clearTimeout(nextTimeoutId);
-  nextTimeoutId = setTimeout(() => {
-    renderForDate(new Date());
-    scheduleNextUpdate();
-  }, msUntilNext0001() + 50);
-}
-
-(function initDayClock() {
-  renderForDate(new Date());
-  scheduleNextUpdate();
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) renderForDate(new Date());
-  });
-  setInterval(() => renderForDate(new Date()), 60 * 1000);
-})();
 </script>
-
+  
 </body>
 </html>
