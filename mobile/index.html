@@ -421,31 +421,153 @@
 
   <!-- JS -->
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const dayDropdownBtn = document.getElementById("dayDropdownBtn");
-      const dayDropdown = document.getElementById("dayDropdown");
-      const dropdownItems = document.querySelectorAll(".dropdown-item");
-      const scheduleDays = document.querySelectorAll(".schedule-day");
+document.addEventListener("DOMContentLoaded", () => {
+  // ===== Feather icons =====
+  if (window.feather) feather.replace();
 
-      dayDropdownBtn.addEventListener("click", () => {
-        dayDropdown.classList.toggle("hidden");
-      });
+  // ===== Day Dropdown =====
+  const dropdownBtn = document.getElementById("dayDropdownBtn");
+  const dropdownMenu = document.getElementById("dayDropdown");
+  const dropdownItems = document.querySelectorAll(".dropdown-item");
+  const scheduleDays = document.querySelectorAll(".schedule-day");
 
-      dropdownItems.forEach(item => {
-        item.addEventListener("click", () => {
-          const selectedDay = item.dataset.day;
-          scheduleDays.forEach(day => day.classList.add("hidden"));
-          const activeDay = document.getElementById("day-" + selectedDay);
-          if (activeDay) activeDay.classList.remove("hidden");
-          dayDropdownBtn.textContent = item.textContent + " ▾";
-          dayDropdown.classList.add("hidden");
-        });
-      });
+  // Toggle dropdown menu
+  dropdownBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    dropdownMenu.classList.toggle("hidden");
+  });
 
-      // Default visible day
-      const defaultDay = document.getElementById("day-A");
-      if (defaultDay) defaultDay.classList.remove("hidden");
+  // Close dropdown if clicked outside
+  document.addEventListener("click", () => {
+    dropdownMenu.classList.add("hidden");
+  });
+
+  // Show selected day
+  dropdownItems.forEach(item => {
+    item.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const selectedDay = item.dataset.day;
+
+      // Hide all days
+      scheduleDays.forEach(day => day.style.display = "none");
+
+      // Show selected day
+      const activeDay = document.getElementById("day-" + selectedDay);
+      if (activeDay) activeDay.style.display = "flex";
+
+      // Update button text
+      dropdownBtn.textContent = item.textContent + " ▾";
+
+      // Close dropdown
+      dropdownMenu.classList.add("hidden");
     });
-  </script>
+  });
+
+  // Show default day on load
+  const defaultDay = document.getElementById("day-A");
+  if (defaultDay) defaultDay.style.display = "flex";
+
+  // ===== Smooth Card Cursor-Follow Effect =====
+  const cards = document.querySelectorAll(".schedule-card");
+  let mouse = { x: 0, y: 0 };
+
+  window.addEventListener("mousemove", e => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+
+  function animateCards() {
+    cards.forEach(card => {
+      const rect = card.getBoundingClientRect();
+      const cardX = rect.left + rect.width / 2;
+      const cardY = rect.top + rect.height / 2;
+
+      const deltaX = mouse.x - cardX;
+      const deltaY = mouse.y - cardY;
+
+      const currentX = parseFloat(card.dataset.tx || 0);
+      const currentY = parseFloat(card.dataset.ty || 0);
+
+      const easedX = currentX + (deltaX * 0.03);
+      const easedY = currentY + (deltaY * 0.03);
+
+      card.dataset.tx = easedX;
+      card.dataset.ty = easedY;
+
+      card.style.setProperty("--mouseX", easedX);
+      card.style.setProperty("--mouseY", easedY);
+    });
+
+    requestAnimationFrame(animateCards);
+  }
+
+  animateCards();
+
+  cards.forEach(card => {
+    card.addEventListener("mouseleave", () => {
+      card.dataset.tx = 0;
+      card.dataset.ty = 0;
+    });
+  });
+
+  // ===== Mouse-following particles =====
+  const canvas = document.getElementById("bgCanvas");
+  if (canvas) {
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+    const particleCount = 60;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = Math.random() * 2 - 1;
+        this.speedY = Math.random() * 2 - 1;
+        this.color = `rgba(139,92,246,${Math.random() * 0.5 + 0.2})`;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      }
+      draw() {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
+    }
+
+    window.addEventListener('mousemove', e => {
+      particles.push(new Particle(e.x + Math.random() * 20 - 10, e.y + Math.random() * 20 - 10));
+      if (particles.length > particleCount) particles.shift();
+    });
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+
+    animateParticles();
+  }
+});
+</script>
 </body>
 </html>
