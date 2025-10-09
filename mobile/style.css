@@ -1,124 +1,137 @@
-/* 🌙 GENERAL LAYOUT */
+/* 🌌 BACKGROUND & GLOBAL STYLE */
 body {
-  font-family: 'Inter', sans-serif;
-  background-color: #0f0f1a;
-  color: #fff;
-  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Arial", sans-serif;
+  background: linear-gradient(135deg, #0b0f25, #1b1f3e, #3b3f7a, #4f46e5);
+  background-size: 300% 300%;
+  animation: gradientShift 30s ease infinite;
+  color: #e2e8f0;
   padding: 1rem;
+  margin: 0;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
-/* 🕓 DAY CLOCK */
+/* 🌈 Gradient Animation */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* 🧾 Headers */
+h1, h2, h3 {
+  font-weight: 600;
+  background: linear-gradient(90deg, #8b5cf6, #4f46e5);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* 🕓 Day Clock */
 .day-clock-wrapper {
-  width: 90%;
-  max-width: 400px;
-  margin: 1.25rem auto;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
 }
 
 .day-clock-card {
-  background: rgba(27, 27, 43, 0.9);
-  padding: 0.75rem 1rem;
-  border-radius: 12px;
-  color: #66ccff;
+  background: rgba(30, 41, 59, 0.55);
+  backdrop-filter: blur(15px) saturate(180%);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  border-radius: 20px;
+  padding: 1rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  color: #e2e8f0;
   font-weight: 600;
   font-size: 1.1rem;
-  text-align: center;
-  box-shadow: 0 0 15px rgba(102, 204, 255, 0.25);
-  border: 1px solid rgba(102, 204, 255, 0.3);
 }
 
-/* 📅 DROPDOWN BUTTON */
+/* 📅 Dropdown Button */
 #dayDropdownBtn {
   width: 100%;
   padding: 0.75rem 1rem;
-  font-size: 1rem;
-  border-radius: 10px;
-  border: none;
-  outline: none;
-  background: #1e1e2f;
+  background: linear-gradient(135deg, #8b5cf6, #4f46e5);
   color: #fff;
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
   cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-size: 1rem;
 }
 
 #dayDropdownBtn:hover {
-  background: #2b2b45;
   transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(139,92,246,0.5);
 }
 
-/* 📋 DROPDOWN MENU */
-#dayDropdown {
-  width: 100%;
-  max-width: 400px;
-  overflow: hidden;
-  border-radius: 10px;
-  background: rgba(27, 27, 43, 0.95);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+#dayDropdownBtn:active {
+  transform: scale(0.98);
+}
+
+/* 📋 Dropdown Menu */
+.dropdown-menu {
+  background: rgba(30,41,59,0.95);
+  border-radius: 12px;
   margin-top: 0.25rem;
-  transition: max-height 0.3s ease;
+  overflow: hidden;
   max-height: 0;
+  transition: max-height 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
-#dayDropdown.show {
-  max-height: 400px;
+/* 🔽 Dropdown Visible */
+.dropdown-menu.show {
+  max-height: 500px; /* enough to show all items */
 }
 
-/* 📋 DROPDOWN ITEMS */
+/* 📋 Dropdown Items */
 .dropdown-item {
   padding: 0.75rem 1rem;
   cursor: pointer;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   transition: background 0.2s ease, color 0.2s ease;
-}
-
-.dropdown-item:last-child {
-  border-bottom: none;
+  color: #e2e8f0;
+  font-weight: 500;
 }
 
 .dropdown-item:hover {
-  background: #2b2b45;
-  color: #66ccff;
+  background: linear-gradient(135deg, #8b5cf6, #4f46e5);
+  color: #fff;
 }
 
-/* 📅 SCHEDULE DAYS */
+/* 📘 Schedule Layout */
 .schedule-day {
   display: none;
   flex-direction: column;
   gap: 1rem;
-  margin-bottom: 2rem;
-  width: 100%;
+  margin-top: 1.5rem;
 }
 
-/* ✨ ACTIVE DAY */
+/* ✨ Active Day */
 .schedule-day:not(.hidden) {
   display: flex;
 }
 
-/* 🎴 SCHEDULE CARDS */
+/* 🧾 Schedule Card */
 .schedule-card {
-  background: linear-gradient(145deg, rgba(27, 27, 43, 0.9), rgba(32, 32, 58, 0.9));
-  border-radius: 12px;
-  padding: 1rem 1.25rem;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.35);
+  background: rgba(30,41,59,0.55);
+  backdrop-filter: blur(12px) saturate(150%);
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid rgba(139,92,246,0.25);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  animation: fadeIn 0.4s ease-in-out;
-  border: 1px solid rgba(255,255,255,0.05);
 }
 
 .schedule-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 18px rgba(102,204,255,0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(139,92,246,0.4);
 }
 
-/* 🕒 TEXT STYLES */
+/* 🕒 Text Styles */
 .schedule-card h3 {
   font-size: 1.1rem;
   margin: 0 0 0.25rem 0;
-  color: #66ccff;
+  color: #a78bfa;
 }
 
 .schedule-card .time {
@@ -136,22 +149,16 @@ body {
 
 .schedule-card .details {
   font-size: 0.85rem;
-  color: #999;
+  color: #a1a1aa;
 }
 
-/* ✨ ANIMATION */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* 📱 MOBILE TWEAKS */
+/* 📱 Mobile */
 @media (max-width: 768px) {
-  .schedule-card {
-    padding: 0.75rem 1rem;
+  #dayDropdownBtn {
+    font-size: 0.95rem;
   }
 
-  #dayDropdownBtn {
+  .dropdown-item {
     font-size: 0.95rem;
   }
 
@@ -162,8 +169,9 @@ body {
   .schedule-card .subject {
     font-size: 0.95rem;
   }
+}
 
-  .dropdown-item {
-    font-size: 0.95rem;
-  }
+/* 🫥 Hidden Utility */
+.hidden {
+  display: none !important;
 }
