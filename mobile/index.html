@@ -364,6 +364,24 @@ animateParticles();
     console.log(`✅ Reordered ${dayEl.id}`);
   });
 })();
+  // ===== Mobile: show only the selected day =====
+(function showOnlySelectedDay() {
+  const daySelector = document.querySelector("#day-select"); // whatever your day dropdown ID is
+  const days = document.querySelectorAll(".schedule-day");
+
+  function updateVisibleDay() {
+    const selectedDay = daySelector?.value || "A-day";
+    days.forEach(day => {
+      day.style.display = (day.id === selectedDay) ? "flex" : "none";
+    });
+  }
+
+  // Initialize visibility
+  updateVisibleDay();
+
+  // Re-run when the user changes the day
+  daySelector?.addEventListener("change", updateVisibleDay);
+})();
 </script>
 </body>
 </html>
