@@ -227,29 +227,52 @@
   </div>
 
   <script>
-    // ===== Day Dropdown =====
-    const dayBtn = document.getElementById("dayDropdownBtn");
-    const dropdown = document.getElementById("dayDropdown");
-    const items = document.querySelectorAll(".dropdown-item");
-    const days = document.querySelectorAll(".schedule-day");
+    // ===== Day Dropdown (Desktop + Mobile) =====
+const dayBtn = document.getElementById("dayDropdownBtn");
+const dropdown = document.getElementById("dayDropdown");
+const items = document.querySelectorAll(".dropdown-item");
+const days = document.querySelectorAll(".schedule-day");
 
-    dayBtn.addEventListener("click", () => {
-      dropdown.classList.toggle("hidden");
-    });
+// Toggle dropdown for click or touch
+function toggleDropdown(e) {
+  e.preventDefault(); // Prevent double-trigger on touch
+  dropdown.classList.toggle("hidden");
+}
 
-    items.forEach(item => {
-      item.addEventListener("click", () => {
-        const selectedDay = item.dataset.day;
-        days.forEach(d => d.classList.add("hidden"));
-        const activeDay = document.getElementById("day-" + selectedDay);
-        if (activeDay) activeDay.classList.remove("hidden");
-        dayBtn.textContent = item.textContent + " ▾";
-        dropdown.classList.add("hidden");
-      });
-    });
+// Close dropdown if clicking/tapping outside
+function closeDropdown(e) {
+  if (!dayBtn.contains(e.target) && !dropdown.contains(e.target)) {
+    dropdown.classList.add("hidden");
+  }
+}
 
-    // Show default day
-    document.getElementById("day-A").classList.remove("hidden");
+dayBtn.addEventListener("click", toggleDropdown);
+dayBtn.addEventListener("touchstart", toggleDropdown);
+
+// Close dropdown when tapping outside (desktop + mobile)
+document.addEventListener("click", closeDropdown);
+document.addEventListener("touchstart", closeDropdown);
+
+// Select day
+items.forEach(item => {
+  item.addEventListener("click", () => {
+    const day = item.dataset.day;
+    days.forEach(d => d.classList.add("hidden"));
+    document.getElementById(day + "-day").classList.remove("hidden");
+    dayBtn.textContent = item.textContent + " ▾";
+    dropdown.classList.add("hidden");
+  });
+
+  // Also handle touch on items for mobile
+  item.addEventListener("touchstart", (e) => {
+    e.preventDefault();
+    const day = item.dataset.day;
+    days.forEach(d => d.classList.add("hidden"));
+    document.getElementById(day + "-day").classList.remove("hidden");
+    dayBtn.textContent = item.textContent + " ▾";
+    dropdown.classList.add("hidden");
+  });
+});
   </script>
 </body>
 </html>
