@@ -238,45 +238,34 @@
   <div class="schedule-card"><h3>E Class</h3><p class="time">1:00–1:48</p><p class="subject">English II</p><p class="details">MB314</p></div>
 </div>
 <script>
-<script>
 // ===== Feather icons =====
 feather.replace();
 
 // ===== Day Dropdown =====
-document.addEventListener("DOMContentLoaded", function() {
-  const dayBtn = document.getElementById("dayDropdownBtn");
-  const dropdown = document.getElementById("dayDropdown");
-  const items = document.querySelectorAll(".dropdown-item");
-  const days = document.querySelectorAll(".schedule-day");
+const dayBtn = document.getElementById("dayDropdownBtn");
+const dropdown = document.getElementById("dayDropdown");
+const items = document.querySelectorAll(".dropdown-item");
+const days = document.querySelectorAll(".schedule-day");
 
-  // Make the first day visible by default
-  if (days.length > 0) {
-    days[0].classList.remove("hidden");
-  }
+// Hide all days except the first one on load
+days.forEach(d => d.classList.add("hidden"));
+document.getElementById("day-A").classList.remove("hidden"); // Default visible day
 
-  // Toggle dropdown open/close
-  dayBtn.addEventListener("click", () => {
-    dropdown.classList.toggle("hidden");
-  });
+dayBtn.addEventListener("click", () => {
+  dropdown.classList.toggle("hidden");
+});
 
-  // Handle clicking a day
-  items.forEach(item => {
-    item.addEventListener("click", () => {
-      const day = item.dataset.day;
+items.forEach(item => {
+  item.addEventListener("click", () => {
+    const day = item.dataset.day;
+    days.forEach(d => d.classList.add("hidden"));
 
-      // Hide all day sections
-      days.forEach(d => d.classList.add("hidden"));
+    // The section IDs are formatted like "day-A", "day-B", etc.
+    const selected = document.getElementById("day-" + day);
+    if (selected) selected.classList.remove("hidden");
 
-      // Show selected day
-      const selected = document.getElementById(day + "-day");
-      if (selected) {
-        selected.classList.remove("hidden");
-      }
-
-      // Update dropdown text + close it
-      dayBtn.textContent = item.textContent + " ▾";
-      dropdown.classList.add("hidden");
-    });
+    dayBtn.textContent = item.textContent + " ▾";
+    dropdown.classList.add("hidden");
   });
 });
 
@@ -323,58 +312,60 @@ cards.forEach(card => {
 
 // ===== Mouse-following particles =====
 const canvas = document.getElementById("bgCanvas");
-const ctx = canvas.getContext("2d");
-let particles = [];
-const particleCount = 60;
+if (canvas) {
+  const ctx = canvas.getContext("2d");
+  let particles = [];
+  const particleCount = 60;
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-
-class Particle {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-    this.size = Math.random() * 3 + 1;
-    this.speedX = Math.random() * 2 - 1;
-    this.speedY = Math.random() * 2 - 1;
-    this.color = `rgba(139,92,246,${Math.random() * 0.5 + 0.2})`;
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
   }
-  update() {
-    this.x += this.speedX;
-    this.y += this.speedY;
-    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  class Particle {
+    constructor(x, y) {
+      this.x = x;
+      this.y = y;
+      this.size = Math.random() * 3 + 1;
+      this.speedX = Math.random() * 2 - 1;
+      this.speedY = Math.random() * 2 - 1;
+      this.color = `rgba(139,92,246,${Math.random() * 0.5 + 0.2})`;
+    }
+    update() {
+      this.x += this.speedX;
+      this.y += this.speedY;
+      if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+      if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+    }
+    draw() {
+      ctx.fillStyle = this.color;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
   }
-  draw() {
-    ctx.fillStyle = this.color;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fill();
+
+  for (let i = 0; i < particleCount; i++) {
+    particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
   }
-}
 
-for (let i = 0; i < particleCount; i++) {
-  particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
-}
-
-window.addEventListener('mousemove', e => {
-  particles.push(new Particle(e.x + Math.random() * 20 - 10, e.y + Math.random() * 20 - 10));
-  if (particles.length > particleCount) particles.shift();
-});
-
-function animateParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach(p => {
-    p.update();
-    p.draw();
+  window.addEventListener('mousemove', e => {
+    particles.push(new Particle(e.x + Math.random() * 20 - 10, e.y + Math.random() * 20 - 10));
+    if (particles.length > particleCount) particles.shift();
   });
-  requestAnimationFrame(animateParticles);
+
+  function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.update();
+      p.draw();
+    });
+    requestAnimationFrame(animateParticles);
+  }
+  animateParticles();
 }
-animateParticles();
 </script>
 </body>
 </html>
