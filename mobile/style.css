@@ -13,7 +13,7 @@ body {
   100% { background-position: 0% 50%; }
 }
 
-h1, h2, h3 { font-weight: 600; }
+h1, h2, h3 { font-weight: 600; background: linear-gradient(90deg, #8b5cf6, #4f46e5); -webkit-background-clip: text; color: transparent; }
 
 .schedule-day {
   display: flex;
@@ -26,7 +26,14 @@ h1, h2, h3 { font-weight: 600; }
   backdrop-filter: blur(12px) saturate(150%);
   border-radius: 16px;
   padding: 16px;
-  border: 1px solid rgba(139,92,246,0.15);
+  border: 1px solid rgba(139,92,246,0.25);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.schedule-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 6px 25px rgba(139,92,246,0.5);
 }
 
 .day-clock-wrapper {
@@ -42,6 +49,7 @@ h1, h2, h3 { font-weight: 600; }
   border-radius: 20px;
   padding: 1rem 1.5rem;
   text-align: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
 }
 
 #dayDropdownBtn {
@@ -50,6 +58,12 @@ h1, h2, h3 { font-weight: 600; }
   background: linear-gradient(135deg, #8b5cf6, #4f46e5);
   color: #fff;
   border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+  transition: transform 0.2s ease;
+}
+
+#dayDropdownBtn:active {
+  transform: scale(0.98);
 }
 
 .dropdown-menu {
@@ -57,11 +71,18 @@ h1, h2, h3 { font-weight: 600; }
   border-radius: 12px;
   margin-top: 0.25rem;
   overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease;
+}
+
+.dropdown-menu.show {
+  max-height: 500px; /* enough to fit all items */
 }
 
 .dropdown-item {
   padding: 0.5rem 1rem;
   cursor: pointer;
+  transition: background 0.2s ease;
 }
 
 .dropdown-item:hover {
@@ -69,7 +90,6 @@ h1, h2, h3 { font-weight: 600; }
   color: #fff;
 }
 
-/* Hidden class */
 .hidden {
   display: none !important;
 }
