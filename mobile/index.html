@@ -315,23 +315,80 @@ function animateParticles() {
 }
 animateParticles();
 
-// ===== Fetch Current Day from Neocities =====
-const clockDisplay = document.getElementById("school-day");
+// ===== Mobile: flatten & reorder schedule cards per day =====
+(function reorderMobileCards() {
+  // run only on mobile width
+  if (window.innerWidth > 768) return;
 
-fetch("/day.json?_=" + Date.now()) // fetch from same site, avoid caching
-  .then(res => res.json())
-  .then(data => {
-    if(clockDisplay && data.currentDay) {
-      clockDisplay.textContent = data.currentDay + " Day";
-    } else {
-      clockDisplay.textContent = "Day not found";
-      console.warn("⚠️ currentDay missing from day.json");
-    }
-  })
-  .catch(err => {
-    console.error("Error loading current day:", err);
-    clockDisplay.textContent = "Loading Day...";
+  const desiredOrders = {
+    "A-day": [
+      "a class", "b class", "c class", "lunch & formation", "d class", "e class"
+    ],
+    "B-day": [
+      "b class", "c class", "lunch", "d class", "formation", "e class", "f class"
+    ],
+    "C-day": [
+      "c class", "d class", "lunch", "e class", "formation", "f class", "g class"
+    ],
+    "D-day": [
+      "d class", "e class", "lunch", "f class", "formation", "g class", "a class"
+    ],
+    "E-day": [
+      "e class", "f class", "g class", "lunch & formation", "a class", "b class"
+    ],
+    "F-day": [
+      "f class", "g class", "a class", "lunch & formation", "b class", "c class"
+    ],
+    "G-day": [
+      "g class", "a class", "b class", "lunch & formation", "c class", "d class"
+    ]
+    // WED-day: keep default order (leave unchanged)
+  };
+
+  // Helper: normalize text
+  const norm = s => (s || "").toString().trim().toLowerCase();
+
+  document.querySelectorAll(".schedule-day").forEach(dayEl => {
+    const order = desiredOrders[dayEl.id];
+    if (!order) return; // skip days we don't reorder (e.g. WED-day)
+
+    // collect all .schedule-card elements inside the day (even if nested)
+    const cards = Array.from(dayEl.querySelectorAll(".schedule-card"));
+
+    // we will mutate this working array as we append matches
+    const remaining = cards.slice();
+
+    order.forEach(token => {
+      const tok = norm(token);
+
+      // try to match a card by checking if its <h3> text contains all token words
+      const idx = remaining.findIndex(card => {
+        const h = norm(card.querySelector("h3")?.textContent);
+        const words = tok.replace("&"," ").split(/\s+/).filter(Boolean);
+        return words.every(w => h.includes(w));
+      });
+
+      if (idx !== -1) {
+        // move matched card to be a direct child of .schedule-day (appendChild moves it)
+        dayEl.appendChild(remaining[idx]);
+        remaining.splice(idx, 1);
+      } else {
+        // fallback: match by first word in token
+        const first = tok.split(" ")[0];
+        const idx2 = remaining.findIndex(card => norm(card.querySelector("h3")?.textContent).includes(first));
+        if (idx2 !== -1) {
+          dayEl.appendChild(remaining[idx2]);
+          remaining.splice(idx2, 1);
+        } else {
+          console.warn("Reorder: couldn't find card for token", token, "in", dayEl.id);
+        }
+      }
+    });
+
+    // append any leftovers (safety)
+    remaining.forEach(c => dayEl.appendChild(c));
   });
+})();
 </script>
 </body>
 </html>
