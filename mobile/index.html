@@ -226,11 +226,12 @@
 
   </div>
 
-  <script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
   // ===== Feather Icons =====
-  feather.replace();
+  if (feather) feather.replace();
 
-  // ===== Day Dropdown Functionality =====
+  // ===== Day Dropdown =====
   const dayDropdownBtn = document.getElementById("dayDropdownBtn");
   const dayDropdown = document.getElementById("dayDropdown");
   const dropdownItems = document.querySelectorAll(".dropdown-item");
@@ -241,7 +242,7 @@
     dayDropdown.classList.toggle("hidden");
   });
 
-  // Select a day from dropdown
+  // Select a day
   dropdownItems.forEach(item => {
     item.addEventListener("click", () => {
       const selectedDay = item.dataset.day;
@@ -249,15 +250,15 @@
       const activeDay = document.getElementById("day-" + selectedDay);
       if (activeDay) activeDay.classList.remove("hidden"); // show selected
       dayDropdownBtn.textContent = item.textContent + " ▾"; // update button text
-      dayDropdown.classList.add("hidden"); // close dropdown
+      dayDropdown.classList.add("hidden"); // hide dropdown
     });
   });
 
-  // ===== Show A Day by default =====
+  // ===== Show default day (A) =====
   const defaultDay = document.getElementById("day-A");
   if (defaultDay) defaultDay.classList.remove("hidden");
 
-  // ===== Particle Background (optional, keeps original effect) =====
+  // ===== Particle background (optional) =====
   const canvas = document.getElementById("bgCanvas");
   if (canvas) {
     const ctx = canvas.getContext("2d");
@@ -314,6 +315,7 @@
 
     animateParticles();
   }
+});
 </script>
 </body>
 </html>
