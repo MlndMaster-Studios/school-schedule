@@ -238,7 +238,7 @@
   <div class="schedule-card"><h3>E Class</h3><p class="time">1:00–1:48</p><p class="subject">English II</p><p class="details">MB314</p></div>
 </div>
 <script>
-// ===== Feather icons =====
+  // ===== Feather icons =====
 feather.replace();
 
 // ===== Day Dropdown =====
@@ -247,23 +247,18 @@ const dropdown = document.getElementById("dayDropdown");
 const items = document.querySelectorAll(".dropdown-item");
 const days = document.querySelectorAll(".schedule-day");
 
-// Hide all days except the first one on load
-days.forEach(d => d.classList.add("hidden"));
-document.getElementById("day-" + day).classList.remove("hidden"); // Default visible day
-
 dayBtn.addEventListener("click", () => {
   dropdown.classList.toggle("hidden");
 });
 
 items.forEach(item => {
   item.addEventListener("click", () => {
-    const day = item.dataset.day;
+    const selectedDay = item.dataset.day; // ✅ renamed to avoid undefined variable
     days.forEach(d => d.classList.add("hidden"));
-
-    // The section IDs are formatted like "day-A", "day-B", etc.
-    const selected = document.getElementById("day-" + day);
-    if (selected) selected.classList.remove("hidden");
-
+    const activeDay = document.getElementById("day-" + selectedDay);
+    if (activeDay) {
+      activeDay.classList.remove("hidden");
+    }
     dayBtn.textContent = item.textContent + " ▾";
     dropdown.classList.add("hidden");
   });
@@ -272,6 +267,7 @@ items.forEach(item => {
 // ===== Smooth Card Cursor-Follow Effect =====
 const cards = document.querySelectorAll(".schedule-card");
 let mouse = { x: 0, y: 0 };
+
 window.addEventListener("mousemove", e => {
   mouse.x = e.clientX;
   mouse.y = e.clientY;
@@ -301,6 +297,7 @@ function animateCards() {
 
   requestAnimationFrame(animateCards);
 }
+
 animateCards();
 
 cards.forEach(card => {
@@ -364,6 +361,7 @@ if (canvas) {
     });
     requestAnimationFrame(animateParticles);
   }
+
   animateParticles();
 }
 </script>
