@@ -7,8 +7,6 @@
   <link rel="icon" href="tab-icon.png" type="image/png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/feather-icons"></script>
-
-  <!-- Load your CSS *after* Tailwind -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-slate-900 text-gray-200 min-h-screen relative">
@@ -198,51 +196,25 @@
 // ===== Feather icons =====
 feather.replace();
 
-<!-- existing desktop dropdown script -->
-<script>
+// ===== Day Dropdown =====
 const dayBtn = document.getElementById("dayDropdownBtn");
 const dropdown = document.getElementById("dayDropdown");
 const items = document.querySelectorAll(".dropdown-item");
 const days = document.querySelectorAll(".schedule-day");
 
-if (dayBtn) { // prevent errors if mobile doesn't have it
-  dayBtn.addEventListener("click", () => {
-    dropdown.classList.toggle("hidden");
-  });
+dayBtn.addEventListener("click", () => {
+  dropdown.classList.toggle("hidden");
+});
 
-  items.forEach(item => {
-    item.addEventListener("click", () => {
-      const day = item.dataset.day;
-      days.forEach(d => d.classList.add("hidden"));
-      document.getElementById(day + "-day").classList.remove("hidden");
-      dayBtn.textContent = item.textContent + " ▾";
-      dropdown.classList.add("hidden");
-    });
-  });
-}
-</script>
-
-<!-- NEW: mobile-specific dropdown -->
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const daySelector = document.getElementById("day-select");
-  const days = document.querySelectorAll(".schedule-day");
-
-  if (!daySelector) return; // skip if no mobile select
-
-  days.forEach((day, index) => {
-    day.style.display = index === 0 ? "block" : "none";
-  });
-
-  daySelector.addEventListener("change", (event) => {
-    const selectedDay = event.target.value.toLowerCase();
-    days.forEach(day => {
-      day.style.display = day.id.toLowerCase() === selectedDay ? "block" : "none";
-    });
+items.forEach(item => {
+  item.addEventListener("click", () => {
+    const day = item.dataset.day;
+    days.forEach(d => d.classList.add("hidden"));
+    document.getElementById(day + "-day").classList.remove("hidden");
+    dayBtn.textContent = item.textContent + " ▾";
+    dropdown.classList.add("hidden");
   });
 });
-</script>
-
 
 // ===== Smooth Card Cursor-Follow Effect =====
 const cards = document.querySelectorAll(".schedule-card");
@@ -341,73 +313,28 @@ function animateParticles() {
 }
 animateParticles();
 
-// ===== Mobile: flatten & reorder schedule cards per day =====
-(function reorderMobileCards() {
-  if (window.innerWidth > 768) return;
+// ===== Fetch Current Day from Neocities =====
+const clockDisplay = document.getElementById("school-day");
 
-  const desiredOrders = {
-    "A-day": ["A Class", "B Class", "C Class", "Lunch & Formation", "D Class", "E Class"],
-    "B-day": ["B Class", "C Class", "Lunch", "D Class", "Formation", "E Class", "F Class"],
-    "C-day": ["C Class", "D Class", "Lunch", "E Class", "Formation", "F Class", "G Class"],
-    "D-day": ["D Class", "E Class", "Lunch", "F Class", "Formation", "G Class", "A Class"],
-    "E-day": ["E Class", "F Class", "G Class", "Lunch & Formation", "A Class", "B Class"],
-    "F-day": ["F Class", "G Class", "A Class", "Lunch & Formation", "B Class", "C Class"],
-    "G-day": ["G Class", "A Class", "B Class", "Lunch & Formation", "C Class", "D Class"]
-  };
-
-  document.querySelectorAll(".schedule-day").forEach(dayEl => {
-    const order = desiredOrders[dayEl.id];
-    if (!order) return;
-
-    const cards = Array.from(dayEl.querySelectorAll(".schedule-card"));
-    const titleMap = new Map();
-
-    // build lookup of each card's <h3> text
-    cards.forEach(card => {
-      const title = card.querySelector("h3")?.textContent.trim();
-      if (title) titleMap.set(title.toLowerCase(), card);
-    });
-
-    const newOrder = [];
-
-    order.forEach(title => {
-      const key = title.toLowerCase();
-      if (titleMap.has(key)) {
-        newOrder.push(titleMap.get(key));
-        titleMap.delete(key);
-      } else {
-        console.warn(`⚠️ Missing card "${title}" in ${dayEl.id}`);
-      }
-    });
-
-    // Append leftover cards (if any)
-    for (const [, card] of titleMap) newOrder.push(card);
-
-    // Clear and re-append in new order
-    cards.forEach(c => c.remove());
-    newOrder.forEach(c => dayEl.appendChild(c));
-
-    console.log(`✅ Reordered ${dayEl.id}`);
+fetch("/day.json?_=" + Date.now()) // fetch from same site, avoid caching
+  .then(res => res.json())
+  .then(data => {
+    if(clockDisplay && data.currentDay) {
+      clockDisplay.textContent = data.currentDay + " Day";
+    } else {
+      clockDisplay.textContent = "Day not found";
+      console.warn("⚠️ currentDay missing from day.json");
+    }
+  })
+  .catch(err => {
+    console.error("Error loading current day:", err);
+    clockDisplay.textContent = "Loading Day...";
   });
-})();
-  // ===== Mobile: show only the selected day =====
-(function showOnlySelectedDay() {
-  const daySelector = document.querySelector("#day-select"); // whatever your day dropdown ID is
-  const days = document.querySelectorAll(".schedule-day");
 
-  function updateVisibleDay() {
-    const selectedDay = daySelector?.value || "A-day";
-    days.forEach(day => {
-      day.style.display = (day.id === selectedDay) ? "flex" : "none";
-    });
-  }
-
-  // Initialize visibility
-  updateVisibleDay();
-
-  // Re-run when the user changes the day
-  daySelector?.addEventListener("change", updateVisibleDay);
-})();
+// ===== Auto redirect mobile =====
+if (window.innerWidth <= 768) {
+  window.location.href = "https://mlndmaster-studios.github.io/school-schedule";
+}
 </script>
 </body>
 </html>
