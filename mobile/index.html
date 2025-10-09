@@ -342,38 +342,33 @@ animateParticles();
     "G-day": [
       "g class", "a class", "b class", "lunch & formation", "c class", "d class"
     ]
-    // WED-day: keep default order (leave unchanged)
   };
 
-  // Helper: normalize text
   const norm = s => (s || "").toString().trim().toLowerCase();
 
   document.querySelectorAll(".schedule-day").forEach(dayEl => {
     const order = desiredOrders[dayEl.id];
-    if (!order) return; // skip days we don't reorder (e.g. WED-day)
+    if (!order) return;
 
-    // collect all .schedule-card elements inside the day (even if nested)
-    const cards = Array.from(dayEl.querySelectorAll(".schedule-card"));
+    // flatten: grab all cards and remove rows
+    const rows = Array.from(dayEl.querySelectorAll(".schedule-row"));
+    const cards = rows.flatMap(r => Array.from(r.querySelectorAll(".schedule-card")));
+    rows.forEach(r => r.remove()); // remove row wrappers
 
-    // we will mutate this working array as we append matches
     const remaining = cards.slice();
 
     order.forEach(token => {
       const tok = norm(token);
-
-      // try to match a card by checking if its <h3> text contains all token words
       const idx = remaining.findIndex(card => {
         const h = norm(card.querySelector("h3")?.textContent);
-        const words = tok.replace("&"," ").split(/\s+/).filter(Boolean);
+        const words = tok.replace("&", " ").split(/\s+/).filter(Boolean);
         return words.every(w => h.includes(w));
       });
 
       if (idx !== -1) {
-        // move matched card to be a direct child of .schedule-day (appendChild moves it)
         dayEl.appendChild(remaining[idx]);
         remaining.splice(idx, 1);
       } else {
-        // fallback: match by first word in token
         const first = tok.split(" ")[0];
         const idx2 = remaining.findIndex(card => norm(card.querySelector("h3")?.textContent).includes(first));
         if (idx2 !== -1) {
@@ -385,8 +380,7 @@ animateParticles();
       }
     });
 
-    // append any leftovers (safety)
-    remaining.forEach(c => dayEl.appendChild(c));
+    remaining.forEach(c => dayEl.appendChild(c)); // append any extras
   });
 })();
 </script>
