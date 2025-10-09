@@ -6,34 +6,32 @@
   <title>Semester 1 Schedule</title>
   <link rel="icon" href="tab-icon.png" type="image/png">
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/feather-icons"></script>
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-slate-900 text-gray-200 min-h-screen relative">
- <!-- Clock -->
-<div class="day-clock-wrapper">
-  <div class="day-clock-card">
-    <h2 id="school-day">Loading Day...</h2>
-    <p id="dateText"></p>
-  </div>
-</div>
-  <!-- Canvas for particle background -->
-  <canvas id="bgCanvas" class="fixed top-0 left-0 w-full h-full -z-10"></canvas>
+<body class="bg-slate-900 text-gray-200 min-h-screen">
 
-  <div class="container mx-auto px-4 py-8 max-w-7xl relative z-10">
+  <!-- Clock -->
+  <div class="day-clock-wrapper p-4">
+    <div class="day-clock-card bg-slate-800 p-4 rounded-lg text-center">
+      <h2 id="school-day">Loading Day...</h2>
+      <p id="dateText"></p>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-4 py-6 max-w-md">
 
     <!-- Header -->
-    <header class="flex justify-between items-center mb-8">
-      <h1 class="text-3xl font-bold text-white">Semester <span class="text-purple-500">1</span></h1>
+    <header class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold text-white">Semester <span class="text-purple-500">1</span></h1>
       <span class="text-gray-300 font-medium">Liam Quinn</span>
     </header>
 
     <!-- Day Dropdown -->
-    <div class="mb-6 relative w-64">
+    <div class="mb-6 relative">
       <button id="dayDropdownBtn" class="w-full bg-slate-800 px-4 py-2 rounded-lg text-white font-medium text-left">
         Select Day ▾
       </button>
-      <div id="dayDropdown" class="absolute w-full bg-slate-800 rounded-lg mt-1 hidden shadow-lg">
+      <div id="dayDropdown" class="absolute w-full bg-slate-800 rounded-lg mt-1 hidden shadow-lg z-20">
         <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="A">A Day</div>
         <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="B">B Day</div>
         <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="C">C Day</div>
@@ -41,329 +39,217 @@
         <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="E">E Day</div>
         <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="F">F Day</div>
         <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="G">G Day</div>
-        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="WED">Wednesday</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="Wednesday">Wednesday</div>
       </div>
     </div>
 
- <!-- A Day -->
-<div class="schedule-day" id="day-A">
-  <div class="schedule-card">
-    <h3>A Class</h3>
-    <p class="time">8:20–9:23</p>
-    <p class="subject">Chemistry</p>
-    <p class="details">SC202</p>
+    <!-- ================= Schedules ================= -->
+    
+    <!-- A Day -->
+    <div class="schedule-day hidden" id="day-A">
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>A Class</h3><p class="time">8:20–9:23</p><p class="subject">Chemistry</p><p class="details">SC202</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>B Class</h3><p class="time">9:30–10:28</p><p class="subject">FREE</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>C Class</h3><p class="time">10:35–11:33</p><p class="subject">Spanish II</p><p class="details">MB416</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>Lunch & Formation</h3><p class="time">11:40–12:52</p><p class="subject">Advisory – TUE</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>D Class</h3><p class="time">12:57–1:55</p><p class="subject">Modern U.S. History</p><p class="details">MB123</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>E Class</h3><p class="time">2:02–3:05</p><p class="subject">English II</p><p class="details">MB314</p>
+      </div>
+    </div>
+
+    <!-- B Day -->
+    <div class="schedule-day hidden" id="day-B">
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>B Class</h3><p class="time">8:20–9:23</p><p class="subject">FREE</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>C Class</h3><p class="time">9:30–10:28</p><p class="subject">Spanish II</p><p class="details">MB416</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>D Class</h3><p class="time">10:35–11:33</p><p class="subject">Modern U.S. History</p><p class="details">MB123</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>Lunch & Formation</h3><p class="time">11:40–12:52</p><p class="subject">Advisory – WED</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>E Class</h3><p class="time">12:57–1:55</p><p class="subject">English II</p><p class="details">MB314</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>A Class</h3><p class="time">2:02–3:05</p><p class="subject">Chemistry</p><p class="details">SC202</p>
+      </div>
+    </div>
+
+    <!-- C Day -->
+    <div class="schedule-day hidden" id="day-C">
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>C Class</h3><p class="time">8:20–9:23</p><p class="subject">Spanish II</p><p class="details">MB416</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>D Class</h3><p class="time">9:30–10:28</p><p class="subject">Modern U.S. History</p><p class="details">MB123</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>E Class</h3><p class="time">10:35–11:33</p><p class="subject">English II</p><p class="details">MB314</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>Lunch & Formation</h3><p class="time">11:40–12:52</p><p class="subject">Advisory – THU</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>A Class</h3><p class="time">12:57–1:55</p><p class="subject">Chemistry</p><p class="details">SC202</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>B Class</h3><p class="time">2:02–3:05</p><p class="subject">FREE</p>
+      </div>
+    </div>
+
+    <!-- D Day -->
+    <div class="schedule-day hidden" id="day-D">
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>D Class</h3><p class="time">8:20–9:23</p><p class="subject">Modern U.S. History</p><p class="details">MB123</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>E Class</h3><p class="time">9:30–10:28</p><p class="subject">English II</p><p class="details">MB314</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>A Class</h3><p class="time">10:35–11:33</p><p class="subject">Chemistry</p><p class="details">SC202</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>Lunch & Formation</h3><p class="time">11:40–12:52</p><p class="subject">Advisory – FRI</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>B Class</h3><p class="time">12:57–1:55</p><p class="subject">FREE</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>C Class</h3><p class="time">2:02–3:05</p><p class="subject">Spanish II</p><p class="details">MB416</p>
+      </div>
+    </div>
+
+    <!-- E Day -->
+    <div class="schedule-day hidden" id="day-E">
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>E Class</h3><p class="time">8:20–9:23</p><p class="subject">English II</p><p class="details">MB314</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>A Class</h3><p class="time">9:30–10:28</p><p class="subject">Chemistry</p><p class="details">SC202</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>B Class</h3><p class="time">10:35–11:33</p><p class="subject">FREE</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>Lunch & Formation</h3><p class="time">11:40–12:52</p><p class="subject">Advisory – MON</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>C Class</h3><p class="time">12:57–1:55</p><p class="subject">Spanish II</p><p class="details">MB416</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>D Class</h3><p class="time">2:02–3:05</p><p class="subject">Modern U.S. History</p><p class="details">MB123</p>
+      </div>
+    </div>
+
+    <!-- F Day -->
+    <div class="schedule-day hidden" id="day-F">
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>F Class</h3><p class="time">8:20–9:23</p><p class="subject">Physics</p><p class="details">SC204</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>A Class</h3><p class="time">9:30–10:28</p><p class="subject">Chemistry</p><p class="details">SC202</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>B Class</h3><p class="time">10:35–11:33</p><p class="subject">FREE</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>Lunch & Formation</h3><p class="time">11:40–12:52</p><p class="subject">Advisory – MON</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>C Class</h3><p class="time">12:57–1:55</p><p class="subject">Spanish II</p><p class="details">MB416</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>D Class</h3><p class="time">2:02–3:05</p><p class="subject">Modern U.S. History</p><p class="details">MB123</p>
+      </div>
+    </div>
+
+    <!-- G Day -->
+    <div class="schedule-day hidden" id="day-G">
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>G Class</h3><p class="time">8:20–9:23</p><p class="subject">Math</p><p class="details">MB220</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>A Class</h3><p class="time">9:30–10:28</p><p class="subject">Chemistry</p><p class="details">SC202</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>B Class</h3><p class="time">10:35–11:33</p><p class="subject">FREE</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>Lunch & Formation</h3><p class="time">11:40–12:52</p><p class="subject">Advisory – MON</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>C Class</h3><p class="time">12:57–1:55</p><p class="subject">Spanish II</p><p class="details">MB416</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>D Class</h3><p class="time">2:02–3:05</p><p class="subject">Modern U.S. History</p><p class="details">MB123</p>
+      </div>
+    </div>
+
+    <!-- Wednesday -->
+    <div class="schedule-day hidden" id="day-Wednesday">
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>Advisory</h3><p class="time">8:20–8:40</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>A Class</h3><p class="time">8:45–9:33</p><p class="subject">Chemistry</p><p class="details">SC202</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>B Class</h3><p class="time">9:40–10:28</p><p class="subject">FREE</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>C Class</h3><p class="time">10:35–11:23</p><p class="subject">Spanish II</p><p class="details">MB416</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>Lunch</h3><p class="time">11:30–12:00</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>D Class</h3><p class="time">12:05–12:53</p><p class="subject">Modern U.S. History</p><p class="details">MB123</p>
+      </div>
+      <div class="schedule-card bg-slate-800 p-4 rounded-lg mb-4">
+        <h3>E Class</h3><p class="time">1:00–1:48</p><p class="subject">English II</p><p class="details">MB314</p>
+      </div>
+    </div>
+
   </div>
-  <div class="schedule-card">
-    <h3>B Class</h3>
-    <p class="time">9:30–10:28</p>
-    <p class="subject">FREE</p>
-  </div>
-  <div class="schedule-card">
-    <h3>C Class</h3>
-    <p class="time">10:35–11:33</p>
-    <p class="subject">Spanish II</p>
-    <p class="details">MB416</p>
-  </div>
-  <div class="schedule-card">
-    <h3>Lunch & Formation</h3>
-    <p class="time">11:40–12:52</p>
-    <p class="subject">Advisory – TUE</p>
-  </div>
-  <div class="schedule-card">
-    <h3>D Class</h3>
-    <p class="time">12:57–1:55</p>
-    <p class="subject">Modern U.S. History</p>
-    <p class="details">MB123</p>
-  </div>
-  <div class="schedule-card">
-    <h3>E Class</h3>
-    <p class="time">2:02–3:05</p>
-    <p class="subject">English II</p>
-    <p class="details">MB314</p>
-  </div>
-</div>
 
-<!-- B Day -->
-<div class="schedule-day" id="day-B">
-  <div class="schedule-card">
-    <h3>B Class</h3>
-    <p class="time">8:20–9:23</p>
-    <p class="subject">FREE</p>
-  </div>
-  <div class="schedule-card">
-    <h3>C Class</h3>
-    <p class="time">9:30–10:28</p>
-    <p class="subject">Spanish II</p>
-    <p class="details">MB416</p>
-  </div>
-  <div class="schedule-card">
-    <h3>D Class</h3>
-    <p class="time">10:35–11:33</p>
-    <p class="subject">Modern U.S. History</p>
-    <p class="details">MB123</p>
-  </div>
-  <div class="schedule-card">
-    <h3>Lunch & Formation</h3>
-    <p class="time">11:40–12:52</p>
-    <p class="subject">Advisory – WED</p>
-  </div>
-  <div class="schedule-card">
-    <h3>E Class</h3>
-    <p class="time">12:57–1:55</p>
-    <p class="subject">English II</p>
-    <p class="details">MB314</p>
-  </div>
-  <div class="schedule-card">
-    <h3>A Class</h3>
-    <p class="time">2:02–3:05</p>
-    <p class="subject">Chemistry</p>
-    <p class="details">SC202</p>
-  </div>
-</div>
+  <script>
+    // ===== Day Dropdown =====
+    const dayBtn = document.getElementById("dayDropdownBtn");
+    const dropdown = document.getElementById("dayDropdown");
+    const items = document.querySelectorAll(".dropdown-item");
+    const days = document.querySelectorAll(".schedule-day");
 
-<!-- C Day -->
-<div class="schedule-day" id="day-C">
-  <div class="schedule-card">
-    <h3>C Class</h3>
-    <p class="time">8:20–9:23</p>
-    <p class="subject">Spanish II</p>
-    <p class="details">MB416</p>
-  </div>
-  <div class="schedule-card">
-    <h3>D Class</h3>
-    <p class="time">9:30–10:28</p>
-    <p class="subject">Modern U.S. History</p>
-    <p class="details">MB123</p>
-  </div>
-  <div class="schedule-card">
-    <h3>E Class</h3>
-    <p class="time">10:35–11:33</p>
-    <p class="subject">English II</p>
-    <p class="details">MB314</p>
-  </div>
-  <div class="schedule-card">
-    <h3>Lunch & Formation</h3>
-    <p class="time">11:40–12:52</p>
-    <p class="subject">Advisory – THU</p>
-  </div>
-  <div class="schedule-card">
-    <h3>A Class</h3>
-    <p class="time">12:57–1:55</p>
-    <p class="subject">Chemistry</p>
-    <p class="details">SC202</p>
-  </div>
-  <div class="schedule-card">
-    <h3>B Class</h3>
-    <p class="time">2:02–3:05</p>
-    <p class="subject">FREE</p>
-  </div>
-</div>
-
-<!-- D Day -->
-<div class="schedule-day" id="day-D">
-  <div class="schedule-card">
-    <h3>D Class</h3>
-    <p class="time">8:20–9:23</p>
-    <p class="subject">Modern U.S. History</p>
-    <p class="details">MB123</p>
-  </div>
-  <div class="schedule-card">
-    <h3>E Class</h3>
-    <p class="time">9:30–10:28</p>
-    <p class="subject">English II</p>
-    <p class="details">MB314</p>
-  </div>
-  <div class="schedule-card">
-    <h3>A Class</h3>
-    <p class="time">10:35–11:33</p>
-    <p class="subject">Chemistry</p>
-    <p class="details">SC202</p>
-  </div>
-  <div class="schedule-card">
-    <h3>Lunch & Formation</h3>
-    <p class="time">11:40–12:52</p>
-    <p class="subject">Advisory – FRI</p>
-  </div>
-  <div class="schedule-card">
-    <h3>B Class</h3>
-    <p class="time">12:57–1:55</p>
-    <p class="subject">FREE</p>
-  </div>
-  <div class="schedule-card">
-    <h3>C Class</h3>
-    <p class="time">2:02–3:05</p>
-    <p class="subject">Spanish II</p>
-    <p class="details">MB416</p>
-  </div>
-</div>
-
-<!-- E Day -->
-<div class="schedule-day" id="day-E">
-  <div class="schedule-card"><h3>E Class</h3><p class="time">8:20–9:23</p><p class="subject">English II</p><p class="details">MB314</p></div>
-  <div class="schedule-card"><h3>A Class</h3><p class="time">9:30–10:28</p><p class="subject">Chemistry</p><p class="details">SC202</p></div>
-  <div class="schedule-card"><h3>B Class</h3><p class="time">10:35–11:33</p><p class="subject">FREE</p></div>
-  <div class="schedule-card"><h3>Lunch & Formation</h3><p class="time">11:40–12:52</p><p class="subject">Advisory – MON</p></div>
-  <div class="schedule-card"><h3>C Class</h3><p class="time">12:57–1:55</p><p class="subject">Spanish II</p><p class="details">MB416</p></div>
-  <div class="schedule-card"><h3>D Class</h3><p class="time">2:02–3:05</p><p class="subject">Modern U.S. History</p><p class="details">MB123</p></div>
-</div>
-
-<!-- F Day -->
-<div class="schedule-day" id="day-F">
-  <div class="schedule-card"><h3>F Class</h3><p class="time">8:20–9:23</p><p class="subject">Physics</p><p class="details">SC204</p></div>
-  <div class="schedule-card"><h3>A Class</h3><p class="time">9:30–10:28</p><p class="subject">Chemistry</p><p class="details">SC202</p></div>
-  <div class="schedule-card"><h3>B Class</h3><p class="time">10:35–11:33</p><p class="subject">FREE</p></div>
-  <div class="schedule-card"><h3>Lunch & Formation</h3><p class="time">11:40–12:52</p><p class="subject">Advisory – MON</p></div>
-  <div class="schedule-card"><h3>C Class</h3><p class="time">12:57–1:55</p><p class="subject">Spanish II</p><p class="details">MB416</p></div>
-  <div class="schedule-card"><h3>D Class</h3><p class="time">2:02–3:05</p><p class="subject">Modern U.S. History</p><p class="details">MB123</p></div>
-</div>
-
-<!-- G Day -->
-<div class="schedule-day" id="day-G">
-  <div class="schedule-card"><h3>G Class</h3><p class="time">8:20–9:23</p><p class="subject">Math</p><p class="details">MB220</p></div>
-  <div class="schedule-card"><h3>A Class</h3><p class="time">9:30–10:28</p><p class="subject">Chemistry</p><p class="details">SC202</p></div>
-  <div class="schedule-card"><h3>B Class</h3><p class="time">10:35–11:33</p><p class="subject">FREE</p></div>
-  <div class="schedule-card"><h3>Lunch & Formation</h3><p class="time">11:40–12:52</p><p class="subject">Advisory – MON</p></div>
-  <div class="schedule-card"><h3>C Class</h3><p class="time">12:57–1:55</p><p class="subject">Spanish II</p><p class="details">MB416</p></div>
-  <div class="schedule-card"><h3>D Class</h3><p class="time">2:02–3:05</p><p class="subject">Modern U.S. History</p><p class="details">MB123</p></div>
-</div>
-
-<!-- Wednesday Schedule -->
-<div class="schedule-day" id="day-Wednesday">
-  <div class="schedule-card"><h3>Advisory</h3><p class="time">8:20–8:40</p></div>
-  <div class="schedule-card"><h3>A Class</h3><p class="time">8:45–9:33</p><p class="subject">Chemistry</p><p class="details">SC202</p></div>
-  <div class="schedule-card"><h3>B Class</h3><p class="time">9:40–10:28</p><p class="subject">FREE</p></div>
-  <div class="schedule-card"><h3>C Class</h3><p class="time">10:35–11:23</p><p class="subject">Spanish II</p><p class="details">MB416</p></div>
-  <div class="schedule-card"><h3>Lunch</h3><p class="time">11:30–12:00</p></div>
-  <div class="schedule-card"><h3>D Class</h3><p class="time">12:05–12:53</p><p class="subject">Modern U.S. History</p><p class="details">MB123</p></div>
-  <div class="schedule-card"><h3>E Class</h3><p class="time">1:00–1:48</p><p class="subject">English II</p><p class="details">MB314</p></div>
-</div>
-<script>
-  // ===== Feather icons =====
-feather.replace();
-
-// ===== Day Dropdown =====
-const dayBtn = document.getElementById("dayDropdownBtn");
-const dropdown = document.getElementById("dayDropdown");
-const items = document.querySelectorAll(".dropdown-item");
-const days = document.querySelectorAll(".schedule-day");
-
-dayBtn.addEventListener("click", () => {
-  dropdown.classList.toggle("hidden");
-});
-
-items.forEach(item => {
-  item.addEventListener("click", () => {
-    const selectedDay = item.dataset.day; // ✅ renamed to avoid undefined variable
-    days.forEach(d => d.classList.add("hidden"));
-    const activeDay = document.getElementById("day-" + selectedDay);
-    if (activeDay) {
-      activeDay.classList.remove("hidden");
-    }
-    dayBtn.textContent = item.textContent + " ▾";
-    dropdown.classList.add("hidden");
-  });
-});
-
-// ===== Smooth Card Cursor-Follow Effect =====
-const cards = document.querySelectorAll(".schedule-card");
-let mouse = { x: 0, y: 0 };
-
-window.addEventListener("mousemove", e => {
-  mouse.x = e.clientX;
-  mouse.y = e.clientY;
-});
-
-function animateCards() {
-  cards.forEach(card => {
-    const rect = card.getBoundingClientRect();
-    const cardX = rect.left + rect.width / 2;
-    const cardY = rect.top + rect.height / 2;
-
-    const deltaX = mouse.x - cardX;
-    const deltaY = mouse.y - cardY;
-
-    const currentX = parseFloat(card.dataset.tx || 0);
-    const currentY = parseFloat(card.dataset.ty || 0);
-
-    const easedX = currentX + (deltaX * 0.03);
-    const easedY = currentY + (deltaY * 0.03);
-
-    card.dataset.tx = easedX;
-    card.dataset.ty = easedY;
-
-    card.style.setProperty("--mouseX", easedX);
-    card.style.setProperty("--mouseY", easedY);
-  });
-
-  requestAnimationFrame(animateCards);
-}
-
-animateCards();
-
-cards.forEach(card => {
-  card.addEventListener("mouseleave", () => {
-    card.dataset.tx = 0;
-    card.dataset.ty = 0;
-  });
-});
-
-// ===== Mouse-following particles =====
-const canvas = document.getElementById("bgCanvas");
-if (canvas) {
-  const ctx = canvas.getContext("2d");
-  let particles = [];
-  const particleCount = 60;
-
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
-
-  class Particle {
-    constructor(x, y) {
-      this.x = x;
-      this.y = y;
-      this.size = Math.random() * 3 + 1;
-      this.speedX = Math.random() * 2 - 1;
-      this.speedY = Math.random() * 2 - 1;
-      this.color = `rgba(139,92,246,${Math.random() * 0.5 + 0.2})`;
-    }
-    update() {
-      this.x += this.speedX;
-      this.y += this.speedY;
-      if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-      if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-    }
-    draw() {
-      ctx.fillStyle = this.color;
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  for (let i = 0; i < particleCount; i++) {
-    particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
-  }
-
-  window.addEventListener('mousemove', e => {
-    particles.push(new Particle(e.x + Math.random() * 20 - 10, e.y + Math.random() * 20 - 10));
-    if (particles.length > particleCount) particles.shift();
-  });
-
-  function animateParticles() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach(p => {
-      p.update();
-      p.draw();
+    dayBtn.addEventListener("click", () => {
+      dropdown.classList.toggle("hidden");
     });
-    requestAnimationFrame(animateParticles);
-  }
 
-  animateParticles();
-}
-</script>
+    items.forEach(item => {
+      item.addEventListener("click", () => {
+        const selectedDay = item.dataset.day;
+        days.forEach(d => d.classList.add("hidden"));
+        const activeDay = document.getElementById("day-" + selectedDay);
+        if (activeDay) activeDay.classList.remove("hidden");
+        dayBtn.textContent = item.textContent + " ▾";
+        dropdown.classList.add("hidden");
+      });
+    });
+
+    // Show default day
+    document.getElementById("day-A").classList.remove("hidden");
+  </script>
 </body>
 </html>
