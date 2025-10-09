@@ -158,7 +158,10 @@ p { color: #c3c1ff; margin-top: 4px; margin-bottom: 8px; }
   }
 
   .schedule-row {
-    display: contents; /* keeps cards in flow without extra divs */
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 0;
   }
 
   .schedule-card {
