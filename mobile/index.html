@@ -312,29 +312,6 @@ function animateParticles() {
   requestAnimationFrame(animateParticles);
 }
 animateParticles();
-
-// ===== Fetch Current Day from Neocities =====
-const clockDisplay = document.getElementById("school-day");
-
-fetch("/day.json?_=" + Date.now()) // fetch from same site, avoid caching
-  .then(res => res.json())
-  .then(data => {
-    if(clockDisplay && data.currentDay) {
-      clockDisplay.textContent = data.currentDay + " Day";
-    } else {
-      clockDisplay.textContent = "Day not found";
-      console.warn("⚠️ currentDay missing from day.json");
-    }
-  })
-  .catch(err => {
-    console.error("Error loading current day:", err);
-    clockDisplay.textContent = "Loading Day...";
-  });
-
-// ===== Auto redirect mobile =====
-if (window.innerWidth <= 768) {
-  window.location.href = "https://mlndmaster-studios.github.io/school-schedule";
-}
 </script>
 </body>
 </html>
