@@ -249,7 +249,7 @@ const days = document.querySelectorAll(".schedule-day");
 
 // Hide all days except the first one on load
 days.forEach(d => d.classList.add("hidden"));
-document.getElementById("day-A").classList.remove("hidden"); // Default visible day
+document.getElementById("day-" + day).classList.remove("hidden"); // Default visible day
 
 dayBtn.addEventListener("click", () => {
   dropdown.classList.toggle("hidden");
