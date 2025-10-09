@@ -6,45 +6,53 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
-/* 📅 DROPDOWN */
-select#daySelect {
-  margin: 1.5rem 0;
-  padding: 0.75rem 1.25rem;
+/* 📅 DROPDOWN BUTTON */
+#dayDropdownBtn {
+  width: 100%;
+  padding: 0.75rem 1rem;
   font-size: 1rem;
   border-radius: 8px;
   border: none;
   outline: none;
   background: #1e1e2f;
   color: #fff;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  cursor: pointer;
   transition: all 0.2s ease;
-  width: 90%;
-  max-width: 400px;
 }
 
-select#daySelect:hover,
-select#daySelect:focus {
+#dayDropdownBtn:hover {
   background: #2b2b45;
   transform: scale(1.02);
+}
+
+/* 📋 DROPDOWN ITEMS */
+#dayDropdown {
+  display: none;
+}
+
+.dropdown-item {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background: #2b2b45;
 }
 
 /* 📋 SCHEDULE DAYS */
 .schedule-day {
   display: none;
   flex-direction: column;
-  width: 90%;
-  max-width: 450px;
   gap: 1rem;
   margin-bottom: 2rem;
+  width: 100%;
 }
 
 /* ✨ ACTIVE DAY */
-.schedule-day.active {
+.schedule-day:not(.hidden) {
   display: flex;
 }
 
@@ -90,27 +98,39 @@ select#daySelect:focus {
 
 /* ✨ ANIMATION */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 🕓 DAY CLOCK */
+.day-clock-wrapper {
+  width: 90%;
+  max-width: 400px;
+  margin: 1rem auto;
+}
+
+.day-clock-card {
+  background: #1b1b2b;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  color: #66ccff;
+  font-weight: 600;
+  font-size: 1.1rem;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
 }
 
 /* 📱 MOBILE TWEAKS */
 @media (max-width: 768px) {
   body {
-    padding-bottom: 2rem;
-  }
-
-  .schedule-card {
     padding: 1rem;
   }
 
-  select#daySelect {
+  .schedule-card {
+    padding: 0.75rem 1rem;
+  }
+
+  #dayDropdownBtn {
     font-size: 0.95rem;
   }
 
@@ -121,16 +141,8 @@ select#daySelect:focus {
   .schedule-card .subject {
     font-size: 0.95rem;
   }
-}
-/* 🕓 DAY CLOCK BOX FIX */
-#day-clock {
-  background: #1b1b2b;
-  padding: 0.75rem 1.25rem;
-  border-radius: 10px;
-  margin: 1rem auto;
-  width: fit-content;
-  color: #66ccff;
-  font-weight: 600;
-  font-size: 1.1rem;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+
+  .dropdown-item {
+    font-size: 0.95rem;
+  }
 }
