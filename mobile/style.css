@@ -122,3 +122,15 @@ select#daySelect:focus {
     font-size: 0.95rem;
   }
 }
+/* 🕓 DAY CLOCK BOX FIX */
+#day-clock {
+  background: #1b1b2b;
+  padding: 0.75rem 1.25rem;
+  border-radius: 10px;
+  margin: 1rem auto;
+  width: fit-content;
+  color: #66ccff;
+  font-weight: 600;
+  font-size: 1.1rem;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
