@@ -126,18 +126,97 @@ document.addEventListener('DOMContentLoaded', () => {
   const dropdown = document.getElementById("dayDropdown");
   const items = document.querySelectorAll(".dropdown-item");
   const days = document.querySelectorAll(".schedule-day");
+  const dayDisplayEl = document.getElementById("dayDisplay");
+  const dateTextEl = document.getElementById("dateText");
 
+  // 🧩 --- SCHEDULE CLOCK CONFIG --- 🧩
+  const scheduleOrder = ["A", "F", "D", "B", "G", "E", "C"];
+  const startDate = new Date("2025-10-09"); // G Day start reference
+  const startLetter = "G";
+  const overrides = {
+    "2025-10-10": "NO_CLASSES", // example override for testing
+    "2025-10-11": "NO_CLASSES",
+    "2025-10-12": "NO_CLASSES"
+  };
+
+  function toYMD(date) {
+    return date.toISOString().split("T")[0];
+  }
+
+  function computeLetterForDate(date) {
+    const ymd = toYMD(date);
+    if (overrides[ymd]) return overrides[ymd];
+
+    const startIndex = scheduleOrder.indexOf(startLetter);
+    const start = new Date(startDate);
+    let index = startIndex;
+    let current = new Date(start);
+
+    while (current < date) {
+      current.setDate(current.getDate() + 1);
+      const dayOfWeek = current.getDay();
+
+      if (dayOfWeek === 0 || dayOfWeek === 6) continue; // Skip weekends
+      if (overrides[toYMD(current)] === "NO_CLASSES") continue; // Skip off days
+
+      index = (index + 1) % scheduleOrder.length;
+    }
+
+    return scheduleOrder[index];
+  }
+
+  function renderForDate(d) {
+    const letter = computeLetterForDate(d);
+    const dateStr = toYMD(d);
+
+    if (letter === 'NO_CLASSES') {
+      dayDisplayEl.textContent = 'No Classes Today 🎉';
+    } else {
+      dayDisplayEl.textContent = `${letter} Day`;
+    }
+
+    if (dateTextEl) {
+      const opts = { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' };
+      dateTextEl.textContent = d.toLocaleDateString(undefined, opts);
+    }
+
+    // Automatically select the correct schedule on load
+    const todaySchedule = document.getElementById(`day-${letter}`) ||
+                          document.getElementById(`${letter}-day`) ||
+                          document.getElementById(letter);
+    if (todaySchedule) {
+      days.forEach(d => d.classList.add("hidden"));
+      todaySchedule.classList.remove("hidden");
+      dayBtn.textContent = `${letter} Day ▾`;
+    }
+  }
+
+  function updateClock() {
+    const now = new Date();
+    renderForDate(now);
+  }
+
+  // Run immediately + refresh at 12:01am
+  updateClock();
+  const now = new Date();
+  const nextUpdate = new Date(now);
+  nextUpdate.setDate(now.getDate() + 1);
+  nextUpdate.setHours(0, 1, 0, 0);
+  setTimeout(() => {
+    updateClock();
+    setInterval(updateClock, 24 * 60 * 60 * 1000); // repeat daily
+  }, nextUpdate - now);
+
+  // 🧩 --- DROPDOWN MENU SYSTEM --- 🧩
   if (!dayBtn || !dropdown) {
     console.warn("Dropdown button or menu missing!");
     return;
   }
 
-  // Initialize dropdown for smooth animation
   dropdown.style.overflow = "hidden";
   dropdown.style.maxHeight = "0px";
   dropdown.style.transition = "max-height 0.25s ease";
 
-  // 🔽 Toggle dropdown open/close
   dayBtn.addEventListener("click", (e) => {
     e.stopPropagation();
     if (dropdown.classList.contains("open")) {
@@ -147,56 +226,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ✅ Handle item click → switch schedule
   items.forEach(item => {
     item.addEventListener("click", (e) => {
       e.stopPropagation();
       const selectedDay = item.dataset.day;
 
-      // Hide all schedules
       days.forEach(d => d.classList.add("hidden"));
-
-      // Find the correct schedule element
-      const target = document.getElementById(`day-${selectedDay}`) || 
-                     document.getElementById(`${selectedDay}-day`) || 
+      const target = document.getElementById(`day-${selectedDay}`) ||
+                     document.getElementById(`${selectedDay}-day`) ||
                      document.getElementById(selectedDay);
-      
       if (target) {
         target.classList.remove("hidden");
       } else {
         console.warn("No schedule found for:", selectedDay);
       }
 
-      // Update button label
       dayBtn.textContent = item.textContent + " ▾";
-
-      // Close dropdown
       closeDropdown();
     });
   });
 
-  // 🚪 Close dropdown when clicking outside
   document.addEventListener("click", (e) => {
     if (!dropdown.contains(e.target) && e.target !== dayBtn) {
       closeDropdown();
     }
   });
 
-  // ⎋ Close dropdown when pressing Escape
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeDropdown();
   });
 
-  // ✨ Default: show A day
-  const defaultDay = document.getElementById("day-A") ||
-                     document.getElementById("A-day") ||
-                     document.getElementById("A");
-  if (defaultDay) {
-    days.forEach(d => d.classList.add("hidden"));
-    defaultDay.classList.remove("hidden");
-  }
-
-  // Helper functions
   function openDropdown() {
     dropdown.classList.add("open");
     dropdown.style.maxHeight = dropdown.scrollHeight + "px";
