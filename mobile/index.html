@@ -121,26 +121,92 @@
   </div>
 
   <script>
-    const dayBtn = document.getElementById("dayDropdownBtn");
-    const dropdown = document.getElementById("dayDropdown");
-    const items = document.querySelectorAll(".dropdown-item");
-    const days = document.querySelectorAll(".schedule-day");
+document.addEventListener('DOMContentLoaded', () => {
+  const dayBtn = document.getElementById("dayDropdownBtn");
+  const dropdown = document.getElementById("dayDropdown");
+  const items = document.querySelectorAll(".dropdown-item");
+  const days = document.querySelectorAll(".schedule-day");
 
-    // Toggle dropdown
-    dayBtn.addEventListener("click", () => {
-      dropdown.classList.toggle("hidden");
-    });
+  if (!dayBtn || !dropdown) {
+    console.warn("Dropdown button or menu missing!");
+    return;
+  }
 
-    // Day selection
-    items.forEach(item => {
-      item.addEventListener("click", () => {
-        const day = item.dataset.day;
-        days.forEach(d => d.classList.add("hidden"));
-        document.getElementById(day + "-day").classList.remove("hidden");
-        dayBtn.textContent = item.textContent + " ▾";
-        dropdown.classList.add("hidden");
-      });
+  // Initialize dropdown for smooth animation
+  dropdown.style.overflow = "hidden";
+  dropdown.style.maxHeight = "0px";
+  dropdown.style.transition = "max-height 0.25s ease";
+
+  // 🔽 Toggle dropdown open/close
+  dayBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (dropdown.classList.contains("open")) {
+      closeDropdown();
+    } else {
+      openDropdown();
+    }
+  });
+
+  // ✅ Handle item click → switch schedule
+  items.forEach(item => {
+    item.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const selectedDay = item.dataset.day;
+
+      // Hide all schedules
+      days.forEach(d => d.classList.add("hidden"));
+
+      // Find the correct schedule element
+      const target = document.getElementById(`day-${selectedDay}`) || 
+                     document.getElementById(`${selectedDay}-day`) || 
+                     document.getElementById(selectedDay);
+      
+      if (target) {
+        target.classList.remove("hidden");
+      } else {
+        console.warn("No schedule found for:", selectedDay);
+      }
+
+      // Update button label
+      dayBtn.textContent = item.textContent + " ▾";
+
+      // Close dropdown
+      closeDropdown();
     });
-  </script>
+  });
+
+  // 🚪 Close dropdown when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!dropdown.contains(e.target) && e.target !== dayBtn) {
+      closeDropdown();
+    }
+  });
+
+  // ⎋ Close dropdown when pressing Escape
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeDropdown();
+  });
+
+  // ✨ Default: show A day
+  const defaultDay = document.getElementById("day-A") ||
+                     document.getElementById("A-day") ||
+                     document.getElementById("A");
+  if (defaultDay) {
+    days.forEach(d => d.classList.add("hidden"));
+    defaultDay.classList.remove("hidden");
+  }
+
+  // Helper functions
+  function openDropdown() {
+    dropdown.classList.add("open");
+    dropdown.style.maxHeight = dropdown.scrollHeight + "px";
+  }
+
+  function closeDropdown() {
+    dropdown.classList.remove("open");
+    dropdown.style.maxHeight = "0px";
+  }
+});
+</script>
 </body>
 </html>
