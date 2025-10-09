@@ -352,6 +352,7 @@ animateParticles();
 
     // flatten: grab all cards and remove rows
     const rows = Array.from(dayEl.querySelectorAll(".schedule-row"));
+    console.log("✅ Finished reordering:", dayEl.id);
     const cards = rows.flatMap(r => Array.from(r.querySelectorAll(".schedule-card")));
     rows.forEach(r => r.remove()); // remove row wrappers
 
@@ -382,6 +383,7 @@ animateParticles();
 
     remaining.forEach(c => dayEl.appendChild(c)); // append any extras
   });
+  console.log("✅ Finished reordering:", dayEl.id);
 })();
 </script>
 </body>
