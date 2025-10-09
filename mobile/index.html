@@ -227,29 +227,93 @@
   </div>
 
   <script>
-    // ===== Day Dropdown =====
-    const dayBtn = document.getElementById("dayDropdownBtn");
-    const dropdown = document.getElementById("dayDropdown");
-    const items = document.querySelectorAll(".dropdown-item");
-    const days = document.querySelectorAll(".schedule-day");
+  // ===== Feather Icons =====
+  feather.replace();
 
-    dayBtn.addEventListener("click", () => {
-      dropdown.classList.toggle("hidden");
+  // ===== Day Dropdown Functionality =====
+  const dayDropdownBtn = document.getElementById("dayDropdownBtn");
+  const dayDropdown = document.getElementById("dayDropdown");
+  const dropdownItems = document.querySelectorAll(".dropdown-item");
+  const scheduleDays = document.querySelectorAll(".schedule-day");
+
+  // Toggle dropdown
+  dayDropdownBtn.addEventListener("click", () => {
+    dayDropdown.classList.toggle("hidden");
+  });
+
+  // Select a day from dropdown
+  dropdownItems.forEach(item => {
+    item.addEventListener("click", () => {
+      const selectedDay = item.dataset.day;
+      scheduleDays.forEach(day => day.classList.add("hidden")); // hide all
+      const activeDay = document.getElementById("day-" + selectedDay);
+      if (activeDay) activeDay.classList.remove("hidden"); // show selected
+      dayDropdownBtn.textContent = item.textContent + " ▾"; // update button text
+      dayDropdown.classList.add("hidden"); // close dropdown
+    });
+  });
+
+  // ===== Show A Day by default =====
+  const defaultDay = document.getElementById("day-A");
+  if (defaultDay) defaultDay.classList.remove("hidden");
+
+  // ===== Particle Background (optional, keeps original effect) =====
+  const canvas = document.getElementById("bgCanvas");
+  if (canvas) {
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+    const particleCount = 60;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = Math.random() * 2 - 1;
+        this.speedY = Math.random() * 2 - 1;
+        this.color = `rgba(139,92,246,${Math.random() * 0.5 + 0.2})`;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      }
+      draw() {
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
+    }
+
+    window.addEventListener('mousemove', e => {
+      particles.push(new Particle(e.x + Math.random() * 20 - 10, e.y + Math.random() * 20 - 10));
+      if (particles.length > particleCount) particles.shift();
     });
 
-    items.forEach(item => {
-      item.addEventListener("click", () => {
-        const selectedDay = item.dataset.day;
-        days.forEach(d => d.classList.add("hidden"));
-        const activeDay = document.getElementById("day-" + selectedDay);
-        if (activeDay) activeDay.classList.remove("hidden");
-        dayBtn.textContent = item.textContent + " ▾";
-        dropdown.classList.add("hidden");
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.update();
+        p.draw();
       });
-    });
+      requestAnimationFrame(animateParticles);
+    }
 
-    // Show default day
-    document.getElementById("day-A").classList.remove("hidden");
-  </script>
+    animateParticles();
+  }
+</script>
 </body>
 </html>
