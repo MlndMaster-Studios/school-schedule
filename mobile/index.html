@@ -317,73 +317,52 @@ animateParticles();
 
 // ===== Mobile: flatten & reorder schedule cards per day =====
 (function reorderMobileCards() {
-  // run only on mobile width
   if (window.innerWidth > 768) return;
 
   const desiredOrders = {
-    "A-day": [
-      "a class", "b class", "c class", "lunch & formation", "d class", "e class"
-    ],
-    "B-day": [
-      "b class", "c class", "lunch", "d class", "formation", "e class", "f class"
-    ],
-    "C-day": [
-      "c class", "d class", "lunch", "e class", "formation", "f class", "g class"
-    ],
-    "D-day": [
-      "d class", "e class", "lunch", "f class", "formation", "g class", "a class"
-    ],
-    "E-day": [
-      "e class", "f class", "g class", "lunch & formation", "a class", "b class"
-    ],
-    "F-day": [
-      "f class", "g class", "a class", "lunch & formation", "b class", "c class"
-    ],
-    "G-day": [
-      "g class", "a class", "b class", "lunch & formation", "c class", "d class"
-    ]
+    "A-day": ["A Class", "B Class", "C Class", "Lunch & Formation", "D Class", "E Class"],
+    "B-day": ["B Class", "C Class", "Lunch", "D Class", "Formation", "E Class", "F Class"],
+    "C-day": ["C Class", "D Class", "Lunch", "E Class", "Formation", "F Class", "G Class"],
+    "D-day": ["D Class", "E Class", "Lunch", "F Class", "Formation", "G Class", "A Class"],
+    "E-day": ["E Class", "F Class", "G Class", "Lunch & Formation", "A Class", "B Class"],
+    "F-day": ["F Class", "G Class", "A Class", "Lunch & Formation", "B Class", "C Class"],
+    "G-day": ["G Class", "A Class", "B Class", "Lunch & Formation", "C Class", "D Class"]
   };
-
-  const norm = s => (s || "").toString().trim().toLowerCase();
 
   document.querySelectorAll(".schedule-day").forEach(dayEl => {
     const order = desiredOrders[dayEl.id];
     if (!order) return;
 
-    // flatten: grab all cards and remove rows
-    const rows = Array.from(dayEl.querySelectorAll(".schedule-row"));
-    console.log("✅ Finished reordering:", dayEl.id);
-    const cards = rows.flatMap(r => Array.from(r.querySelectorAll(".schedule-card")));
-    rows.forEach(r => r.remove()); // remove row wrappers
+    const cards = Array.from(dayEl.querySelectorAll(".schedule-card"));
+    const titleMap = new Map();
 
-    const remaining = cards.slice();
+    // build lookup of each card's <h3> text
+    cards.forEach(card => {
+      const title = card.querySelector("h3")?.textContent.trim();
+      if (title) titleMap.set(title.toLowerCase(), card);
+    });
 
-    order.forEach(token => {
-      const tok = norm(token);
-      const idx = remaining.findIndex(card => {
-        const h = norm(card.querySelector("h3")?.textContent);
-        const words = tok.replace("&", " ").split(/\s+/).filter(Boolean);
-        return words.every(w => h.includes(w));
-      });
+    const newOrder = [];
 
-      if (idx !== -1) {
-        dayEl.appendChild(remaining[idx]);
-        remaining.splice(idx, 1);
+    order.forEach(title => {
+      const key = title.toLowerCase();
+      if (titleMap.has(key)) {
+        newOrder.push(titleMap.get(key));
+        titleMap.delete(key);
       } else {
-        const first = tok.split(" ")[0];
-        const idx2 = remaining.findIndex(card => norm(card.querySelector("h3")?.textContent).includes(first));
-        if (idx2 !== -1) {
-          dayEl.appendChild(remaining[idx2]);
-          remaining.splice(idx2, 1);
-        } else {
-          console.warn("Reorder: couldn't find card for token", token, "in", dayEl.id);
-        }
+        console.warn(`⚠️ Missing card "${title}" in ${dayEl.id}`);
       }
     });
 
-    remaining.forEach(c => dayEl.appendChild(c)); // append any extras
+    // Append leftover cards (if any)
+    for (const [, card] of titleMap) newOrder.push(card);
+
+    // Clear and re-append in new order
+    cards.forEach(c => c.remove());
+    newOrder.forEach(c => dayEl.appendChild(c));
+
+    console.log(`✅ Reordered ${dayEl.id}`);
   });
-  console.log("✅ Finished reordering:", dayEl.id);
 })();
 </script>
 </body>
