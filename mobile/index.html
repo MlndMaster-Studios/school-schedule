@@ -238,26 +238,45 @@
   <div class="schedule-card"><h3>E Class</h3><p class="time">1:00–1:48</p><p class="subject">English II</p><p class="details">MB314</p></div>
 </div>
 <script>
+<script>
 // ===== Feather icons =====
 feather.replace();
 
 // ===== Day Dropdown =====
-const dayBtn = document.getElementById("dayDropdownBtn");
-const dropdown = document.getElementById("dayDropdown");
-const items = document.querySelectorAll(".dropdown-item");
-const days = document.querySelectorAll(".schedule-day");
+document.addEventListener("DOMContentLoaded", function() {
+  const dayBtn = document.getElementById("dayDropdownBtn");
+  const dropdown = document.getElementById("dayDropdown");
+  const items = document.querySelectorAll(".dropdown-item");
+  const days = document.querySelectorAll(".schedule-day");
 
-dayBtn.addEventListener("click", () => {
-  dropdown.classList.toggle("hidden");
-});
+  // Make the first day visible by default
+  if (days.length > 0) {
+    days[0].classList.remove("hidden");
+  }
 
-items.forEach(item => {
-  item.addEventListener("click", () => {
-    const day = item.dataset.day;
-    days.forEach(d => d.classList.add("hidden"));
-    document.getElementById(day + "-day").classList.remove("hidden");
-    dayBtn.textContent = item.textContent + " ▾";
-    dropdown.classList.add("hidden");
+  // Toggle dropdown open/close
+  dayBtn.addEventListener("click", () => {
+    dropdown.classList.toggle("hidden");
+  });
+
+  // Handle clicking a day
+  items.forEach(item => {
+    item.addEventListener("click", () => {
+      const day = item.dataset.day;
+
+      // Hide all day sections
+      days.forEach(d => d.classList.add("hidden"));
+
+      // Show selected day
+      const selected = document.getElementById(day + "-day");
+      if (selected) {
+        selected.classList.remove("hidden");
+      }
+
+      // Update dropdown text + close it
+      dayBtn.textContent = item.textContent + " ▾";
+      dropdown.classList.add("hidden");
+    });
   });
 });
 
@@ -293,7 +312,6 @@ function animateCards() {
 
   requestAnimationFrame(animateCards);
 }
-
 animateCards();
 
 cards.forEach(card => {
@@ -328,28 +346,28 @@ class Particle {
   update() {
     this.x += this.speedX;
     this.y += this.speedY;
-    if(this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-    if(this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
   }
   draw() {
     ctx.fillStyle = this.color;
     ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
     ctx.fill();
   }
 }
 
-for(let i = 0; i < particleCount; i++){
-  particles.push(new Particle(Math.random()*canvas.width, Math.random()*canvas.height));
+for (let i = 0; i < particleCount; i++) {
+  particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
 }
 
 window.addEventListener('mousemove', e => {
-  particles.push(new Particle(e.x + Math.random()*20-10, e.y + Math.random()*20-10));
-  if(particles.length > particleCount) particles.shift();
+  particles.push(new Particle(e.x + Math.random() * 20 - 10, e.y + Math.random() * 20 - 10));
+  if (particles.length > particleCount) particles.shift();
 });
 
 function animateParticles() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   particles.forEach(p => {
     p.update();
     p.draw();
