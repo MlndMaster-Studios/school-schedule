@@ -198,25 +198,51 @@
 // ===== Feather icons =====
 feather.replace();
 
-// ===== Day Dropdown =====
+<!-- existing desktop dropdown script -->
+<script>
 const dayBtn = document.getElementById("dayDropdownBtn");
 const dropdown = document.getElementById("dayDropdown");
 const items = document.querySelectorAll(".dropdown-item");
 const days = document.querySelectorAll(".schedule-day");
 
-dayBtn.addEventListener("click", () => {
-  dropdown.classList.toggle("hidden");
-});
+if (dayBtn) { // prevent errors if mobile doesn't have it
+  dayBtn.addEventListener("click", () => {
+    dropdown.classList.toggle("hidden");
+  });
 
-items.forEach(item => {
-  item.addEventListener("click", () => {
-    const day = item.dataset.day;
-    days.forEach(d => d.classList.add("hidden"));
-    document.getElementById(day + "-day").classList.remove("hidden");
-    dayBtn.textContent = item.textContent + " ▾";
-    dropdown.classList.add("hidden");
+  items.forEach(item => {
+    item.addEventListener("click", () => {
+      const day = item.dataset.day;
+      days.forEach(d => d.classList.add("hidden"));
+      document.getElementById(day + "-day").classList.remove("hidden");
+      dayBtn.textContent = item.textContent + " ▾";
+      dropdown.classList.add("hidden");
+    });
+  });
+}
+</script>
+
+<!-- NEW: mobile-specific dropdown -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const daySelector = document.getElementById("day-select");
+  const days = document.querySelectorAll(".schedule-day");
+
+  if (!daySelector) return; // skip if no mobile select
+
+  days.forEach((day, index) => {
+    day.style.display = index === 0 ? "block" : "none";
+  });
+
+  daySelector.addEventListener("change", (event) => {
+    const selectedDay = event.target.value.toLowerCase();
+    days.forEach(day => {
+      day.style.display = day.id.toLowerCase() === selectedDay ? "block" : "none";
+    });
   });
 });
+</script>
+
 
 // ===== Smooth Card Cursor-Follow Effect =====
 const cards = document.querySelectorAll(".schedule-card");
