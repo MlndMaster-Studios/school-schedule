@@ -130,13 +130,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const dateTextEl = document.getElementById("dateText");
 
   // ===== CONFIG =====
+  // Your exact school rotation order:
   const scheduleOrder = ["A", "F", "D", "B", "G", "E", "C"];
-  const startDate = new Date("2025-10-09"); // G Day
+  const startDate = new Date("2025-10-09"); // known G Day
   const startLetter = "G";
 
-  // ===== OVERRIDES (leave empty unless you add a pause day) =====
+  // ===== OVERRIDES =====
+  // Use this to pause or force a specific day:
+  // "PAUSE" = skips that day (e.g., no school)
+  // "A"–"G" = manually override to a specific day
   const overrides = {
-    // "YYYY-MM-DD": "NO_CLASSES"
+    // "2025-10-17": "PAUSE", // Example: No school on Oct 17
+    // "2025-10-31": "A"      // Example: Force A day on Oct 31
   };
 
   function toYMD(date) {
@@ -154,8 +159,8 @@ document.addEventListener('DOMContentLoaded', () => {
     while (current < date) {
       current.setDate(current.getDate() + 1);
       const dayOfWeek = current.getDay();
-      if (dayOfWeek === 0 || dayOfWeek === 6) continue;
-      if (overrides[toYMD(current)] === "NO_CLASSES") continue;
+      if (dayOfWeek === 0 || dayOfWeek === 6) continue; // skip weekends
+      if (overrides[toYMD(current)] === "PAUSE") continue;
       index = (index + 1) % scheduleOrder.length;
     }
 
@@ -164,9 +169,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderForDate(d) {
     const letter = computeLetterForDate(d);
-    const isNoClass = letter === "NO_CLASSES";
+    const isPause = letter === "PAUSE";
 
-    if (isNoClass) {
+    if (isPause) {
       dayDisplayEl.textContent = "No Classes Today 🎉";
       dayBtn.textContent = "No Classes ▾";
     } else {
@@ -179,20 +184,20 @@ document.addEventListener('DOMContentLoaded', () => {
       dateTextEl.textContent = d.toLocaleDateString(undefined, opts);
     }
 
-    // Hide all, show correct
     days.forEach(d => d.classList.add("hidden"));
-    if (!isNoClass) {
+    if (!isPause) {
       const todaySchedule = document.getElementById(`${letter}-day`);
       if (todaySchedule) todaySchedule.classList.remove("hidden");
     }
   }
 
-  // ===== AUTO UPDATE =====
+  // ===== CLOCK / AUTO UPDATE =====
   function updateClock() {
     renderForDate(new Date());
   }
 
   updateClock();
+
   const now = new Date();
   const nextUpdate = new Date(now);
   nextUpdate.setDate(now.getDate() + 1);
@@ -203,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }, nextUpdate - now);
 
   // ===== DROPDOWN =====
-  dropdown.style.overflow = "hidden";
+  dropdown.classList.add("show"); // ensures dropdown renders
   dropdown.style.maxHeight = "0px";
   dropdown.style.transition = "max-height 0.25s ease";
 
