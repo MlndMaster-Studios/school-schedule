@@ -126,15 +126,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const dropdown = document.getElementById("dayDropdown");
   const items = document.querySelectorAll(".dropdown-item");
   const days = document.querySelectorAll(".schedule-day");
-  const dayDisplayEl = document.getElementById("dayDisplay");
+  const dayDisplayEl = document.getElementById("school-day");
   const dateTextEl = document.getElementById("dateText");
 
   // ===== SCHEDULE CLOCK CONFIG =====
   const scheduleOrder = ["A", "F", "D", "B", "G", "E", "C"];
   const startDate = new Date("2025-10-09"); // G Day reference
   const startLetter = "G";
+
+  // PAUSE / NO_CLASSES DAYS
   const overrides = {
-    "2025-10-10": "NO_CLASSES", // example pause days
+    "2025-10-10": "NO_CLASSES", 
     "2025-10-11": "NO_CLASSES"
   };
 
@@ -147,15 +149,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (overrides[ymd]) return overrides[ymd];
 
     const startIndex = scheduleOrder.indexOf(startLetter);
-    const start = new Date(startDate);
     let index = startIndex;
-    let current = new Date(start);
+    const current = new Date(startDate);
 
     while (current < date) {
       current.setDate(current.getDate() + 1);
       const dayOfWeek = current.getDay();
-      if (dayOfWeek === 0 || dayOfWeek === 6) continue; // skip weekends
-      if (overrides[toYMD(current)] === "NO_CLASSES") continue; // skip paused days
+      if (dayOfWeek === 0 || dayOfWeek === 6) continue; // Skip weekends
+      if (overrides[toYMD(current)] === "NO_CLASSES") continue; // Skip paused days
       index = (index + 1) % scheduleOrder.length;
     }
     return scheduleOrder[index];
@@ -174,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
       dateTextEl.textContent = d.toLocaleDateString(undefined, opts);
     }
 
-    // Show today's schedule
+    // Show the correct schedule
     const todaySchedule = document.getElementById(`day-${letter}`) ||
                           document.getElementById(`${letter}-day`) ||
                           document.getElementById(letter);
@@ -185,33 +186,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ===== INITIALIZE CLOCK =====
   function updateClock() {
-    const now = new Date();
-    renderForDate(now);
+    renderForDate(new Date());
   }
 
+  // Initial render + schedule daily update at 12:01 AM
   updateClock();
   const now = new Date();
   const nextUpdate = new Date(now);
   nextUpdate.setDate(now.getDate() + 1);
-  nextUpdate.setHours(0, 1, 0, 0); // 12:01 AM
+  nextUpdate.setHours(0, 1, 0, 0);
   setTimeout(() => {
     updateClock();
-    setInterval(updateClock, 24 * 60 * 60 * 1000); // repeat daily
+    setInterval(updateClock, 24 * 60 * 60 * 1000);
   }, nextUpdate - now);
 
   // ===== DROPDOWN SYSTEM =====
-  if (!dayBtn || !dropdown) return;
-
   dropdown.style.overflow = "hidden";
   dropdown.style.maxHeight = "0px";
   dropdown.style.transition = "max-height 0.25s ease";
 
   dayBtn.addEventListener("click", e => {
     e.stopPropagation();
-    if (dropdown.classList.contains("open")) closeDropdown();
-    else openDropdown();
+    dropdown.classList.contains("open") ? closeDropdown() : openDropdown();
   });
 
   items.forEach(item => {
@@ -219,7 +216,6 @@ document.addEventListener('DOMContentLoaded', () => {
       e.stopPropagation();
       const selectedDay = item.dataset.day;
       days.forEach(d => d.classList.add("hidden"));
-
       const target = document.getElementById(`day-${selectedDay}`) ||
                      document.getElementById(`${selectedDay}-day`) ||
                      document.getElementById(selectedDay);
@@ -232,6 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener("click", e => {
     if (!dropdown.contains(e.target) && e.target !== dayBtn) closeDropdown();
   });
+
   document.addEventListener("keydown", e => { if (e.key === "Escape") closeDropdown(); });
 
   function openDropdown() {
