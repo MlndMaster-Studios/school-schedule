@@ -129,14 +129,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const dayDisplayEl = document.getElementById("school-day");
   const dateTextEl = document.getElementById("dateText");
 
-  // ===== SCHEDULE CLOCK CONFIG =====
+  // ===== CONFIG =====
   const scheduleOrder = ["A", "F", "D", "B", "G", "E", "C"];
-  const startDate = new Date("2025-10-09"); // G Day reference
+  const startDate = new Date("2025-10-09"); // G Day
   const startLetter = "G";
 
-  // PAUSE / NO_CLASSES DAYS
-  const overrides = { 
-    "2025-10-11": "NO_CLASSES"
+  // ===== OVERRIDES (leave empty unless you add a pause day) =====
+  const overrides = {
+    // "YYYY-MM-DD": "NO_CLASSES"
   };
 
   function toYMD(date) {
@@ -154,19 +154,24 @@ document.addEventListener('DOMContentLoaded', () => {
     while (current < date) {
       current.setDate(current.getDate() + 1);
       const dayOfWeek = current.getDay();
-      if (dayOfWeek === 0 || dayOfWeek === 6) continue; // Skip weekends
-      if (overrides[toYMD(current)] === "NO_CLASSES") continue; // Skip paused days
+      if (dayOfWeek === 0 || dayOfWeek === 6) continue;
+      if (overrides[toYMD(current)] === "NO_CLASSES") continue;
       index = (index + 1) % scheduleOrder.length;
     }
+
     return scheduleOrder[index];
   }
 
   function renderForDate(d) {
     const letter = computeLetterForDate(d);
-    if (letter === "NO_CLASSES") {
+    const isNoClass = letter === "NO_CLASSES";
+
+    if (isNoClass) {
       dayDisplayEl.textContent = "No Classes Today 🎉";
+      dayBtn.textContent = "No Classes ▾";
     } else {
       dayDisplayEl.textContent = `${letter} Day`;
+      dayBtn.textContent = `${letter} Day ▾`;
     }
 
     if (dateTextEl) {
@@ -174,22 +179,19 @@ document.addEventListener('DOMContentLoaded', () => {
       dateTextEl.textContent = d.toLocaleDateString(undefined, opts);
     }
 
-    // Show the correct schedule
-    const todaySchedule = document.getElementById(`day-${letter}`) ||
-                          document.getElementById(`${letter}-day`) ||
-                          document.getElementById(letter);
-    if (todaySchedule) {
-      days.forEach(d => d.classList.add("hidden"));
-      todaySchedule.classList.remove("hidden");
-      dayBtn.textContent = letter === "NO_CLASSES" ? "No Classes ▾" : `${letter} Day ▾`;
+    // Hide all, show correct
+    days.forEach(d => d.classList.add("hidden"));
+    if (!isNoClass) {
+      const todaySchedule = document.getElementById(`${letter}-day`);
+      if (todaySchedule) todaySchedule.classList.remove("hidden");
     }
   }
 
+  // ===== AUTO UPDATE =====
   function updateClock() {
     renderForDate(new Date());
   }
 
-  // Initial render + schedule daily update at 12:01 AM
   updateClock();
   const now = new Date();
   const nextUpdate = new Date(now);
@@ -200,40 +202,35 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(updateClock, 24 * 60 * 60 * 1000);
   }, nextUpdate - now);
 
-  // ===== DROPDOWN SYSTEM =====
+  // ===== DROPDOWN =====
   dropdown.style.overflow = "hidden";
   dropdown.style.maxHeight = "0px";
   dropdown.style.transition = "max-height 0.25s ease";
+
+  function openDropdown() {
+    dropdown.classList.add("open");
+    dropdown.style.maxHeight = dropdown.scrollHeight + "px";
+  }
+
+  function closeDropdown() {
+    dropdown.classList.remove("open");
+    dropdown.style.maxHeight = "0px";
+  }
 
   dayBtn.addEventListener("click", e => {
     e.stopPropagation();
     dropdown.classList.contains("open") ? closeDropdown() : openDropdown();
   });
-  function openDropdown() {
-  dropdown.classList.add("open");
-  dropdown.style.maxHeight = dropdown.scrollHeight + "px";
-  dropdown.style.visibility = "visible";
-  dropdown.style.opacity = "1";
-  dropdown.style.pointerEvents = "auto";
-}
-function closeDropdown() {
-  dropdown.classList.remove("open");
-  dropdown.style.maxHeight = "0px";
-  dropdown.style.visibility = "hidden";
-  dropdown.style.opacity = "0";
-  dropdown.style.pointerEvents = "none";
-}
 
   items.forEach(item => {
     item.addEventListener("click", e => {
       e.stopPropagation();
       const selectedDay = item.dataset.day;
       days.forEach(d => d.classList.add("hidden"));
-      const target = document.getElementById(`day-${selectedDay}`) ||
-                     document.getElementById(`${selectedDay}-day`) ||
-                     document.getElementById(selectedDay);
+      const target = document.getElementById(`${selectedDay}-day`);
       if (target) target.classList.remove("hidden");
-      dayBtn.textContent = item.textContent + " ▾";
+      dayBtn.textContent = `${selectedDay} Day ▾`;
+      dayDisplayEl.textContent = `${selectedDay} Day`;
       closeDropdown();
     });
   });
@@ -242,16 +239,9 @@ function closeDropdown() {
     if (!dropdown.contains(e.target) && e.target !== dayBtn) closeDropdown();
   });
 
-  document.addEventListener("keydown", e => { if (e.key === "Escape") closeDropdown(); });
-
-  function openDropdown() {
-    dropdown.classList.add("open");
-    dropdown.style.maxHeight = dropdown.scrollHeight + "px";
-  }
-  function closeDropdown() {
-    dropdown.classList.remove("open");
-    dropdown.style.maxHeight = "0px";
-  }
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") closeDropdown();
+  });
 });
 </script>
 </body>
