@@ -135,8 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const startLetter = "G";
 
   // PAUSE / NO_CLASSES DAYS
-  const overrides = {
-    "2025-10-10": "NO_CLASSES", 
+  const overrides = { 
     "2025-10-11": "NO_CLASSES"
   };
 
@@ -210,6 +209,20 @@ document.addEventListener('DOMContentLoaded', () => {
     e.stopPropagation();
     dropdown.classList.contains("open") ? closeDropdown() : openDropdown();
   });
+  function openDropdown() {
+  dropdown.classList.add("open");
+  dropdown.style.maxHeight = dropdown.scrollHeight + "px";
+  dropdown.style.visibility = "visible";
+  dropdown.style.opacity = "1";
+  dropdown.style.pointerEvents = "auto";
+}
+function closeDropdown() {
+  dropdown.classList.remove("open");
+  dropdown.style.maxHeight = "0px";
+  dropdown.style.visibility = "hidden";
+  dropdown.style.opacity = "0";
+  dropdown.style.pointerEvents = "none";
+}
 
   items.forEach(item => {
     item.addEventListener("click", e => {
