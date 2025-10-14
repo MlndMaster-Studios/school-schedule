@@ -131,7 +131,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ===== CONFIG =====
   const scheduleOrder = ["A", "F", "D", "B", "G", "E", "C"];
-  const refDate = new Date("2025-10-10"); // confirmed E day
+
+  // VERIFIED: Oct 10 2025 = E Day
+  const refDate = new Date("2025-10-10");
   const refLetter = "E";
 
   const overrides = {
@@ -149,6 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const startIndex = scheduleOrder.indexOf(refLetter);
     let index = startIndex;
     const current = new Date(refDate);
+
     const diffDays = Math.floor((date - current) / (1000 * 60 * 60 * 24));
     const step = diffDays > 0 ? 1 : -1;
     const steps = Math.abs(diffDays);
@@ -164,71 +167,68 @@ document.addEventListener('DOMContentLoaded', () => {
     return scheduleOrder[index];
   }
 
-  function renderForDate(d) {
-    const letter = computeLetterForDate(d);
+  function renderClockForToday() {
+    const today = new Date();
+    const letter = computeLetterForDate(today);
+
     if (letter === "PAUSE") {
       dayDisplayEl.textContent = "No Classes Today 🎉";
       dayBtn.textContent = "No Classes ▾";
     } else {
       dayDisplayEl.textContent = `${letter} Day`;
-      dayBtn.textContent = `${letter} Day ▾`;
+      dayBtn.textContent = "Select Day ▾"; // reset default dropdown label
     }
 
-    if (dateTextEl) {
-      const opts = { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' };
-      dateTextEl.textContent = d.toLocaleDateString(undefined, opts);
-    }
+    const opts = { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' };
+    dateTextEl.textContent = today.toLocaleDateString(undefined, opts);
 
+    // Auto-show today's schedule initially
     days.forEach(d => d.classList.add("hidden"));
     const todaySchedule = document.getElementById(`${letter}-day`);
     if (todaySchedule) todaySchedule.classList.remove("hidden");
   }
 
-  function updateClock() {
-    renderForDate(new Date());
+  function updateClockDaily() {
+    renderClockForToday();
+    const now = new Date();
+    const nextUpdate = new Date(now);
+    nextUpdate.setDate(now.getDate() + 1);
+    nextUpdate.setHours(0, 1, 0, 0);
+    setTimeout(() => {
+      renderClockForToday();
+      setInterval(renderClockForToday, 24 * 60 * 60 * 1000);
+    }, nextUpdate - now);
   }
 
-  updateClock();
-
-  // Auto-update at midnight
-  const now = new Date();
-  const nextUpdate = new Date(now);
-  nextUpdate.setDate(now.getDate() + 1);
-  nextUpdate.setHours(0, 1, 0, 0);
-  setTimeout(() => {
-    updateClock();
-    setInterval(updateClock, 24 * 60 * 60 * 1000);
-  }, nextUpdate - now);
-
   // ===== Dropdown logic =====
-  dropdown.classList.remove("hidden"); // <-- FIXED: make visible
   dropdown.style.maxHeight = "0px";
   dropdown.style.transition = "max-height 0.25s ease";
 
   function openDropdown() {
-    dropdown.classList.add("show");
+    dropdown.classList.add("open");
     dropdown.style.maxHeight = dropdown.scrollHeight + "px";
   }
-
   function closeDropdown() {
-    dropdown.classList.remove("show");
+    dropdown.classList.remove("open");
     dropdown.style.maxHeight = "0px";
   }
 
   dayBtn.addEventListener("click", e => {
     e.stopPropagation();
-    dropdown.classList.contains("show") ? closeDropdown() : openDropdown();
+    dropdown.classList.contains("open") ? closeDropdown() : openDropdown();
   });
 
   items.forEach(item => {
     item.addEventListener("click", e => {
       e.stopPropagation();
       const selectedDay = item.dataset.day;
+
+      // Only update the visible schedule — not the top display
       days.forEach(d => d.classList.add("hidden"));
       const target = document.getElementById(`${selectedDay}-day`);
       if (target) target.classList.remove("hidden");
+
       dayBtn.textContent = `${selectedDay} Day ▾`;
-      dayDisplayEl.textContent = `${selectedDay} Day`;
       closeDropdown();
     });
   });
@@ -236,10 +236,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener("click", e => {
     if (!dropdown.contains(e.target) && e.target !== dayBtn) closeDropdown();
   });
-
   document.addEventListener("keydown", e => {
     if (e.key === "Escape") closeDropdown();
   });
+
+  // Initialize
+  updateClockDaily();
 });
 </script>
 </body>
