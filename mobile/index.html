@@ -200,45 +200,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }, nextUpdate - now);
   }
 
-  // ===== Dropdown logic =====
-  dropdown.style.maxHeight = "0px";
-  dropdown.style.transition = "max-height 0.25s ease";
+// ===== Dropdown logic =====
+dropdown.classList.remove("hidden"); // make sure it’s visible but hidden by opacity
+dropdown.classList.remove("show"); // cleanup old class if any
+dropdown.style.maxHeight = ""; // remove height-based animation
 
-  function openDropdown() {
-    dropdown.classList.add("open");
-    dropdown.style.maxHeight = dropdown.scrollHeight + "px";
-  }
-  function closeDropdown() {
-    dropdown.classList.remove("open");
-    dropdown.style.maxHeight = "0px";
-  }
+function openDropdown() {
+  dropdown.classList.add("open");
+}
 
-  dayBtn.addEventListener("click", e => {
+function closeDropdown() {
+  dropdown.classList.remove("open");
+}
+
+dayBtn.addEventListener("click", e => {
+  e.stopPropagation();
+  dropdown.classList.contains("open") ? closeDropdown() : openDropdown();
+});
+
+items.forEach(item => {
+  item.addEventListener("click", e => {
     e.stopPropagation();
-    dropdown.classList.contains("open") ? closeDropdown() : openDropdown();
-  });
+    const selectedDay = item.dataset.day;
 
-  items.forEach(item => {
-    item.addEventListener("click", e => {
-      e.stopPropagation();
-      const selectedDay = item.dataset.day;
+    // Only update the visible schedule — not the top clock
+    days.forEach(d => d.classList.add("hidden"));
+    const target = document.getElementById(`${selectedDay}-day`);
+    if (target) target.classList.remove("hidden");
 
-      // Only update the visible schedule — not the top display
-      days.forEach(d => d.classList.add("hidden"));
-      const target = document.getElementById(`${selectedDay}-day`);
-      if (target) target.classList.remove("hidden");
+    dayBtn.textContent = `${selectedDay} Day ▾`;
+    closeDropdown();
+  });
+});
 
-      dayBtn.textContent = `${selectedDay} Day ▾`;
-      closeDropdown();
-    });
-  });
+document.addEventListener("click", e => {
+  if (!dropdown.contains(e.target) && e.target !== dayBtn) closeDropdown();
+});
 
-  document.addEventListener("click", e => {
-    if (!dropdown.contains(e.target) && e.target !== dayBtn) closeDropdown();
-  });
-  document.addEventListener("keydown", e => {
-    if (e.key === "Escape") closeDropdown();
-  });
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeDropdown();
+});
+
 
   // Initialize
   updateClockDaily();
