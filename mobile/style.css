@@ -74,14 +74,21 @@ h1, h2, h3 {
   border-radius: 12px;
   margin-top: 0.25rem;
   overflow: hidden;
-  max-height: 0;
-  transition: max-height 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-5px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
   box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  position: absolute;
+  width: 100%;
+  z-index: 1000;
 }
 
 /* 🔽 Dropdown Visible */
-.dropdown-menu.show {
-  max-height: 500px; /* enough to show all items */
+.dropdown-menu.open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
 /* 📋 Dropdown Items */
