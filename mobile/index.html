@@ -130,17 +130,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const dateTextEl = document.getElementById("dateText");
 
   // ===== CONFIG =====
-  // Your true cycle pattern:
   const scheduleOrder = ["A", "F", "D", "B", "G", "E", "C"];
-
-  // VERIFIED reference: Oct 10 2025 = E Day
-  const refDate = new Date("2025-10-10");
+  const refDate = new Date("2025-10-10"); // confirmed E day
   const refLetter = "E";
 
   const overrides = {
-    // Example:
     // "2025-10-17": "PAUSE",
-    // "2025-10-31": "A"
   };
 
   function toYMD(date) {
@@ -154,8 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const startIndex = scheduleOrder.indexOf(refLetter);
     let index = startIndex;
     const current = new Date(refDate);
-
-    // Count days forward or backward to align correctly
     const diffDays = Math.floor((date - current) / (1000 * 60 * 60 * 24));
     const step = diffDays > 0 ? 1 : -1;
     const steps = Math.abs(diffDays);
@@ -197,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   updateClock();
 
-  // Auto-update each midnight
+  // Auto-update at midnight
   const now = new Date();
   const nextUpdate = new Date(now);
   nextUpdate.setDate(now.getDate() + 1);
@@ -208,21 +201,23 @@ document.addEventListener('DOMContentLoaded', () => {
   }, nextUpdate - now);
 
   // ===== Dropdown logic =====
+  dropdown.classList.remove("hidden"); // <-- FIXED: make visible
   dropdown.style.maxHeight = "0px";
   dropdown.style.transition = "max-height 0.25s ease";
 
   function openDropdown() {
-    dropdown.classList.add("open");
+    dropdown.classList.add("show");
     dropdown.style.maxHeight = dropdown.scrollHeight + "px";
   }
+
   function closeDropdown() {
-    dropdown.classList.remove("open");
+    dropdown.classList.remove("show");
     dropdown.style.maxHeight = "0px";
   }
 
   dayBtn.addEventListener("click", e => {
     e.stopPropagation();
-    dropdown.classList.contains("open") ? closeDropdown() : openDropdown();
+    dropdown.classList.contains("show") ? closeDropdown() : openDropdown();
   });
 
   items.forEach(item => {
@@ -241,6 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener("click", e => {
     if (!dropdown.contains(e.target) && e.target !== dayBtn) closeDropdown();
   });
+
   document.addEventListener("keydown", e => {
     if (e.key === "Escape") closeDropdown();
   });
