@@ -318,3 +318,26 @@ p {
   transform: translateY(-3px);
   box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
 }
+.widget-card {
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+  min-width: 180px;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.widget-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+}
+
+.widget-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+  color: #c4b5fd; /* subtle purple highlight */
+}
