@@ -1,15 +1,15 @@
 /* ===== Body & Fonts ===== */
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Arial", sans-serif;
-  background: linear-gradient(135deg, #0b0f25, #1b1f3e, #3b3f7a, #4f46e5);
+  background: linear-gradient(135deg, #2d1e44, #4b3a7a, #5c49b3);
   background-size: 300% 300%;
-  animation: gradientShift 30s ease infinite;
+  animation: softPurpleShift 20s ease infinite;
   color: #e2e8f0;
   padding: 2rem;
   overflow-x: hidden;
 }
 
-@keyframes gradientShift {
+@keyframes softPurpleShift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
@@ -268,18 +268,16 @@ p {
 #progress-bar {
   height: 100%;
   border-radius: 9999px;
-  transition: width 0.7s ease-in-out;
-
-  /* Animated rainbow gradient */
-  background: linear-gradient(90deg, #ff3cac, #784ba0, #ffb347, #00f260, #00c9ff, #ff6a00, #f00);
+  transition: width 0.7s ease-in-out, background 2s ease-in-out;
+  background: linear-gradient(90deg, #8b5cf6, #a78bfa, #c4b5fd, #8b5cf6);
   background-size: 300% 100%;
-  animation: rainbowFill 5s linear infinite;
+  animation: progressBarShift 6s linear infinite;
 }
 
-@keyframes rainbowFill {
-  0% { background-position: 0% 0%; }
-  50% { background-position: 100% 0%; }
-  100% { background-position: 0% 0%; }
+@keyframes progressBarShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 #progress-text {
@@ -289,7 +287,7 @@ p {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
-/* ===== Progress Widgets (Glass + Neon) ===== */
+/* ===== Progress Widgets (Glass Cards) ===== */
 #progress-widgets {
   display: flex;
   flex-wrap: wrap;
@@ -299,43 +297,24 @@ p {
 }
 
 .widget-card {
-  background: rgba(30, 20, 60, 0.6);
-  backdrop-filter: blur(18px) saturate(200%);
-  -webkit-backdrop-filter: blur(18px) saturate(200%);
+  background: rgba(30, 41, 59, 0.55); /* match schedule cards */
+  backdrop-filter: blur(12px) saturate(150%);
   border-radius: 16px;
-  border: 1px solid rgba(139, 92, 246, 0.4);
+  border: 1px solid rgba(139, 92, 246, 0.15);
   padding: 1rem 1.5rem;
   min-width: 160px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.35), 0 0 12px rgba(139, 92, 246, 0.2);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease, background 0.3s ease;
   color: #fff;
 }
 
 .widget-card:hover {
   transform: translateY(-6px);
-  box-shadow: 
-    0 12px 28px rgba(139, 92, 246, 0.6), 
-    0 0 20px rgba(139, 92, 246, 0.4), 
-    0 0 30px rgba(139, 92, 246, 0.25);
-  border: 1px solid rgba(139, 92, 246, 0.6);
-  background: rgba(40, 25, 70, 0.7);
-}
-
-.widget-title {
-  font-size: 0.875rem;
-  font-weight: 500;
-  margin-bottom: 0.25rem;
-  color: #d8b4fe;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
-}
-
-.widget-number {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #fff;
-  text-shadow: 0 2px 8px rgba(139, 92, 246, 0.7);
+  box-shadow: 0 8px 16px rgba(139, 92, 246, 0.25), 0 0 12px rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  background: rgba(30, 41, 59, 0.55);
 }
