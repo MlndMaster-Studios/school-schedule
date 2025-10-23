@@ -19,21 +19,23 @@
 </div>
   <!-- Progress Bar Section -->
 <div id="progress-section" class="flex flex-col items-center mt-6 mb-8 text-center">
+
   <!-- Progress Bar -->
-  <div id="progress-bar-container" class="relative w-3/4 h-6 bg-slate-800 rounded-full overflow-hidden shadow-md">
+  <div id="progress-bar-container" class="relative w-3/4 h-6 rounded-full overflow-hidden">
     <div id="progress-bar" class="h-full rounded-full transition-all duration-700 ease-in-out"></div>
     <span id="progress-text" class="absolute inset-0 flex items-center justify-center text-sm font-medium text-white"></span>
   </div>
 
-  <!-- Widgets -->
-<div id="progress-widgets" class="mt-4 flex flex-col sm:flex-row sm:space-x-4 justify-center">
-  <div class="widget-card">
-    <div class="widget-title">Estimated School Days:</div>
-    <div id="weekdays-left" class="widget-number">--</div>
-  </div>
-  <div class="widget-card">
-    <div class="widget-title">Total Days:</div>
-    <div id="total-days" class="widget-number">--</div>
+  <!-- Progress Widgets -->
+  <div id="progress-widgets" class="mt-6 flex flex-col sm:flex-row sm:space-x-4 justify-center">
+    <div class="widget-card">
+      <div class="widget-title">Estimated School Days:</div>
+      <div id="weekdays-left" class="widget-number">--</div>
+    </div>
+    <div class="widget-card">
+      <div class="widget-title">Total Days:</div>
+      <div id="total-days" class="widget-number">--</div>
+    </div>
   </div>
 </div>
   <!-- Canvas for particle background -->
