@@ -7,7 +7,7 @@
   <link rel="icon" href="tab-icon.png" type="image/png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/feather-icons"></script>
-  <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=2">
 </head>
 <body class="bg-slate-900 text-gray-200 min-h-screen relative">
  <!-- Clock -->
@@ -452,6 +452,13 @@ updateProgress();
 
 // Optional: update every day at midnight
 setInterval(updateProgress, 60 * 60 * 1000); // every hour is fine
+
+  function updateProgressBar(percent) {
+  const bar = document.getElementById('progress-bar');
+  bar.style.width = percent + '%';
+  document.getElementById('progress-text').textContent = `${percent}%`;
+}
+
 </script>
 </body>
 </html>
