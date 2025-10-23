@@ -19,19 +19,21 @@
 </div>
   <!-- Progress Bar Section -->
 <div id="progress-section" class="flex flex-col items-center mt-6 mb-8 text-center">
+  <!-- Progress Bar -->
   <div id="progress-bar-container" class="relative w-3/4 h-6 bg-slate-800 rounded-full overflow-hidden shadow-md">
     <div id="progress-bar" class="h-full rounded-full transition-all duration-700 ease-in-out"></div>
     <span id="progress-text" class="absolute inset-0 flex items-center justify-center text-sm font-medium text-white"></span>
   </div>
 
+  <!-- Widgets -->
   <div id="progress-widgets" class="mt-4 flex flex-col sm:flex-row sm:space-x-4 justify-center">
-    <div class="widget-card">
-      <div class="widget-title">Estimated School Days:</div>
-      <div id="weekdays-left" class="widget-number">--</div>
+    <div class="widget-card glass-card p-3 rounded-lg shadow-md flex flex-col items-center">
+      <div class="widget-title text-gray-300 text-sm mb-1">Estimated School Days</div>
+      <div id="weekdays-left" class="widget-number text-white text-lg font-semibold">--</div>
     </div>
-    <div class="widget-card">
-      <div class="widget-title">Total Days:</div>
-      <div id="total-days" class="widget-number">--</div>
+    <div class="widget-card glass-card p-3 rounded-lg shadow-md flex flex-col items-center">
+      <div class="widget-title text-gray-300 text-sm mb-1">Total Days</div>
+      <div id="total-days" class="widget-number text-white text-lg font-semibold">--</div>
     </div>
   </div>
 </div>
@@ -392,52 +394,63 @@ function updateBackgroundByTime() {
 updateBackgroundByTime();
 setInterval(updateBackgroundByTime, 15 * 60 * 1000);
 
-// ===== School Year Progress Bar =====
-const startSchool = new Date("2025-08-20T00:00:00");
-const endSchool = new Date("2026-05-21T00:00:00");
+// ===== Progress Bar & Widgets =====
 const progressBar = document.getElementById("progress-bar");
 const progressText = document.getElementById("progress-text");
-const weekdaysLeftDisplay = document.getElementById("weekdays-left");
-const totalDaysDisplay = document.getElementById("total-days");
+const weekdaysLeftElem = document.getElementById("weekdays-left");
+const totalDaysElem = document.getElementById("total-days");
 
-// Function to calculate weekdays between two dates
-function countWeekdays(start, end, pauses = {}) {
+// Start & end of school
+const schoolStart = new Date("2025-08-20T00:00:00");
+const schoolEnd = new Date("2026-05-21T00:00:00");
+
+// Paused days (YYYY-MM-DD)
+const pausedDays = ["2025-10-15", "2025-10-16", "2025-10-17"]; // example
+
+// Helper to count weekdays excluding paused days
+function countWeekdays(start, end) {
   let count = 0;
-  const dayMS = 1000 * 60 * 60 * 24;
   let current = new Date(start);
   while (current <= end) {
     const dayOfWeek = current.getDay();
-    const dateStr = current.toISOString().slice(0,10);
-    if (dayOfWeek !== 0 && dayOfWeek !== 6 && pauses[dateStr] !== "PAUSE") {
+    const yyyy_mm_dd = current.toISOString().slice(0,10);
+    if(dayOfWeek !== 0 && dayOfWeek !== 6 && !pausedDays.includes(yyyy_mm_dd)) {
       count++;
     }
-    current = new Date(current.getTime() + dayMS);
+    current.setDate(current.getDate() + 1);
   }
   return count;
 }
 
-function updateProgressBar() {
-  const now = new Date();
-  const totalDays = countWeekdays(startSchool, endSchool, scheduleOverrides);
-  const daysElapsed = countWeekdays(startSchool, now, scheduleOverrides);
-  const daysRemaining = totalDays - daysElapsed;
-  const allDaysRemaining = Math.ceil((endSchool - now) / (1000*60*60*24));
+// Update progress
+function updateProgress() {
+  const today = new Date();
+  const totalWeekdays = countWeekdays(schoolStart, schoolEnd);
+  const elapsedWeekdays = countWeekdays(schoolStart, today);
+  const remainingWeekdays = totalWeekdays - elapsedWeekdays;
 
-  const progress = Math.min((daysElapsed / totalDays) * 100, 100);
-  const red = Math.round(255 - (progress * 2.55));
-  const green = Math.round(progress * 2.55);
-  const color = `rgb(${red}, ${Math.min(green + 60, 255)}, 100)`;
+  const percent = Math.min(Math.max((elapsedWeekdays / totalWeekdays) * 100, 0), 100);
 
-  progressBar.style.width = `${progress}%`;
-  progressBar.style.background = `linear-gradient(90deg, #ff4d4d, ${color})`;
-  progressText.textContent = `${progress.toFixed(1)}%`;
+  // Update bar width and color
+  progressBar.style.width = percent + "%";
 
-  weekdaysLeftDisplay.textContent = `Estimated school days left: ${daysRemaining}`;
-  totalDaysDisplay.textContent = `Total days remaining: ${allDaysRemaining}`;
+  // Smooth gradient: red -> orange -> yellow -> green
+  const color = `hsl(${percent * 1.2}, 75%, 50%)`;
+  progressBar.style.background = color;
+
+  // Update text inside bar
+  progressText.textContent = Math.round(percent) + "%";
+
+  // Update widgets (only numbers)
+  weekdaysLeftElem.textContent = remainingWeekdays;
+  totalDaysElem.textContent = totalWeekdays;
 }
 
-updateProgressBar();
-setInterval(updateProgressBar, 1000 * 60 * 60); // update hourly
+// Run initially
+updateProgress();
+
+// Optional: update every day at midnight
+setInterval(updateProgress, 60 * 60 * 1000); // every hour is fine
 </script>
 </body>
 </html>
