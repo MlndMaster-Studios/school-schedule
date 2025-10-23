@@ -10,35 +10,38 @@
 <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body class="bg-slate-900 text-gray-200 min-h-screen relative">
- <!-- Clock -->
-<div class="day-clock-wrapper">
-  <div class="day-clock-card">
-    <h2 id="school-day">Loading Day...</h2>
-    <p id="dateText"></p>
-  </div>
-</div>
-  <!-- Progress Bar Section -->
-<div id="progress-section" class="flex flex-col items-center mt-6 mb-8 text-center">
 
-  <!-- Progress Bar -->
-  <div id="progress-bar-container" class="relative w-3/4 h-6 rounded-full overflow-hidden">
-    <div id="progress-bar" class="h-full rounded-full transition-all duration-700 ease-in-out"></div>
-    <span id="progress-text" class="absolute inset-0 flex items-center justify-center text-sm font-medium text-white"></span>
-  </div>
-
-  <!-- Progress Widgets -->
-  <div id="progress-widgets" class="mt-6 flex flex-col sm:flex-row sm:space-x-4 justify-center">
-    <div class="widget-card">
-      <div class="widget-title">Estimated School Days:</div>
-      <div id="weekdays-left" class="widget-number">--</div>
-    </div>
-    <div class="widget-card">
-      <div class="widget-title">Total Days:</div>
-      <div id="total-days" class="widget-number">--</div>
+  <!-- Letter Day Clock -->
+  <div class="day-clock-wrapper flex justify-center mt-8">
+    <div class="day-clock-card bg-slate-800/70 backdrop-blur-md rounded-xl p-6 text-center">
+      <h2 id="school-day" class="text-4xl font-bold">Loading Day...</h2>
+      <p id="dateText" class="mt-2 text-gray-300"></p>
     </div>
   </div>
-</div>
-  <!-- Canvas for particle background -->
+
+  <!-- Progress Section -->
+  <div id="progress-section" class="flex flex-col items-center mt-6 mb-8 text-center">
+
+    <!-- Progress Bar -->
+    <div id="progress-bar-container" class="relative w-3/4 h-6 rounded-full overflow-hidden bg-slate-700">
+      <div id="progress-bar" class="h-full rounded-full transition-all duration-700 ease-in-out bg-purple-500"></div>
+      <span id="progress-text" class="absolute inset-0 flex items-center justify-center text-sm font-medium text-white"></span>
+    </div>
+
+    <!-- Progress Widgets -->
+    <div id="progress-widgets" class="mt-6 flex flex-col sm:flex-row sm:space-x-4 justify-center">
+      <div class="widget-card bg-slate-800/70 backdrop-blur-md rounded-lg p-4 mb-4 sm:mb-0">
+        <div class="widget-title text-gray-300">Estimated School Days:</div>
+        <div id="weekdays-left" class="widget-number text-xl font-semibold">--</div>
+      </div>
+      <div class="widget-card bg-slate-800/70 backdrop-blur-md rounded-lg p-4">
+        <div class="widget-title text-gray-300">Total Days:</div>
+        <div id="total-days" class="widget-number text-xl font-semibold">--</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Canvas for Particle Background -->
   <canvas id="bgCanvas" class="fixed top-0 left-0 w-full h-full -z-10"></canvas>
 
   <div class="container mx-auto px-4 py-8 max-w-7xl relative z-10">
@@ -46,7 +49,7 @@
     <!-- Header -->
     <header class="flex justify-between items-center mb-8">
       <h1 class="text-3xl font-bold text-white">Semester <span class="text-purple-500">1</span></h1>
-      <span class="text-gray-300 font-medium">Liam Quinn</span>
+      <span class="text-gray-300 font-medium">SIHS</span>
     </header>
 
     <!-- Day Dropdown -->
@@ -66,10 +69,11 @@
       </div>
     </div>
 
-    <!-- Schedules -->
+    <!-- Schedule Container -->
     <div id="schedule-container">
-      <!-- Each day uses the same row structure (2 cards per row; last centered if alone) -->
-
+      <!-- All schedule-day divs (A–G, WED) go here unchanged -->
+    </div>
+  </div>
       <!-- A Day -->
       <div class="schedule-day" id="A-day">
         <div class="schedule-row">
@@ -214,7 +218,7 @@
   </div>
 
 <script>
-// ===== Feather icons =====
+// ===== Feather Icons =====
 feather.replace();
 
 // ===== Day Dropdown =====
@@ -223,9 +227,7 @@ const dropdown = document.getElementById("dayDropdown");
 const items = document.querySelectorAll(".dropdown-item");
 const days = document.querySelectorAll(".schedule-day");
 
-dayBtn.addEventListener("click", () => {
-  dropdown.classList.toggle("hidden");
-});
+dayBtn.addEventListener("click", () => dropdown.classList.toggle("hidden"));
 
 items.forEach(item => {
   item.addEventListener("click", () => {
@@ -240,6 +242,7 @@ items.forEach(item => {
 // ===== Smooth Card Cursor-Follow Effect =====
 const cards = document.querySelectorAll(".schedule-card");
 let mouse = { x: 0, y: 0 };
+
 window.addEventListener("mousemove", e => {
   mouse.x = e.clientX;
   mouse.y = e.clientY;
@@ -254,12 +257,11 @@ function animateCards() {
     const deltaY = mouse.y - cardY;
     const currentX = parseFloat(card.dataset.tx || 0);
     const currentY = parseFloat(card.dataset.ty || 0);
-    const easedX = currentX + (deltaX * 0.03);
-    const easedY = currentY + (deltaY * 0.03);
+    const easedX = currentX + deltaX * 0.03;
+    const easedY = currentY + deltaY * 0.03;
     card.dataset.tx = easedX;
     card.dataset.ty = easedY;
-    card.style.setProperty("--mouseX", easedX);
-    card.style.setProperty("--mouseY", easedY);
+    card.style.transform = `translate(${easedX * 0.1}px, ${easedY * 0.1}px)`;
   });
   requestAnimationFrame(animateCards);
 }
@@ -269,10 +271,11 @@ cards.forEach(card => {
   card.addEventListener("mouseleave", () => {
     card.dataset.tx = 0;
     card.dataset.ty = 0;
+    card.style.transform = `translate(0px, 0px)`;
   });
 });
 
-// ===== Mouse-following particles =====
+// ===== Mouse-Following Particles =====
 const canvas = document.getElementById("bgCanvas");
 const ctx = canvas.getContext("2d");
 let particles = [];
@@ -282,7 +285,7 @@ function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 }
-window.addEventListener('resize', resizeCanvas);
+window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
 
 class Particle {
@@ -303,26 +306,23 @@ class Particle {
   draw() {
     ctx.fillStyle = this.color;
     ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
     ctx.fill();
   }
 }
 
-for(let i = 0; i < particleCount; i++){
-  particles.push(new Particle(Math.random()*canvas.width, Math.random()*canvas.height));
+for(let i = 0; i < particleCount; i++) {
+  particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
 }
 
-window.addEventListener('mousemove', e => {
-  particles.push(new Particle(e.x + Math.random()*20-10, e.y + Math.random()*20-10));
+window.addEventListener("mousemove", e => {
+  particles.push(new Particle(e.x + Math.random() * 20 - 10, e.y + Math.random() * 20 - 10));
   if(particles.length > particleCount) particles.shift();
 });
 
 function animateParticles() {
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  particles.forEach(p => {
-    p.update();
-    p.draw();
-  });
+  particles.forEach(p => { p.update(); p.draw(); });
   requestAnimationFrame(animateParticles);
 }
 animateParticles();
@@ -330,13 +330,11 @@ animateParticles();
 // ===== School Day Clock =====
 const clockDisplay = document.getElementById("school-day");
 const scheduleOrder = ["A","F","D","B","G","E","C"];
-
 const scheduleOverrides = {
   "2025-10-17": "PAUSE",
   "2025-10-16": "PAUSE",
   "2025-10-15": "PAUSE"
 };
-
 const startDate = new Date("2025-10-09T00:00:00");
 
 function calculateDay(today = new Date()) {
@@ -348,10 +346,7 @@ function calculateDay(today = new Date()) {
     const yyyy_mm_dd = current.toISOString().slice(0,10);
     const dayOfWeek = current.getDay();
     if(dayOfWeek !== 0 && dayOfWeek !== 6) {
-      if(scheduleOverrides[yyyy_mm_dd] === "PAUSE") {
-      } else if(scheduleOverrides[yyyy_mm_dd]) {
-        index = scheduleOrder.indexOf(scheduleOverrides[yyyy_mm_dd]);
-      } else {
+      if(!scheduleOverrides[yyyy_mm_dd] || scheduleOverrides[yyyy_mm_dd] !== "PAUSE") {
         index = (index + 1) % scheduleOrder.length;
       }
     }
@@ -364,33 +359,26 @@ function calculateDay(today = new Date()) {
   return scheduleOrder[index] + " Day";
 }
 
-function updateDayDisplay() {
-  if(clockDisplay) clockDisplay.textContent = calculateDay();
-}
+function updateDayDisplay() { if(clockDisplay) clockDisplay.textContent = calculateDay(); }
 updateDayDisplay();
-
 setInterval(() => {
   const now = new Date();
   if(now.getHours() === 0 && now.getMinutes() === 1) updateDayDisplay();
 }, 60*1000);
 
-// ===== Redirect mobile users =====
-if (window.innerWidth <= 768) {
-  window.location.href = "https://mlndmaster-studios.github.io/school-schedule/mobile/";
-}
+// ===== Redirect Mobile Users =====
+if(window.innerWidth <= 768) window.location.href = "https://mlndmaster-studios.github.io/school-schedule/mobile/";
 
 // ===== Time-Based Background Gradient =====
 function updateBackgroundByTime() {
-  const now = new Date();
-  const hour = now.getHours();
+  const hour = new Date().getHours();
   let gradient;
-  if (hour >= 5 && hour < 10) gradient = "linear-gradient(135deg, #fbc2eb, #a6c1ee)";
-  else if (hour >= 10 && hour < 17) gradient = "linear-gradient(135deg, #89f7fe, #66a6ff)";
-  else if (hour >= 17 && hour < 20) gradient = "linear-gradient(135deg, #f6d365, #fda085)";
+  if(hour >= 5 && hour < 10) gradient = "linear-gradient(135deg, #fbc2eb, #a6c1ee)";
+  else if(hour >= 10 && hour < 17) gradient = "linear-gradient(135deg, #89f7fe, #66a6ff)";
+  else if(hour >= 17 && hour < 20) gradient = "linear-gradient(135deg, #f6d365, #fda085)";
   else gradient = "linear-gradient(135deg, #0b0f25, #1b1f3e, #3b3f7a, #4f46e5)";
   document.body.style.transition = "background 2s ease";
   document.body.style.background = gradient;
-  document.body.style.backgroundSize = "300% 300%";
 }
 updateBackgroundByTime();
 setInterval(updateBackgroundByTime, 15 * 60 * 1000);
@@ -401,64 +389,39 @@ const progressText = document.getElementById("progress-text");
 const weekdaysLeftElem = document.getElementById("weekdays-left");
 const totalDaysElem = document.getElementById("total-days");
 
-// Start & end of school
 const schoolStart = new Date("2025-08-20T00:00:00");
 const schoolEnd = new Date("2026-05-21T00:00:00");
+const pausedDays = ["2025-10-15","2025-10-16","2025-10-17"];
 
-// Paused days (YYYY-MM-DD)
-const pausedDays = ["2025-10-15", "2025-10-16", "2025-10-17"]; // example
-
-// Helper to count weekdays excluding paused days
 function countWeekdays(start, end) {
   let count = 0;
   let current = new Date(start);
-  while (current <= end) {
+  while(current <= end) {
     const dayOfWeek = current.getDay();
     const yyyy_mm_dd = current.toISOString().slice(0,10);
-    if(dayOfWeek !== 0 && dayOfWeek !== 6 && !pausedDays.includes(yyyy_mm_dd)) {
-      count++;
-    }
+    if(dayOfWeek !== 0 && dayOfWeek !== 6 && !pausedDays.includes(yyyy_mm_dd)) count++;
     current.setDate(current.getDate() + 1);
   }
   return count;
 }
 
-// Update progress
 function updateProgress() {
   const today = new Date();
   const totalWeekdays = countWeekdays(schoolStart, schoolEnd);
   const elapsedWeekdays = countWeekdays(schoolStart, today);
   const remainingWeekdays = totalWeekdays - elapsedWeekdays;
-
   const percent = Math.min(Math.max((elapsedWeekdays / totalWeekdays) * 100, 0), 100);
 
-  // Update bar width and color
   progressBar.style.width = percent + "%";
-
-  // Smooth gradient: red -> orange -> yellow -> green
-  const color = `hsl(${percent * 1.2}, 75%, 50%)`;
-  progressBar.style.background = color;
-
-  // Update text inside bar
+  progressBar.style.background = `hsl(${percent * 1.2}, 75%, 50%)`;
   progressText.textContent = Math.round(percent) + "%";
 
-  // Update widgets (only numbers)
   weekdaysLeftElem.textContent = remainingWeekdays;
   totalDaysElem.textContent = totalWeekdays;
 }
 
-// Run initially
 updateProgress();
-
-// Optional: update every day at midnight
-setInterval(updateProgress, 60 * 60 * 1000); // every hour is fine
-
-  function updateProgressBar(percent) {
-  const bar = document.getElementById('progress-bar');
-  bar.style.width = percent + '%';
-  document.getElementById('progress-text').textContent = `${percent}%`;
-}
-
+setInterval(updateProgress, 60*60*1000);
 </script>
 </body>
 </html>
