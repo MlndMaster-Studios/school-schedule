@@ -240,23 +240,17 @@ function animateCards() {
     const rect = card.getBoundingClientRect();
     const cardX = rect.left + rect.width / 2;
     const cardY = rect.top + rect.height / 2;
-
     const deltaX = mouse.x - cardX;
     const deltaY = mouse.y - cardY;
-
     const currentX = parseFloat(card.dataset.tx || 0);
     const currentY = parseFloat(card.dataset.ty || 0);
-
     const easedX = currentX + (deltaX * 0.03);
     const easedY = currentY + (deltaY * 0.03);
-
     card.dataset.tx = easedX;
     card.dataset.ty = easedY;
-
     card.style.setProperty("--mouseX", easedX);
     card.style.setProperty("--mouseY", easedY);
   });
-
   requestAnimationFrame(animateCards);
 }
 animateCards();
@@ -325,38 +319,26 @@ animateParticles();
 
 // ===== School Day Clock =====
 const clockDisplay = document.getElementById("school-day");
-
-// Snake schedule order
 const scheduleOrder = ["A","F","D","B","G","E","C"];
 
-// Manual overrides or paused days
-// Format: "YYYY-MM-DD": "PAUSE" or "A"/"B"/...
 const scheduleOverrides = {
   "2025-10-17": "PAUSE",
   "2025-10-16": "PAUSE",
   "2025-10-15": "PAUSE"
 };
 
-// Starting point reference: Oct 9, 2025 = G Day
 const startDate = new Date("2025-10-09T00:00:00");
 
-// Calculate current letter day
 function calculateDay(today = new Date()) {
-  today.setHours(0,0,0,0); // Normalize
+  today.setHours(0,0,0,0);
   const dayMS = 1000*60*60*24;
-
   let current = new Date(startDate);
-  let index = scheduleOrder.indexOf("G"); // starting day
-
+  let index = scheduleOrder.indexOf("G");
   while(current < today) {
     const yyyy_mm_dd = current.toISOString().slice(0,10);
     const dayOfWeek = current.getDay();
-    
-    // Skip Sat/Sun
     if(dayOfWeek !== 0 && dayOfWeek !== 6) {
-      // Check override
       if(scheduleOverrides[yyyy_mm_dd] === "PAUSE") {
-        // do nothing, pause
       } else if(scheduleOverrides[yyyy_mm_dd]) {
         index = scheduleOrder.indexOf(scheduleOverrides[yyyy_mm_dd]);
       } else {
@@ -365,29 +347,21 @@ function calculateDay(today = new Date()) {
     }
     current = new Date(current.getTime() + dayMS);
   }
-
   const todayStr = today.toISOString().slice(0,10);
   const todayOverride = scheduleOverrides[todayStr];
   if(todayOverride === "PAUSE") return "No Classes 🎉";
   if(todayOverride && todayOverride !== "PAUSE") return todayOverride + " Day";
-
   return scheduleOrder[index] + " Day";
 }
 
-// Update display
 function updateDayDisplay() {
   if(clockDisplay) clockDisplay.textContent = calculateDay();
 }
-
-// Initial display
 updateDayDisplay();
 
-// Auto-update every day at 12:01 AM
 setInterval(() => {
   const now = new Date();
-  if(now.getHours() === 0 && now.getMinutes() === 1) {
-    updateDayDisplay();
-  }
+  if(now.getHours() === 0 && now.getMinutes() === 1) updateDayDisplay();
 }, 60*1000);
 
 // ===== Redirect mobile users =====
@@ -395,35 +369,68 @@ if (window.innerWidth <= 768) {
   window.location.href = "https://mlndmaster-studios.github.io/school-schedule/mobile/";
 }
 
-// ===== Time-Based Background Gradient with Smooth Fade =====
+// ===== Time-Based Background Gradient =====
 function updateBackgroundByTime() {
   const now = new Date();
   const hour = now.getHours();
   let gradient;
-
-  if (hour >= 5 && hour < 10) {
-    // Morning – sunrise tones
-    gradient = "linear-gradient(135deg, #fbc2eb, #a6c1ee)";
-  } else if (hour >= 10 && hour < 17) {
-    // Midday – bright sky tones
-    gradient = "linear-gradient(135deg, #89f7fe, #66a6ff)";
-  } else if (hour >= 17 && hour < 20) {
-    // Evening – golden hour
-    gradient = "linear-gradient(135deg, #f6d365, #fda085)";
-  } else {
-    // Night – neon twilight
-    gradient = "linear-gradient(135deg, #0b0f25, #1b1f3e, #3b3f7a, #4f46e5)";
-  }
-
-  // Apply with smooth fade
+  if (hour >= 5 && hour < 10) gradient = "linear-gradient(135deg, #fbc2eb, #a6c1ee)";
+  else if (hour >= 10 && hour < 17) gradient = "linear-gradient(135deg, #89f7fe, #66a6ff)";
+  else if (hour >= 17 && hour < 20) gradient = "linear-gradient(135deg, #f6d365, #fda085)";
+  else gradient = "linear-gradient(135deg, #0b0f25, #1b1f3e, #3b3f7a, #4f46e5)";
   document.body.style.transition = "background 2s ease";
   document.body.style.background = gradient;
   document.body.style.backgroundSize = "300% 300%";
 }
-
-// Run immediately and every 15 minutes
 updateBackgroundByTime();
 setInterval(updateBackgroundByTime, 15 * 60 * 1000);
+
+// ===== School Year Progress Bar =====
+const startSchool = new Date("2025-08-20T00:00:00");
+const endSchool = new Date("2026-05-21T00:00:00");
+const progressBar = document.getElementById("progress-bar");
+const progressText = document.getElementById("progress-text");
+const weekdaysLeftDisplay = document.getElementById("weekdays-left");
+const totalDaysDisplay = document.getElementById("total-days");
+
+// Function to calculate weekdays between two dates
+function countWeekdays(start, end, pauses = {}) {
+  let count = 0;
+  const dayMS = 1000 * 60 * 60 * 24;
+  let current = new Date(start);
+  while (current <= end) {
+    const dayOfWeek = current.getDay();
+    const dateStr = current.toISOString().slice(0,10);
+    if (dayOfWeek !== 0 && dayOfWeek !== 6 && pauses[dateStr] !== "PAUSE") {
+      count++;
+    }
+    current = new Date(current.getTime() + dayMS);
+  }
+  return count;
+}
+
+function updateProgressBar() {
+  const now = new Date();
+  const totalDays = countWeekdays(startSchool, endSchool, scheduleOverrides);
+  const daysElapsed = countWeekdays(startSchool, now, scheduleOverrides);
+  const daysRemaining = totalDays - daysElapsed;
+  const allDaysRemaining = Math.ceil((endSchool - now) / (1000*60*60*24));
+
+  const progress = Math.min((daysElapsed / totalDays) * 100, 100);
+  const red = Math.round(255 - (progress * 2.55));
+  const green = Math.round(progress * 2.55);
+  const color = `rgb(${red}, ${Math.min(green + 60, 255)}, 100)`;
+
+  progressBar.style.width = `${progress}%`;
+  progressBar.style.background = `linear-gradient(90deg, #ff4d4d, ${color})`;
+  progressText.textContent = `${progress.toFixed(1)}%`;
+
+  weekdaysLeftDisplay.textContent = `Estimated school days left: ${daysRemaining}`;
+  totalDaysDisplay.textContent = `Total days remaining: ${allDaysRemaining}`;
+}
+
+updateProgressBar();
+setInterval(updateProgressBar, 1000 * 60 * 60); // update hourly
 </script>
 </body>
 </html>
