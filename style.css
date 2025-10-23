@@ -292,3 +292,29 @@ p {
 #progress-widgets div:hover {
   color: #e0e0e0;
 }
+/* 📦 Progress Widgets Styling */
+#progress-widgets {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+#progress-widgets div {
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  font-size: 0.95rem;
+  color: #e0e7ff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+#progress-widgets div:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+}
