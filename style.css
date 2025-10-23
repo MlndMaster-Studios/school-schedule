@@ -3,7 +3,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Arial", sans-serif;
   background: linear-gradient(-45deg, #1a0033, #2c1a4d, #3f2a70, #4b3a8c, #2b1055);
   background-size: 600% 600%;
-  animation: darkPurpleFlow 30s ease-in-out infinite;
+  animation: darkPurpleFlow 5s ease-in-out infinite;
   color: #e2e8f0;
   padding: 2rem;
   overflow-x: hidden;
