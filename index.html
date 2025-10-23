@@ -383,7 +383,36 @@ setInterval(() => {
 if (window.innerWidth <= 768) {
   window.location.href = "https://mlndmaster-studios.github.io/school-schedule/mobile/";
 }
+
+// ===== Time-Based Background Gradient with Smooth Fade =====
+function updateBackgroundByTime() {
+  const now = new Date();
+  const hour = now.getHours();
+  let gradient;
+
+  if (hour >= 5 && hour < 10) {
+    // Morning – sunrise tones
+    gradient = "linear-gradient(135deg, #fbc2eb, #a6c1ee)";
+  } else if (hour >= 10 && hour < 17) {
+    // Midday – bright sky tones
+    gradient = "linear-gradient(135deg, #89f7fe, #66a6ff)";
+  } else if (hour >= 17 && hour < 20) {
+    // Evening – golden hour
+    gradient = "linear-gradient(135deg, #f6d365, #fda085)";
+  } else {
+    // Night – neon twilight
+    gradient = "linear-gradient(135deg, #0b0f25, #1b1f3e, #3b3f7a, #4f46e5)";
+  }
+
+  // Apply with smooth fade
+  document.body.style.transition = "background 2s ease";
+  document.body.style.background = gradient;
+  document.body.style.backgroundSize = "300% 300%";
+}
+
+// Run immediately and every 15 minutes
+updateBackgroundByTime();
+setInterval(updateBackgroundByTime, 15 * 60 * 1000);
 </script>
-  
 </body>
 </html>
