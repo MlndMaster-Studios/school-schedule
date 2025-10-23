@@ -1,15 +1,15 @@
 /* ===== Body & Fonts ===== */
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Arial", sans-serif;
-  background: linear-gradient(135deg, #2c1a4d, #3f2a70, #4b3a8c);
-  background-size: 400% 400%;
-  animation: darkPurpleShift 20s ease infinite;
+  background: linear-gradient(-45deg, #1a0033, #2c1a4d, #3f2a70, #4b3a8c, #2b1055);
+  background-size: 600% 600%;
+  animation: darkPurpleFlow 30s ease-in-out infinite;
   color: #e2e8f0;
   padding: 2rem;
   overflow-x: hidden;
 }
 
-@keyframes darkPurpleShift {
+@keyframes darkPurpleFlow {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
@@ -269,13 +269,26 @@ p {
   height: 100%;
   border-radius: 9999px;
   transition: width 0.4s ease-in-out;
-  background: linear-gradient(90deg, #f87171, #fb923c, #fbbf24, #34d399);
-  background-size: 400% 100%;
-  animation: progressBarBlend 6s linear infinite;
+  background: linear-gradient(90deg, #8b5cf6, #6366f1, #22d3ee, #34d399);
+  background-size: 300% 100%;
+  animation: progressBarBlend 8s ease-in-out infinite;
 }
 
 @keyframes progressBarBlend {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
+}
+#progress-bar-container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.25);
+  animation: barGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes barGlow {
+  from { box-shadow: 0 0 8px rgba(139, 92, 246, 0.2); }
+  to { box-shadow: 0 0 20px rgba(52, 211, 153, 0.4); }
 }
