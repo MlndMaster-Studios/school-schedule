@@ -319,25 +319,26 @@ p {
   box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
 }
 .widget-card {
-  background: rgba(30, 41, 59, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(8px);
-  padding: 1rem 1.5rem;
+  background: rgba(30, 41, 59, 0.7);  /* semi-transparent dark background */
+  backdrop-filter: blur(10px);        /* frosted glass blur */
+  -webkit-backdrop-filter: blur(10px); /* for Safari */
   border-radius: 12px;
+  padding: 1rem 1.5rem;
   text-align: center;
   min-width: 180px;
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1); /* subtle border */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);  /* soft shadow */
+  transition: transform 0.2s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
 .widget-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+  box-shadow: 0 6px 25px rgba(139, 92, 246, 0.5); /* subtle purple glow on hover */
 }
 
 .widget-title {
   font-weight: 600;
   font-size: 0.95rem;
   margin-bottom: 0.25rem;
-  color: #c4b5fd; /* subtle purple highlight */
+  color: #d8b4fe;  /* soft purple highlight to match your site */
 }
