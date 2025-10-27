@@ -1,4 +1,3 @@
-<script>
 // ===== Feather icons =====
 feather.replace();
 
@@ -243,5 +242,3 @@ setInterval(updateProgress, 60 * 60 * 1000); // every hour is fine
   bar.style.width = percent + '%';
   document.getElementById('progress-text').textContent = `${percent}%`;
 }
-
-</script>
