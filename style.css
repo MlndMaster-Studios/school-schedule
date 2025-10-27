@@ -270,9 +270,8 @@ p {
   border-radius: 9999px;
   transition: width 0.4s ease-in-out;
   background: linear-gradient(90deg, #8b5cf6, #6366f1, #22d3ee, #34d399);
-  background-size: 300% 100%;
-  animation: progressBarBlend 8s ease-in-out infinite;
 }
+
 
 @keyframes progressBarBlend {
   0% { background-position: 0% 50%; }
