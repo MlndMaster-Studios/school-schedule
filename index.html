@@ -49,26 +49,22 @@
       <span class="text-gray-300 font-medium">SIHS</span>
     </header>
 
-<!-- Day Dropdown + Week View Button -->
-<div class="mb-6 relative w-64 flex space-x-2">
-  <button id="dayDropdownBtn" class="flex-1 bg-slate-800 px-4 py-2 rounded-lg text-white font-medium text-left">
-    Select Day ▾
-  </button>
-  <button id="weekViewBtn" class="flex-1 bg-slate-800 px-4 py-2 rounded-lg text-white font-medium">
-    Week View
-  </button>
-  <div id="dayDropdown" class="absolute w-full bg-slate-800 rounded-lg mt-1 hidden shadow-lg">
-    <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="A">A Day</div>
-    <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="B">B Day</div>
-    <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="C">C Day</div>
-    <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="D">D Day</div>
-    <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="E">E Day</div>
-    <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="F">F Day</div>
-    <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="G">G Day</div>
-    <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="WED">Wednesday</div>
-  </div>
-</div>
-
+    <!-- Day Dropdown -->
+    <div class="mb-6 relative w-64">
+      <button id="dayDropdownBtn" class="w-full bg-slate-800 px-4 py-2 rounded-lg text-white font-medium text-left">
+        Select Day ▾
+      </button>
+      <div id="dayDropdown" class="absolute w-full bg-slate-800 rounded-lg mt-1 hidden shadow-lg">
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="A">A Day</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="B">B Day</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="C">C Day</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="D">D Day</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="E">E Day</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="F">F Day</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="G">G Day</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="WED">Wednesday</div>
+      </div>
+    </div>
 
     <!-- Schedules -->
     <div id="schedule-container">
