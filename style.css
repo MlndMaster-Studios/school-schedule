@@ -1,15 +1,15 @@
-/* ===== Body & Fonts ===== */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Arial", sans-serif;
-  background: linear-gradient(-45deg, #1a0033, #2c1a4d, #3f2a70, #4b3a8c, #2b1055);
-  background-size: 600% 600%;
-  animation: darkPurpleFlow 20s ease-in-out infinite;
-  color: #e2e8f0;
-  padding: 2rem;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  background: linear-gradient(-45deg, #1b0034, #2a0066, #260057, #1b0034);
+  background-size: 400% 400%;
+  animation: gradientFlow 15s ease infinite;
+  color: white;
   overflow-x: hidden;
 }
 
-@keyframes darkPurpleFlow {
+@keyframes gradientFlow {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
