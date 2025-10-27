@@ -18,6 +18,9 @@ items.forEach(item => {
     document.getElementById(day + "-day").classList.remove("hidden");
     dayBtn.textContent = item.textContent + " ▾";
     dropdown.classList.add("hidden");
+    // Hide week view if visible
+    const weekContainer = document.getElementById("weekContainer");
+    if (weekContainer) weekContainer.classList.add("hidden");
   });
 });
 
@@ -113,14 +116,12 @@ animateParticles();
 
 // ===== School Day Clock =====
 const clockDisplay = document.getElementById("school-day");
-const scheduleOrder = ["A","F","D","B","G","E","C"];
-
+const scheduleOrder = ["A","B","C","D","E","F","G"];
 const scheduleOverrides = {
-  "2025-10-17": "PAUSE",
+  "2025-10-15": "PAUSE",
   "2025-10-16": "PAUSE",
-  "2025-10-15": "PAUSE"
+  "2025-10-17": "PAUSE"
 };
-
 const startDate = new Date("2025-10-09T00:00:00");
 
 function calculateDay(today = new Date()) {
@@ -128,11 +129,13 @@ function calculateDay(today = new Date()) {
   const dayMS = 1000*60*60*24;
   let current = new Date(startDate);
   let index = scheduleOrder.indexOf("G");
+
   while(current < today) {
     const yyyy_mm_dd = current.toISOString().slice(0,10);
     const dayOfWeek = current.getDay();
     if(dayOfWeek !== 0 && dayOfWeek !== 6) {
       if(scheduleOverrides[yyyy_mm_dd] === "PAUSE") {
+        // skip
       } else if(scheduleOverrides[yyyy_mm_dd]) {
         index = scheduleOrder.indexOf(scheduleOverrides[yyyy_mm_dd]);
       } else {
@@ -141,6 +144,7 @@ function calculateDay(today = new Date()) {
     }
     current = new Date(current.getTime() + dayMS);
   }
+
   const todayStr = today.toISOString().slice(0,10);
   const todayOverride = scheduleOverrides[todayStr];
   if(todayOverride === "PAUSE") return "No Classes 🎉";
@@ -152,7 +156,6 @@ function updateDayDisplay() {
   if(clockDisplay) clockDisplay.textContent = calculateDay();
 }
 updateDayDisplay();
-
 setInterval(() => {
   const now = new Date();
   if(now.getHours() === 0 && now.getMinutes() === 1) updateDayDisplay();
@@ -178,20 +181,17 @@ function updateBackgroundByTime() {
 }
 updateBackgroundByTime();
 setInterval(updateBackgroundByTime, 15 * 60 * 1000);
+
 // ===== Progress Bar & Widgets =====
 const progressBar = document.getElementById("progress-bar");
 const progressText = document.getElementById("progress-text");
 const weekdaysLeftElem = document.getElementById("weekdays-left");
 const totalDaysElem = document.getElementById("total-days");
 
-// Start & end of school
 const schoolStart = new Date("2025-08-20T00:00:00");
 const schoolEnd = new Date("2026-05-21T00:00:00");
+const pausedDays = ["2025-10-15", "2025-10-16", "2025-10-17"];
 
-// Paused days (YYYY-MM-DD)
-const pausedDays = ["2025-10-15", "2025-10-16", "2025-10-17"]; // example
-
-// Helper to count weekdays excluding paused days
 function countWeekdays(start, end) {
   let count = 0;
   let current = new Date(start);
@@ -206,38 +206,97 @@ function countWeekdays(start, end) {
   return count;
 }
 
-// Update progress
 function updateProgress() {
   const today = new Date();
-
-  // --- Calendar-based total days remaining ---
   const totalCalendarDays = Math.ceil((schoolEnd - today) / (1000 * 60 * 60 * 24));
-
-  // --- Weekday counts ---
   const totalWeekdays = countWeekdays(schoolStart, schoolEnd);
   const elapsedWeekdays = countWeekdays(schoolStart, today);
   const remainingWeekdays = totalWeekdays - elapsedWeekdays;
-
-  // --- Progress percentage based on weekdays ---
   const percent = Math.min(Math.max((elapsedWeekdays / totalWeekdays) * 100, 0), 100);
 
-  // Update bar
   progressBar.style.width = percent + "%";
   progressText.textContent = Math.round(percent) + "%";
-
-  // Update widgets
   weekdaysLeftElem.textContent = remainingWeekdays;
   totalDaysElem.textContent = totalCalendarDays;
 }
-
-// Run initially
 updateProgress();
-
-// Optional: update every hour
 setInterval(updateProgress, 60 * 60 * 1000);
 
-  function updateProgressBar(percent) {
-  const bar = document.getElementById('progress-bar');
-  bar.style.width = percent + '%';
-  document.getElementById('progress-text').textContent = `${percent}%`;
+// ===== Dynamic Week View =====
+const weekButton = document.createElement("button");
+weekButton.textContent = "Week ▾";
+weekButton.id = "weekButton";
+weekButton.className = "ml-4 bg-slate-800 px-4 py-2 rounded-lg text-white font-medium";
+document.querySelector("header").appendChild(weekButton);
+
+const weekContainer = document.createElement("div");
+weekContainer.id = "weekContainer";
+weekContainer.className = "flex space-x-4 mt-4 hidden";
+document.querySelector(".container").appendChild(weekContainer);
+
+weekButton.addEventListener("click", () => {
+  const isVisible = !weekContainer.classList.contains("hidden");
+  if (isVisible) {
+    weekContainer.classList.add("hidden");
+    document.getElementById("schedule-container").classList.remove("hidden");
+    return;
+  }
+
+  weekContainer.innerHTML = "";
+  document.getElementById("schedule-container").classList.add("hidden");
+
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+
+  for (let i = 0; i < 5; i++) {
+    const current = new Date(monday);
+    current.setDate(monday.getDate() + i);
+    const yyyy_mm_dd = current.toISOString().slice(0, 10);
+    let letter = getSchoolDay(current);
+    if (letter === "No Classes 🎉") letter = "-";
+
+    const card = document.createElement("div");
+    card.className = "schedule-card text-center";
+    card.innerHTML = `<h3>${["Mon","Tue","Wed","Thu","Fri"][i]}</h3><p>${letter}</p>`;
+    weekContainer.appendChild(card);
+  }
+
+  weekContainer.classList.remove("hidden");
+});
+
+function getSchoolDay(date = new Date()) {
+  const dayMS = 1000 * 60 * 60 * 24;
+  const scheduleOrder = ["A","B","C","D","E","F","G"];
+  const scheduleOverrides = {
+    "2025-10-15": "PAUSE",
+    "2025-10-16": "PAUSE",
+    "2025-10-17": "PAUSE"
+  };
+
+  let current = new Date(startDate);
+  let index = scheduleOrder.indexOf("G");
+  date.setHours(0,0,0,0);
+
+  while (current <= date) {
+    const yyyy_mm_dd = current.toISOString().slice(0,10);
+    const dayOfWeek = current.getDay();
+    if(dayOfWeek !== 0 && dayOfWeek !== 6) {
+      if(scheduleOverrides[yyyy_mm_dd] === "PAUSE") {
+        // skip
+      } else if(scheduleOverrides[yyyy_mm_dd]) {
+        index = scheduleOrder.indexOf(scheduleOverrides[yyyy_mm_dd]);
+      } else {
+        index = (index + 1) % scheduleOrder.length;
+      }
+    }
+    current = new Date(current.getTime() + dayMS);
+  }
+
+  const todayStr = date.toISOString().slice(0,10);
+  const todayOverride = scheduleOverrides[todayStr];
+  if(todayOverride === "PAUSE") return "No Classes 🎉";
+  if(todayOverride && todayOverride !== "PAUSE") return todayOverride;
+  return scheduleOrder[index];
 }
