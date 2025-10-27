@@ -129,38 +129,6 @@ p {
   box-shadow: 0 5px 15px rgba(139,92,246,0.4);
 }
 
-#dayDropdownBtn:hover {
-  filter: brightness(1.1);
-  box-shadow: 0 5px 15px rgba(139,92,246,0.4);
-}
-
-/* ===== Week View Button ===== */
-#weekViewBtn {
-  cursor: pointer;
-  background: linear-gradient(135deg, #8b5cf6, #4f46e5);
-  background-size: 400% 400%;
-  color: #fff;
-  font-weight: 500;
-  border-radius: 12px;
-  padding: 0.5rem 1rem;
-  transition: all 0.3s ease;
-  animation: buttonGradient 8s ease infinite;
-}
-
-#weekViewBtn:hover {
-  filter: brightness(1.1);
-  box-shadow: 0 5px 15px rgba(139,92,246,0.4);
-}
-
-#dayDropdown {
-  background: rgba(30,41,59,0.95);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 10px 20px rgba(139,92,246,0.3);
-  z-index: 50;
-}
-
-
 #dayDropdown {
   background: rgba(30,41,59,0.95);
   border-radius: 12px;
