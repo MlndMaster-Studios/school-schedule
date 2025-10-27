@@ -21,6 +21,70 @@ items.forEach(item => {
   });
 });
 
+// ===== Week View Button =====
+const weekViewBtn = document.createElement("button");
+weekViewBtn.id = "weekViewBtn";
+weekViewBtn.textContent = "Week View ▾";
+dayBtn.parentNode.insertBefore(weekViewBtn, dayBtn.nextSibling);
+
+weekViewBtn.addEventListener("click", () => {
+  // Hide all single-day schedule divs
+  days.forEach(d => d.classList.add("hidden"));
+
+  // Remove any existing week row
+  const existingWeekRow = document.getElementById("weekViewRow");
+  if (existingWeekRow) existingWeekRow.remove();
+
+  // Create new row container
+  const weekRow = document.createElement("div");
+  weekRow.id = "weekViewRow";
+  weekRow.className = "schedule-row";
+
+  // Days of the week
+  const weekdays = ["MON", "TUE", "WED", "THU", "FRI"];
+  weekdays.forEach((day, i) => {
+    const letterDay = calculateDayForWeekday(i); // We'll define this next
+    const card = document.createElement("div");
+    card.className = "schedule-card";
+    card.innerHTML = `<h3>${day}</h3><p>${letterDay} DAY</p>`;
+    weekRow.appendChild(card);
+  });
+
+  document.getElementById("schedule-container").appendChild(weekRow);
+});
+
+// Helper function to calculate day letter for a given weekday index (0=Monday)
+function calculateDayForWeekday(weekdayIndex) {
+  const today = new Date();
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - ((today.getDay() + 6) % 7)); // go to Monday of this week
+  monday.setHours(0,0,0,0);
+
+  const dayMS = 1000*60*60*24;
+  let current = new Date(startDate);
+  let index = scheduleOrder.indexOf("G");
+
+  while (current <= monday) {
+    const yyyy_mm_dd = current.toISOString().slice(0,10);
+    const dayOfWeek = current.getDay();
+    if(dayOfWeek !== 0 && dayOfWeek !== 6) {
+      if(scheduleOverrides[yyyy_mm_dd] === "PAUSE") {
+        // do nothing
+      } else if(scheduleOverrides[yyyy_mm_dd]) {
+        index = scheduleOrder.indexOf(scheduleOverrides[yyyy_mm_dd]);
+      } else {
+        index = (index + 1) % scheduleOrder.length;
+      }
+    }
+    current = new Date(current.getTime() + dayMS);
+  }
+
+  // Offset for the weekdayIndex
+  index = (index + weekdayIndex) % scheduleOrder.length;
+  return scheduleOrder[index];
+}
+
+
 // ===== Smooth Card Cursor-Follow Effect =====
 const cards = document.querySelectorAll(".schedule-card");
 let mouse = { x: 0, y: 0 };
