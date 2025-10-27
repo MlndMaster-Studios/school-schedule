@@ -22,76 +22,81 @@ items.forEach(item => {
 });
 
 // ===== Week View Button & Weekday Cards =====
-function createWeekViewButton() {
+document.addEventListener("DOMContentLoaded", () => {
     const dayBtn = document.getElementById("dayDropdownBtn");
-    if (document.getElementById("weekViewBtn")) return; // prevent duplicates
+    if (!dayBtn) return console.error("❌ Could not find #dayDropdownBtn");
 
-    const weekViewBtn = document.createElement("button");
-    weekViewBtn.id = "weekViewBtn";
-    weekViewBtn.textContent = "Week View ▾";
-    dayBtn.parentNode.insertBefore(weekViewBtn, dayBtn.nextSibling);
+    // create button only if missing
+    if (!document.getElementById("weekViewBtn")) {
+        const weekViewBtn = document.createElement("button");
+        weekViewBtn.id = "weekViewBtn";
+        weekViewBtn.textContent = "Week View ▾";
+        weekViewBtn.style.marginLeft = "0.5rem";
+        dayBtn.parentNode.insertBefore(weekViewBtn, dayBtn.nextSibling);
 
-    weekViewBtn.addEventListener("click", toggleWeekView);
-}
+        let weekViewVisible = false;
 
-// Toggle Week View
-let weekViewVisible = false;
-function toggleWeekView() {
-    const days = document.querySelectorAll(".schedule-day");
-    const existingWeekRow = document.getElementById("weekViewRow");
+        weekViewBtn.addEventListener("click", () => {
+            const days = document.querySelectorAll(".schedule-day");
+            const existingWeekRow = document.getElementById("weekViewRow");
 
-    if (!weekViewVisible) {
-        // Hide normal schedule
-        days.forEach(d => d.classList.add("hidden"));
+            if (!weekViewVisible) {
+                // Hide normal schedule
+                days.forEach(d => d.classList.add("hidden"));
 
-        // Create week row
-        const weekRow = document.createElement("div");
-        weekRow.id = "weekViewRow";
-        weekRow.style.display = "flex";
-        weekRow.style.justifyContent = "space-between";
-        weekRow.style.gap = "1rem";
-        weekRow.style.margin = "1rem 0";
+                // Create container
+                const weekRow = document.createElement("div");
+                weekRow.id = "weekViewRow";
+                weekRow.style.display = "flex";
+                weekRow.style.justifyContent = "space-between";
+                weekRow.style.gap = "1rem";
+                weekRow.style.margin = "1rem 0";
 
-        // Build weekday cards
-        const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-        weekdays.forEach((day, i) => {
-            const letterDay = calculateDayForWeekdayOffset(i);
-            const card = document.createElement("div");
-            card.className = "schedule-card";
-            card.style.flex = "1"; // spread evenly
-            card.innerHTML = `<h3>${day}</h3><p>${letterDay} DAY</p>`;
-            weekRow.appendChild(card);
+                // Create weekday cards
+                const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+                weekdays.forEach((day, i) => {
+                    const letterDay = calculateDayForWeekdayOffset(i);
+                    const card = document.createElement("div");
+                    card.className = "schedule-card";
+                    card.style.flex = "1";
+                    card.style.textAlign = "center";
+                    card.innerHTML = `<h3>${day}</h3><p>${letterDay} DAY</p>`;
+                    weekRow.appendChild(card);
+                });
+
+                // insert below dropdown row
+                dayBtn.parentNode.parentNode.insertBefore(
+                    weekRow,
+                    dayBtn.parentNode.nextSibling
+                );
+
+                weekViewVisible = true;
+            } else {
+                // Hide week view, show normal
+                if (existingWeekRow) existingWeekRow.remove();
+                days.forEach(d => d.classList.remove("hidden"));
+                weekViewVisible = false;
+            }
         });
-
-        // Insert below buttons
-        const parentDiv = dayBtn.parentNode.parentNode;
-        parentDiv.insertBefore(weekRow, dayBtn.parentNode.nextSibling);
-
-        weekViewVisible = true;
-    } else {
-        // Hide week row
-        if (existingWeekRow) existingWeekRow.remove();
-        // Show normal schedule
-        days.forEach(d => d.classList.remove("hidden"));
-        weekViewVisible = false;
     }
-}
 
-// Helper: calculate letter day for any offset
-function calculateDayForWeekdayOffset(offsetDays) {
-    const today = new Date();
-    today.setHours(0,0,0,0);
-    const targetDate = new Date(today);
-    targetDate.setDate(today.getDate() + offsetDays);
+    // helper uses your existing calculateDay()
+    function calculateDayForWeekdayOffset(offsetDays) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const targetDate = new Date(today);
+        targetDate.setDate(today.getDate() + offsetDays);
 
-    const dayStr = calculateDay(targetDate).replace(" Day",""); // remove " Day" suffix
-    if (dayStr === "No Classes 🎉") return "No Classes";
-    return dayStr;
-}
+        if (typeof calculateDay !== "function") {
+            console.error("❌ calculateDay() not found — must be defined above this code!");
+            return "?";
+        }
 
-// Initialize week view button
-createWeekViewButton();
-
+        const dayStr = calculateDay(targetDate).replace(" Day", "");
+        if (dayStr === "No Classes 🎉") return "No Classes";
+        return dayStr;
+    }
+});
 
 // ===== Smooth Card Cursor-Follow Effect =====
 const cards = document.querySelectorAll(".schedule-card");
