@@ -7,37 +7,37 @@
   <link rel="icon" href="tab-icon.png" type="image/png">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/feather-icons"></script>
-<link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body class="text-gray-200 min-h-screen relative">
- <!-- Clock -->
-<div class="day-clock-wrapper">
-  <div class="day-clock-card">
-    <h2 id="school-day">Loading Day...</h2>
-    <p id="dateText"></p>
+
+  <!-- Clock -->
+  <div class="day-clock-wrapper">
+    <div class="day-clock-card">
+      <h2 id="school-day">Loading Day...</h2>
+      <p id="dateText"></p>
+    </div>
   </div>
-</div>
+
   <!-- Progress Bar Section -->
-<div id="progress-section" class="flex flex-col items-center mt-6 mb-8 text-center">
-
-  <!-- Progress Bar -->
-  <div id="progress-bar-container" class="relative w-3/4 h-6 rounded-full overflow-hidden">
-    <div id="progress-bar" class="h-full rounded-full transition-all duration-700 ease-in-out"></div>
-    <span id="progress-text" class="absolute inset-0 flex items-center justify-center text-sm font-medium text-white"></span>
-  </div>
-
-  <!-- Progress Widgets -->
-  <div id="progress-widgets" class="mt-6 flex flex-col sm:flex-row sm:space-x-4 justify-center">
-    <div class="widget-card">
-      <div class="widget-title">Estimated School Days:</div>
-      <div id="weekdays-left" class="widget-number">--</div>
+  <div id="progress-section" class="flex flex-col items-center mt-6 mb-8 text-center">
+    <div id="progress-bar-container" class="relative w-3/4 h-6 rounded-full overflow-hidden">
+      <div id="progress-bar" class="h-full rounded-full transition-all duration-700 ease-in-out"></div>
+      <span id="progress-text" class="absolute inset-0 flex items-center justify-center text-sm font-medium text-white"></span>
     </div>
-    <div class="widget-card">
-      <div class="widget-title">Total Days:</div>
-      <div id="total-days" class="widget-number">--</div>
+
+    <div id="progress-widgets" class="mt-6 flex flex-col sm:flex-row sm:space-x-4 justify-center">
+      <div class="widget-card">
+        <div class="widget-title">Estimated School Days:</div>
+        <div id="weekdays-left" class="widget-number">--</div>
+      </div>
+      <div class="widget-card">
+        <div class="widget-title">Total Days:</div>
+        <div id="total-days" class="widget-number">--</div>
+      </div>
     </div>
   </div>
-</div>
+
   <!-- Canvas for particle background -->
   <canvas id="bgCanvas" class="fixed top-0 left-0 w-full h-full -z-10"></canvas>
 
@@ -49,12 +49,17 @@
       <span class="text-gray-300 font-medium">SIHS</span>
     </header>
 
-    <!-- Day Dropdown -->
-    <div class="mb-6 relative w-64">
-      <button id="dayDropdownBtn" class="w-full bg-slate-800 px-4 py-2 rounded-lg text-white font-medium text-left">
+    <!-- Day Dropdown + Week Button -->
+    <div class="mb-6 relative flex space-x-2 w-64">
+      <button id="dayDropdownBtn" class="flex-1 bg-slate-800 px-4 py-2 rounded-lg text-white font-medium text-left">
         Select Day ▾
       </button>
-      <div id="dayDropdown" class="absolute w-full bg-slate-800 rounded-lg mt-1 hidden shadow-lg">
+      <button id="weekViewBtn" class="bg-purple-600 px-4 py-2 rounded-lg text-white font-medium">
+        Week ▾
+      </button>
+
+      <!-- Day Dropdown -->
+      <div id="dayDropdown" class="absolute w-full bg-slate-800 rounded-lg mt-12 hidden shadow-lg z-20">
         <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="A">A Day</div>
         <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="B">B Day</div>
         <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="C">C Day</div>
@@ -66,9 +71,35 @@
       </div>
     </div>
 
+    <!-- Week View Container -->
+    <div id="weekViewDropdown" class="hidden w-full bg-slate-800 rounded-lg mt-2 p-4 shadow-lg z-10">
+      <div class="flex justify-between text-center font-medium text-white">
+        <div class="week-day-card">
+          <p>Monday</p>
+          <p id="mon-letter" class="text-purple-400">-</p>
+        </div>
+        <div class="week-day-card">
+          <p>Tuesday</p>
+          <p id="tue-letter" class="text-purple-400">-</p>
+        </div>
+        <div class="week-day-card">
+          <p>Wednesday</p>
+          <p id="wed-letter" class="text-purple-400">-</p>
+        </div>
+        <div class="week-day-card">
+          <p>Thursday</p>
+          <p id="thu-letter" class="text-purple-400">-</p>
+        </div>
+        <div class="week-day-card">
+          <p>Friday</p>
+          <p id="fri-letter" class="text-purple-400">-</p>
+        </div>
+      </div>
+    </div>
+
     <!-- Schedules -->
     <div id="schedule-container">
-      <!-- Each day uses the same row structure (2 cards per row; last centered if alone) -->
+            <!-- Each day uses the same row structure (2 cards per row; last centered if alone) -->
 
       <!-- A Day -->
       <div class="schedule-day" id="A-day">
