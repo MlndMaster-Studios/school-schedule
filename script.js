@@ -192,16 +192,13 @@ const schoolEnd = new Date("2026-05-21T00:00:00");
 // Paused days (YYYY-MM-DD)
 const pausedDays = ["2025-10-15", "2025-10-16", "2025-10-17"]; // example
 
-// Helper to count weekdays excluding paused days
+// Helper to count weekdays (no pauses)
 function countWeekdays(start, end) {
   let count = 0;
   let current = new Date(start);
   while (current <= end) {
     const dayOfWeek = current.getDay();
-    const yyyy_mm_dd = current.toISOString().slice(0,10);
-    if(dayOfWeek !== 0 && dayOfWeek !== 6 && !pausedDays.includes(yyyy_mm_dd)) {
-      count++;
-    }
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) count++;
     current.setDate(current.getDate() + 1);
   }
   return count;
@@ -210,23 +207,27 @@ function countWeekdays(start, end) {
 // Update progress
 function updateProgress() {
   const today = new Date();
+
+  // --- Calendar-based total days ---
+  const totalDays = Math.floor((schoolEnd - schoolStart) / (1000 * 60 * 60 * 24));
+  const elapsedDays = Math.floor((today - schoolStart) / (1000 * 60 * 60 * 24));
+  const percent = Math.min(Math.max((elapsedDays / totalDays) * 100, 0), 100);
+
+  // --- Weekday counts ---
   const totalWeekdays = countWeekdays(schoolStart, schoolEnd);
   const elapsedWeekdays = countWeekdays(schoolStart, today);
   const remainingWeekdays = totalWeekdays - elapsedWeekdays;
 
-  const percent = Math.min(Math.max((elapsedWeekdays / totalWeekdays) * 100, 0), 100);
+  // --- Remove paused days from remaining weekdays only ---
+  const remainingPauseDays = pausedDays.filter(d => new Date(d) >= today).length;
+  const adjustedRemainingWeekdays = remainingWeekdays - remainingPauseDays;
 
-  // Update bar width (only)
+  // Update bar
   progressBar.style.width = percent + "%";
-
-  // Keep the CSS gradient static — don’t overwrite it with JS color
-  // progressBar.style.background = color;  ← removed
-
-  // Update text inside bar
   progressText.textContent = Math.round(percent) + "%";
 
-  // Update widgets (only numbers)
-  weekdaysLeftElem.textContent = remainingWeekdays;
+  // Update widgets
+  weekdaysLeftElem.textContent = adjustedRemainingWeekdays;
   totalDaysElem.textContent = totalWeekdays;
 }
 
@@ -234,7 +235,7 @@ function updateProgress() {
 updateProgress();
 
 // Optional: update every day at midnight
-setInterval(updateProgress, 60 * 60 * 1000); // every hour is fine
+setInterval(updateProgress, 60 * 60 * 1000);
 
   function updateProgressBar(percent) {
   const bar = document.getElementById('progress-bar');
