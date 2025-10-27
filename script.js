@@ -187,7 +187,7 @@ const totalDaysElem = document.getElementById("total-days");
 
 // Start & end of school
 const schoolStart = new Date("2025-08-20T00:00:00");
-const schoolEnd = new Date("2026-05-21T00:00:00");
+const schoolEnd = new Date("2025-10-28T00:00:00");
 
 // Paused days (YYYY-MM-DD)
 const pausedDays = ["2025-10-15", "2025-10-16", "2025-10-17"]; // example
