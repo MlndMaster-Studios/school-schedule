@@ -216,12 +216,11 @@ function updateProgress() {
 
   const percent = Math.min(Math.max((elapsedWeekdays / totalWeekdays) * 100, 0), 100);
 
-  // Update bar width and color
+  // Update bar width (only)
   progressBar.style.width = percent + "%";
 
-  // Smooth gradient: red -> orange -> yellow -> green
-  const color = `hsl(${percent * 1.2}, 75%, 50%)`;
-  progressBar.style.background = color;
+  // Keep the CSS gradient static — don’t overwrite it with JS color
+  // progressBar.style.background = color;  ← removed
 
   // Update text inside bar
   progressText.textContent = Math.round(percent) + "%";
