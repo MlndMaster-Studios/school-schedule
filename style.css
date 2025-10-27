@@ -1,14 +1,13 @@
 body {
   margin: 0;
   padding: 0;
-  height: 100vh;
-  background: linear-gradient(-45deg, #1b0034, #2a0066, #260057, #1b0034);
-  background-size: 400% 400%;
-  animation: gradientFlow 15s ease infinite;
-  color: white;
+  min-height: 100vh;
+  background: linear-gradient(-45deg, #100018, #1e0030, #2a0050, #100018) !important;
+  background-size: 400% 400% !important;
+  animation: gradientFlow 20s ease infinite !important;
+  color: #e8e8ff !important;
   overflow-x: hidden;
 }
-
 @keyframes gradientFlow {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
