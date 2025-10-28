@@ -163,6 +163,42 @@ if (window.innerWidth <= 768) {
   window.location.href = "https://mlndmaster-studios.github.io/school-schedule/mobile/";
 }
 
+// ===== Auto-Fill Week View with Correct Letter Days =====
+function updateWeekView() {
+  const weekSection = document.getElementById("WEEK-day");
+  if (!weekSection) return;
+
+  // Get the Monday of the current week
+  const today = new Date();
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - ((today.getDay() + 6) % 7)); // backtrack to Monday
+  monday.setHours(0, 0, 0, 0);
+
+  // Loop through Monday–Friday
+  const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+  const cards = weekSection.querySelectorAll(".schedule-card");
+
+  weekdays.forEach((day, i) => {
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + i);
+
+    const letterDay = calculateDay(date).replace(" Day", "");
+    const card = cards[i];
+    if (card) {
+      card.querySelector("p").textContent = `${letterDay} Day`;
+    }
+  });
+}
+
+// Run every time dropdown changes
+document.querySelectorAll(".dropdown-item").forEach(item => {
+  item.addEventListener("click", e => {
+    if (e.target.dataset.day === "WEEK") {
+      updateWeekView();
+    }
+  });
+});
+
 // ===== Time-Based Background Gradient =====
 function updateBackgroundByTime() {
   const now = new Date();
