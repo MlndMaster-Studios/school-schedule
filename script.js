@@ -168,6 +168,7 @@ function updateWeekView() {
   const weekSection = document.getElementById("WEEK-day");
   if (!weekSection) return;
 
+  // Get Monday of this week
   const today = new Date();
   const monday = new Date(today);
   monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
@@ -183,8 +184,10 @@ function updateWeekView() {
     const letterDay = calculateDay(date).replace(" Day", "");
     const card = cards[i];
     if (card) {
+      // Find or create the paragraph to update
       let textEl = card.querySelector(".day-type");
       if (!textEl) {
+        // Replace placeholder <p> with our dynamic one
         card.querySelector("p").remove();
         textEl = document.createElement("p");
         textEl.classList.add("day-type");
@@ -195,6 +198,7 @@ function updateWeekView() {
   });
 }
 
+// Run every time dropdown changes
 document.querySelectorAll(".dropdown-item").forEach(item => {
   item.addEventListener("click", e => {
     if (e.target.dataset.day === "WEEK") {
@@ -218,17 +222,20 @@ function updateBackgroundByTime() {
 }
 updateBackgroundByTime();
 setInterval(updateBackgroundByTime, 15 * 60 * 1000);
-
 // ===== Progress Bar & Widgets =====
 const progressBar = document.getElementById("progress-bar");
 const progressText = document.getElementById("progress-text");
 const weekdaysLeftElem = document.getElementById("weekdays-left");
 const totalDaysElem = document.getElementById("total-days");
 
+// Start & end of school
 const schoolStart = new Date("2025-08-20T00:00:00");
 const schoolEnd = new Date("2026-05-21T00:00:00");
-const pausedDays = ["2025-10-15", "2025-10-16", "2025-10-17"];
 
+// Paused days (YYYY-MM-DD)
+const pausedDays = ["2025-10-15", "2025-10-16", "2025-10-17"]; // example
+
+// Helper to count weekdays excluding paused days
 function countWeekdays(start, end) {
   let count = 0;
   let current = new Date(start);
@@ -243,40 +250,38 @@ function countWeekdays(start, end) {
   return count;
 }
 
+// Update progress
 function updateProgress() {
   const today = new Date();
+
+  // --- Calendar-based total days remaining ---
   const totalCalendarDays = Math.ceil((schoolEnd - today) / (1000 * 60 * 60 * 24));
+
+  // --- Weekday counts ---
   const totalWeekdays = countWeekdays(schoolStart, schoolEnd);
   const elapsedWeekdays = countWeekdays(schoolStart, today);
   const remainingWeekdays = totalWeekdays - elapsedWeekdays;
+
+  // --- Progress percentage based on weekdays ---
   const percent = Math.min(Math.max((elapsedWeekdays / totalWeekdays) * 100, 0), 100);
 
+  // Update bar
   progressBar.style.width = percent + "%";
   progressText.textContent = Math.round(percent) + "%";
+
+  // Update widgets
   weekdaysLeftElem.textContent = remainingWeekdays;
   totalDaysElem.textContent = totalCalendarDays;
 }
 
+// Run initially
 updateProgress();
+
+// Optional: update every hour
 setInterval(updateProgress, 60 * 60 * 1000);
 
-// ===== Dark/Light Mode Toggle =====
-const themeBtn = document.createElement('button');
-themeBtn.id = 'themeToggleBtn';
-themeBtn.textContent = 'Light Mode';
-themeBtn.className = 'ml-4 px-4 py-2 rounded-lg font-medium bg-blue-500 text-white hover:bg-blue-600 transition';
-document.querySelector('header').appendChild(themeBtn);
-
-// Check saved theme
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme === 'light') {
-  document.documentElement.classList.add('light');
-  themeBtn.textContent = 'Dark Mode';
+  function updateProgressBar(percent) {
+  const bar = document.getElementById('progress-bar');
+  bar.style.width = percent + '%';
+  document.getElementById('progress-text').textContent = `${percent}%`;
 }
-
-// Toggle theme
-themeBtn.addEventListener('click', () => {
-  const isLight = document.documentElement.classList.toggle('light');
-  themeBtn.textContent = isLight ? 'Dark Mode' : 'Light Mode';
-  localStorage.setItem('theme', isLight ? 'light' : 'dark');
-});
