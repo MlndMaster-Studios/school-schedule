@@ -9,7 +9,6 @@ body {
   color: #e8e8ff !important;
   overflow-x: hidden;
 }
-
 @keyframes gradientFlow {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -169,19 +168,13 @@ p {
   }
 }
 
-/* ===== Day Clock + Progress Section: SHIFTED DOWN ===== */
+/* ===== Letter Day Clock (Top Center Card) ===== */
 .day-clock-wrapper {
   display: flex;
   justify-content: center;
-  margin-top: 60px; /* pushes the entire top section down */
+  margin-bottom: 2rem;
 }
 
-#progress-section {
-  margin-top: 20px; /* keeps progress bar & widgets spaced properly relative to clock */
-  font-family: 'Inter', sans-serif;
-}
-
-/* ===== Letter Day Clock (Top Center Card) ===== */
 .day-clock-card {
   background: rgba(30, 41, 59, 0.55);
   backdrop-filter: blur(15px) saturate(180%);
@@ -259,22 +252,42 @@ p {
   }
 }
 
-/* ===== Progress Bar ===== */
+/* ===== Progress Bar Section ===== */
+#progress-section {
+  font-family: 'Inter', sans-serif;
+}
+
 #progress-bar-container {
   background: rgba(30, 41, 59, 0.55);
-  border-radius: 12px;
+  border-radius: 9999px;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.35), inset 0 0 12px rgba(255,255,255,0.1);
   overflow: hidden;
-  width: 80%;
-  max-width: 600px;
-  margin: 0 auto;
-  height: 18px;
-  border: 1px solid rgba(139, 92, 246, 0.2);
+  position: relative;
 }
 
 #progress-bar {
   height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, #8b5cf6, #4f46e5);
-  border-radius: 12px;
-  transition: width 0.4s ease;
+  border-radius: 9999px;
+  transition: width 0.4s ease-in-out;
+  background: linear-gradient(90deg, #8b5cf6, #6366f1, #22d3ee, #34d399);
+}
+
+
+@keyframes progressBarBlend {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+#progress-bar-container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.25);
+  animation: barGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes barGlow {
+  from { box-shadow: 0 0 8px rgba(139, 92, 246, 0.2); }
+  to { box-shadow: 0 0 20px rgba(52, 211, 153, 0.4); }
 }
