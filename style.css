@@ -291,3 +291,56 @@ p {
   from { box-shadow: 0 0 8px rgba(139, 92, 246, 0.2); }
   to { box-shadow: 0 0 20px rgba(52, 211, 153, 0.4); }
 }
+/* ===== Light Mode ===== */
+html.light {
+  --bg-gradient: linear-gradient(135deg, #e0f2ff, #f0f8ff);
+  --text-color: #111;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --card-text: #111;
+  --accent-color: #3b82f6; /* calm blue instead of purple */
+  --particle-color: rgba(59, 130, 246, 0.5);
+}
+
+html.light body {
+  background: var(--bg-gradient) !important;
+  color: var(--text-color) !important;
+}
+
+html.light .schedule-card,
+html.light .widget-card,
+html.light .day-clock-card,
+html.light #progress-bar-container {
+  background: var(--card-bg) !important;
+  color: var(--card-text) !important;
+  border-color: rgba(59, 130, 246, 0.15);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+html.light #dayDropdownBtn {
+  background: var(--accent-color) !important;
+  color: white !important;
+}
+
+html.light .dropdown-item:hover {
+  background: var(--accent-color);
+  color: #fff;
+}
+
+html.light #progress-bar {
+  background: linear-gradient(90deg, #3b82f6, #60a5fa, #22d3ee);
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: var(--accent-color);
+}
+
+/* Adjust gradients for h1 spans in light mode */
+html.light h1 span {
+  background: linear-gradient(270deg, #3b82f6, #60a5fa, #22d3ee);
+}
+
+/* Optional: adjust text gradients in day-clock-card */
+html.light .day-clock-card h2 {
+  background: linear-gradient(90deg, #3b82f6, #60a5fa, #22d3ee);
+}
+
