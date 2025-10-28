@@ -1,41 +1,14 @@
-/* ===== Variables for Dark/Light Mode ===== */
-:root {
-  --bg-dark: linear-gradient(-45deg, #100018, #1e0030, #2a0050, #100018);
-  --bg-light: linear-gradient(-45deg, #e0f7ff, #a0dfff, #70bfff, #e0f7ff);
-  --card-bg-dark: rgba(30, 41, 59, 0.55);
-  --card-bg-light: rgba(220, 240, 255, 0.55);
-  --card-border-dark: rgba(139, 92, 246, 0.15);
-  --card-border-light: rgba(66, 153, 225, 0.25);
-  --text-dark: #e8e8ff;
-  --text-light: #1f2937;
-  --subtext-dark: #c3c1ff;
-  --subtext-light: #1e3a8a;
-  --gradient-dark: linear-gradient(270deg, #8b5cf6, #4f46e5, #0f172a);
-  --gradient-light: linear-gradient(270deg, #3b82f6, #60a5fa, #bfdbfe);
-  --btn-bg-dark: linear-gradient(135deg, #8b5cf6, #4f46e5);
-  --btn-bg-light: linear-gradient(135deg, #3b82f6, #60a5fa);
-  --dropdown-bg-dark: rgba(30,41,59,0.95);
-  --dropdown-bg-light: rgba(220,240,255,0.95);
-}
-
 /* ===== Body & General ===== */
 body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  background: var(--bg-dark);
-  background-size: 400% 400%;
-  animation: gradientFlow 20s ease infinite;
-  color: var(--text-dark);
+  background: linear-gradient(-45deg, #100018, #1e0030, #2a0050, #100018) !important;
+  background-size: 400% 400% !important;
+  animation: gradientFlow 20s ease infinite !important;
+  color: #e8e8ff !important;
   overflow-x: hidden;
-  transition: all 0.5s ease;
 }
-
-.light body {
-  background: var(--bg-light);
-  color: var(--text-light);
-}
-
 @keyframes gradientFlow {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -47,15 +20,11 @@ h1, h2, h3 {
 }
 
 h1 span {
-  background: var(--gradient-dark);
+  background: linear-gradient(270deg, #8b5cf6, #4f46e5, #0f172a);
   background-size: 600% 600%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: textGradient 8s ease infinite;
-}
-
-.light h1 span {
-  background: var(--gradient-light);
 }
 
 @keyframes textGradient {
@@ -65,13 +34,9 @@ h1 span {
 }
 
 p {
-  color: var(--subtext-dark);
+  color: #c3c1ff;
   margin-top: 4px;
   margin-bottom: 8px;
-}
-
-.light p {
-  color: var(--subtext-light);
 }
 
 /* ===== Schedule Rows ===== */
@@ -98,17 +63,17 @@ p {
   }
 }
 
-/* ===== Schedule Cards ===== */
+/* ===== Schedule Cards – frosted glass + subtle neon hover ===== */
 .schedule-card, .widget-card {
   position: relative;
-  background: var(--card-bg-dark);
+  background: rgba(30, 41, 59, 0.55) !important;
   backdrop-filter: blur(12px) saturate(150%);
   border-radius: 16px;
   padding: 16px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  border: 1px solid var(--card-border-dark);
+  border: 1px solid rgba(139, 92, 246, 0.15);
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   transition: all 0.25s ease-in-out;
   overflow: hidden;
@@ -116,11 +81,6 @@ p {
   will-change: transform, box-shadow, border-color;
   --mouseX: 0;
   --mouseY: 0;
-}
-
-.light .schedule-card, .light .widget-card {
-  background: var(--card-bg-light);
-  border: 1px solid var(--card-border-light);
 }
 
 .schedule-card:hover, .widget-card:hover {
@@ -132,13 +92,9 @@ p {
 }
 
 .schedule-card h3 {
-  color: var(--text-dark);
+  color: #e0d7ff;
   text-shadow: 0 0 4px rgba(139,92,246,0.15);
   transition: all 0.3s ease;
-}
-
-.light .schedule-card h3 {
-  color: var(--text-light);
 }
 
 .schedule-card:hover h3 {
@@ -146,28 +102,20 @@ p {
 }
 
 .schedule-card p, .widget-card p {
-  color: var(--subtext-dark);
+  color: #c3c1ff;
 }
 
-.light .schedule-card p, .light .widget-card p {
-  color: var(--subtext-light);
-}
-
-/* ===== Dropdown Button ===== */
+/* ===== Dropdown Menu & Button ===== */
 #dayDropdownBtn {
   cursor: pointer;
-  background: var(--btn-bg-dark);
+  background: linear-gradient(135deg, #8b5cf6, #4f46e5) !important;
   background-size: 400% 400%;
-  color: #fff;
+  color: #fff !important;
   font-weight: 500;
   border-radius: 12px;
   padding: 0.5rem 1rem;
   transition: all 0.3s ease;
   animation: buttonGradient 8s ease infinite;
-}
-
-.light #dayDropdownBtn {
-  background: var(--btn-bg-light);
 }
 
 @keyframes buttonGradient {
@@ -182,15 +130,11 @@ p {
 }
 
 #dayDropdown {
-  background: var(--dropdown-bg-dark);
+  background: rgba(30,41,59,0.95);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 10px 20px rgba(139,92,246,0.3);
   z-index: 50;
-}
-
-.light #dayDropdown {
-  background: var(--dropdown-bg-light);
 }
 
 .dropdown-item {
@@ -200,10 +144,6 @@ p {
 .dropdown-item:hover {
   background: linear-gradient(135deg, #8b5cf6, #4f46e5);
   color: #fff;
-}
-
-.light .dropdown-item:hover {
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
 }
 
 /* ===== Scrollbar ===== */
@@ -217,16 +157,8 @@ p {
   border-radius: 3px;
 }
 
-.light ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #3b82f6, #60a5fa);
-}
-
 ::-webkit-scrollbar-track {
   background: #0f172a;
-}
-
-.light ::-webkit-scrollbar-track {
-  background: #e0f7ff;
 }
 
 /* ===== Responsive Layout ===== */
@@ -236,7 +168,7 @@ p {
   }
 }
 
-/* ===== Letter Day Clock ===== */
+/* ===== Letter Day Clock (Top Center Card) ===== */
 .day-clock-wrapper {
   display: flex;
   justify-content: center;
@@ -244,7 +176,7 @@ p {
 }
 
 .day-clock-card {
-  background: var(--card-bg-dark);
+  background: rgba(30, 41, 59, 0.55);
   backdrop-filter: blur(15px) saturate(180%);
   border: 1px solid rgba(139, 92, 246, 0.25);
   border-radius: 20px;
@@ -256,15 +188,16 @@ p {
   width: 100%;
 }
 
-.light .day-clock-card {
-  background: var(--card-bg-light);
-  border-color: var(--card-border-light);
+.day-clock-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(139, 92, 246, 0.35);
+  border-color: rgba(139, 92, 246, 0.4);
 }
 
 .day-clock-card h2 {
   font-size: 1.75rem;
   font-weight: 600;
-  background: var(--gradient-dark);
+  background: linear-gradient(90deg, #a78bfa, #4f46e5, #60a5fa);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-size: 200% 200%;
@@ -272,18 +205,10 @@ p {
   margin-bottom: 0.25rem;
 }
 
-.light .day-clock-card h2 {
-  background: var(--gradient-light);
-}
-
 .day-clock-card p {
-  color: var(--subtext-dark);
+  color: #c3c1ff;
   font-size: 0.9rem;
   opacity: 0.9;
-}
-
-.light .day-clock-card p {
-  color: var(--subtext-light);
 }
 
 @keyframes textShift {
@@ -292,16 +217,18 @@ p {
   100% { background-position: 0% 50%; }
 }
 
-/* ===== Mobile Schedule Adjustments ===== */
+/* ===== Mobile Schedule Reordering ===== */
 @media (max-width: 640px) {
   .schedule-day {
     display: grid;
     grid-template-columns: 1fr;
     gap: 1rem;
   }
+
   .schedule-row {
     display: contents;
   }
+
   .schedule-card {
     width: 100%;
   }
@@ -313,9 +240,11 @@ p {
     flex-direction: column;
     gap: 1rem;
   }
+
   .schedule-row {
     display: contents;
   }
+
   .schedule-card {
     width: 100%;
     max-width: 100%;
@@ -323,22 +252,17 @@ p {
   }
 }
 
-/* ===== Progress Bar ===== */
+/* ===== Progress Bar Section ===== */
 #progress-section {
   font-family: 'Inter', sans-serif;
 }
 
 #progress-bar-container {
-  background: var(--card-bg-dark);
+  background: rgba(30, 41, 59, 0.55);
   border-radius: 9999px;
   box-shadow: 0 0 20px rgba(139, 92, 246, 0.35), inset 0 0 12px rgba(255,255,255,0.1);
   overflow: hidden;
   position: relative;
-}
-
-.light #progress-bar-container {
-  background: var(--card-bg-light);
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.35), inset 0 0 12px rgba(0,0,0,0.05);
 }
 
 #progress-bar {
@@ -348,10 +272,12 @@ p {
   background: linear-gradient(90deg, #8b5cf6, #6366f1, #22d3ee, #34d399);
 }
 
-.light #progress-bar {
-  background: linear-gradient(90deg, #3b82f6, #60a5fa, #22d3ee, #34d399);
-}
 
+@keyframes progressBarBlend {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
 #progress-bar-container::after {
   content: "";
   position: absolute;
@@ -359,10 +285,6 @@ p {
   border-radius: 9999px;
   box-shadow: 0 0 15px rgba(99, 102, 241, 0.25);
   animation: barGlow 3s ease-in-out infinite alternate;
-}
-
-.light #progress-bar-container::after {
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.25);
 }
 
 @keyframes barGlow {
