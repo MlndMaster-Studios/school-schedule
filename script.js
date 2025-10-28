@@ -168,13 +168,12 @@ function updateWeekView() {
   const weekSection = document.getElementById("WEEK-day");
   if (!weekSection) return;
 
-  // Get the Monday of the current week
+  // Get Monday of this week
   const today = new Date();
   const monday = new Date(today);
-  monday.setDate(today.getDate() - ((today.getDay() + 6) % 7)); // backtrack to Monday
+  monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
   monday.setHours(0, 0, 0, 0);
 
-  // Loop through Monday–Friday
   const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
   const cards = weekSection.querySelectorAll(".schedule-card");
 
@@ -185,7 +184,16 @@ function updateWeekView() {
     const letterDay = calculateDay(date).replace(" Day", "");
     const card = cards[i];
     if (card) {
-      card.querySelector("p").textContent = `${letterDay} Day`;
+      // Find or create the paragraph to update
+      let textEl = card.querySelector(".day-type");
+      if (!textEl) {
+        // Replace placeholder <p> with our dynamic one
+        card.querySelector("p").remove();
+        textEl = document.createElement("p");
+        textEl.classList.add("day-type");
+        card.appendChild(textEl);
+      }
+      textEl.textContent = `${letterDay} Day`;
     }
   });
 }
