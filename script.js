@@ -285,3 +285,44 @@ setInterval(updateProgress, 60 * 60 * 1000);
   bar.style.width = percent + '%';
   document.getElementById('progress-text').textContent = `${percent}%`;
 }
+// ===== Dark/Light Mode Toggle =====
+const themeBtn = document.getElementById("themeToggleBtn");
+
+// Load saved theme
+if(localStorage.getItem("theme") === "light") {
+  document.documentElement.classList.remove("dark");
+  document.documentElement.classList.add("light");
+  themeBtn.textContent = "Dark Mode";
+} else {
+  document.documentElement.classList.add("dark");
+  themeBtn.textContent = "Light Mode";
+}
+
+// Particle color adaptation
+function updateParticleColors() {
+  const isLight = document.documentElement.classList.contains("light");
+  particles.forEach(p => {
+    p.color = isLight
+      ? `rgba(59,130,246,${Math.random() * 0.5 + 0.2})`
+      : `rgba(139,92,246,${Math.random() * 0.5 + 0.2})`;
+  });
+}
+
+// Initial update
+updateParticleColors();
+
+themeBtn.addEventListener("click", () => {
+  const htmlEl = document.documentElement;
+  if(htmlEl.classList.contains("dark")) {
+    htmlEl.classList.remove("dark");
+    htmlEl.classList.add("light");
+    localStorage.setItem("theme", "light");
+    themeBtn.textContent = "Dark Mode";
+  } else {
+    htmlEl.classList.remove("light");
+    htmlEl.classList.add("dark");
+    localStorage.setItem("theme", "dark");
+    themeBtn.textContent = "Light Mode";
+  }
+  updateParticleColors();
+});
