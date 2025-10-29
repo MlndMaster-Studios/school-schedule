@@ -28,12 +28,16 @@
       <div class="dropdown-item" data-day="F">F Day</div>
       <div class="dropdown-item" data-day="G">G Day</div>
       <div class="dropdown-item" data-day="WED">Wednesday</div>
+      <div class="dropdown-item" data-day="WEEK">📅 Weekly Schedule</div>
     </div>
   </div>
 
   <!-- Schedule Container -->
   <div id="schedule-container">
+    <!-- Week View Placeholder -->
+    <div class="schedule-day hidden" id="WEEK-day"></div>
 
+    <!-- Your existing A–G + WED day schedules (unchanged) -->
     <!-- A Day -->
     <div class="schedule-day" id="A-day">
       <div class="schedule-card"><h3>A Class</h3><p>8:20–9:23</p><p>Chemistry - SC202</p></div>
@@ -44,7 +48,7 @@
       <div class="schedule-card"><h3>E Class</h3><p>2:02–3:05</p><p>English II - MB314</p></div>
     </div>
 
-    <!-- B Day -->
+       <!-- B Day -->
     <div class="schedule-day hidden" id="B-day">
       <div class="schedule-card"><h3>B Class</h3><p>8:20–9:23</p><p>FREE</p></div>
       <div class="schedule-card"><h3>C Class</h3><p>9:30–10:28</p><p>Spanish II - MB416</p></div>
@@ -128,18 +132,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const days = document.querySelectorAll(".schedule-day");
   const dayDisplayEl = document.getElementById("school-day");
   const dateTextEl = document.getElementById("dateText");
+  const weekView = document.getElementById("WEEK-day");
 
   // ===== CONFIG =====
   const scheduleOrder = ["A", "F", "D", "B", "G", "E", "C"];
-
-  // VERIFIED: Oct 10 2025 = E Day
   const refDate = new Date("2025-10-10");
   const refLetter = "E";
 
   const overrides = {
-  "2025-10-17": "PAUSE",
-  "2025-10-16": "PAUSE",
-  "2025-10-15": "PAUSE"
+    "2025-10-17": "PAUSE",
+    "2025-10-16": "PAUSE",
+    "2025-10-15": "PAUSE"
   };
 
   function toYMD(date) {
@@ -153,7 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const startIndex = scheduleOrder.indexOf(refLetter);
     let index = startIndex;
     const current = new Date(refDate);
-
     const diffDays = Math.floor((date - current) / (1000 * 60 * 60 * 24));
     const step = diffDays > 0 ? 1 : -1;
     const steps = Math.abs(diffDays);
@@ -178,16 +180,36 @@ document.addEventListener('DOMContentLoaded', () => {
       dayBtn.textContent = "No Classes ▾";
     } else {
       dayDisplayEl.textContent = `${letter} Day`;
-      dayBtn.textContent = "Select Day ▾"; // reset default dropdown label
+      dayBtn.textContent = "Select Day ▾";
     }
 
     const opts = { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' };
     dateTextEl.textContent = today.toLocaleDateString(undefined, opts);
 
-    // Auto-show today's schedule initially
     days.forEach(d => d.classList.add("hidden"));
     const todaySchedule = document.getElementById(`${letter}-day`);
     if (todaySchedule) todaySchedule.classList.remove("hidden");
+  }
+
+  // Generate the week view dynamically
+  function renderWeekView() {
+    const today = new Date();
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - ((today.getDay() + 6) % 7)); // back to Monday
+
+    weekView.innerHTML = ""; // clear existing
+
+    for (let i = 0; i < 5; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      const letter = computeLetterForDate(d);
+      const dayName = d.toLocaleDateString(undefined, { weekday: "long" });
+
+      const card = document.createElement("div");
+      card.className = "schedule-card";
+      card.innerHTML = `<h3>${dayName}</h3><p>${letter === "PAUSE" ? "No Classes" : letter + " Day"}</p>`;
+      weekView.appendChild(card);
+    }
   }
 
   function updateClockDaily() {
@@ -202,47 +224,46 @@ document.addEventListener('DOMContentLoaded', () => {
     }, nextUpdate - now);
   }
 
-// ===== Dropdown logic =====
-dropdown.classList.remove("hidden"); // make sure it’s visible but hidden by opacity
-dropdown.classList.remove("show"); // cleanup old class if any
-dropdown.style.maxHeight = ""; // remove height-based animation
+  // Dropdown logic
+  dropdown.classList.remove("hidden");
 
-function openDropdown() {
-  dropdown.classList.add("open");
-}
+  function openDropdown() {
+    dropdown.classList.add("open");
+  }
+  function closeDropdown() {
+    dropdown.classList.remove("open");
+  }
 
-function closeDropdown() {
-  dropdown.classList.remove("open");
-}
-
-dayBtn.addEventListener("click", e => {
-  e.stopPropagation();
-  dropdown.classList.contains("open") ? closeDropdown() : openDropdown();
-});
-
-items.forEach(item => {
-  item.addEventListener("click", e => {
+  dayBtn.addEventListener("click", e => {
     e.stopPropagation();
-    const selectedDay = item.dataset.day;
-
-    // Only update the visible schedule — not the top clock
-    days.forEach(d => d.classList.add("hidden"));
-    const target = document.getElementById(`${selectedDay}-day`);
-    if (target) target.classList.remove("hidden");
-
-    dayBtn.textContent = `${selectedDay} Day ▾`;
-    closeDropdown();
+    dropdown.classList.contains("open") ? closeDropdown() : openDropdown();
   });
-});
 
-document.addEventListener("click", e => {
-  if (!dropdown.contains(e.target) && e.target !== dayBtn) closeDropdown();
-});
+  items.forEach(item => {
+    item.addEventListener("click", e => {
+      e.stopPropagation();
+      const selectedDay = item.dataset.day;
 
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") closeDropdown();
-});
+      days.forEach(d => d.classList.add("hidden"));
+      if (selectedDay === "WEEK") {
+        renderWeekView();
+        weekView.classList.remove("hidden");
+      } else {
+        const target = document.getElementById(`${selectedDay}-day`);
+        if (target) target.classList.remove("hidden");
+      }
 
+      dayBtn.textContent = `${selectedDay === "WEEK" ? "Weekly Schedule" : selectedDay + " Day"} ▾`;
+      closeDropdown();
+    });
+  });
+
+  document.addEventListener("click", e => {
+    if (!dropdown.contains(e.target) && e.target !== dayBtn) closeDropdown();
+  });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") closeDropdown();
+  });
 
   // Initialize
   updateClockDaily();
