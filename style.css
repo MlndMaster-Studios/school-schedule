@@ -346,3 +346,20 @@ p {
     padding: 1rem !important;
   }
 }
+
+@media print {
+  /* ... your existing print styles ... */
+
+  /* Stack schedule cards vertically in order */
+  .schedule-container,
+  .schedule-grid,
+  .schedule-row {
+    display: block !important;
+  }
+
+  .schedule-card {
+    width: 100% !important;
+    margin-bottom: 1rem !important;
+    page-break-inside: avoid;
+  }
+}
