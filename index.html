@@ -1,207 +1,233 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Day Planner</title>
-
-  <!-- Styles -->
-  <link rel="stylesheet" href="site-styles.css" />
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-
-  <!-- Optional Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Semester 1 Schedule</title>
+  <link rel="icon" href="tab-icon.png" type="image/png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+<link rel="stylesheet" href="style.css?v=2">
 </head>
+<body class="text-gray-200 min-h-screen relative">
+ <!-- Clock -->
+<div class="day-clock-wrapper">
+  <div class="day-clock-card">
+    <h2 id="school-day">Loading Day...</h2>
+    <p id="dateText"></p>
+  </div>
+</div>
+  <!-- Progress Bar Section -->
+<div id="progress-section" class="flex flex-col items-center mt-6 mb-8 text-center">
 
-<body>
-  <!-- Animated Background -->
-  <canvas id="bgCanvas"></canvas>
-
-  <!-- Main Container -->
-  <div class="container">
-
-    <!-- Header -->
-    <header class="header">
-      <div class="brand">
-        <h1>My <span class="accent">Day Planner</span></h1>
-      </div>
-
-      <div class="controls">
-        <button id="printBtn" class="btn" title="Print Schedule">🖨️ <span>Print</span></button>
-
-        <div class="dropdown">
-          <button id="daySelectBtn" class="btn">
-            <span id="currentDayLabel">Select Day</span> ⏷
-          </button>
-          <div id="dayDropdown" class="dropdown-menu hidden">
-            <div class="dropdown-item" data-day="monday">Monday</div>
-            <div class="dropdown-item" data-day="tuesday">Tuesday</div>
-            <div class="dropdown-item" data-day="wednesday">Wednesday</div>
-            <div class="dropdown-item" data-day="thursday">Thursday</div>
-            <div class="dropdown-item" data-day="friday">Friday</div>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <!-- Day Clock -->
-    <section class="day-clock-wrapper">
-      <div class="day-clock-card">
-        <h2 id="dayClock">Monday</h2>
-        <p id="clockTime">--:-- --</p>
-      </div>
-    </section>
-
-    <!-- Progress Section -->
-    <section id="progress-section">
-      <div class="progress-wrap">
-        <div class="progress-bar-outer">
-          <div class="progress-bar-inner" id="progressBar"></div>
-          <div class="progress-label" id="progressLabel">0%</div>
-        </div>
-
-        <div class="progress-widgets">
-          <div class="widget-card">
-            <div class="widget-title">Classes Done</div>
-            <div class="widget-number" id="classesDone">0</div>
-          </div>
-          <div class="widget-card">
-            <div class="widget-title">Remaining</div>
-            <div class="widget-number" id="classesLeft">0</div>
-          </div>
-          <div class="widget-card">
-            <div class="widget-title">Total</div>
-            <div class="widget-number" id="totalClasses">0</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Schedule Section -->
-    <section id="scheduleSection">
-
-      <!-- Monday -->
-      <div class="schedule-day" id="monday">
-        <div class="week-day-label">Monday</div>
-        <div class="schedule-row">
-          <div class="schedule-card">
-            <h3>Mathematics</h3>
-            <p class="time">8:00 AM - 9:00 AM</p>
-            <p class="details">Room 101 • Instructor: Dr. Smith</p>
-          </div>
-          <div class="schedule-card">
-            <h3>English Literature</h3>
-            <p class="time">9:15 AM - 10:15 AM</p>
-            <p class="details">Room 203 • Instructor: Mrs. Johnson</p>
-          </div>
-          <div class="schedule-card">
-            <h3>Physics</h3>
-            <p class="time">10:30 AM - 11:30 AM</p>
-            <p class="details">Room 305 • Instructor: Mr. Lee</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tuesday -->
-      <div class="schedule-day hidden" id="tuesday">
-        <div class="week-day-label">Tuesday</div>
-        <div class="schedule-row">
-          <div class="schedule-card">
-            <h3>History</h3>
-            <p class="time">8:00 AM - 9:00 AM</p>
-            <p class="details">Room 204 • Instructor: Dr. Taylor</p>
-          </div>
-          <div class="schedule-card">
-            <h3>Chemistry</h3>
-            <p class="time">9:15 AM - 10:15 AM</p>
-            <p class="details">Room 108 • Instructor: Ms. Perez</p>
-          </div>
-          <div class="schedule-card">
-            <h3>Art</h3>
-            <p class="time">10:30 AM - 11:30 AM</p>
-            <p class="details">Studio 1 • Instructor: Mr. Moore</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Wednesday -->
-      <div class="schedule-day hidden" id="wednesday">
-        <div class="week-day-label">Wednesday</div>
-        <div class="schedule-row">
-          <div class="schedule-card">
-            <h3>Computer Science</h3>
-            <p class="time">8:00 AM - 9:00 AM</p>
-            <p class="details">Lab 201 • Instructor: Mr. Patel</p>
-          </div>
-          <div class="schedule-card">
-            <h3>Music</h3>
-            <p class="time">9:15 AM - 10:15 AM</p>
-            <p class="details">Room 105 • Instructor: Ms. Hall</p>
-          </div>
-          <div class="schedule-card">
-            <h3>PE</h3>
-            <p class="time">10:30 AM - 11:30 AM</p>
-            <p class="details">Gymnasium • Instructor: Coach Miller</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Thursday -->
-      <div class="schedule-day hidden" id="thursday">
-        <div class="week-day-label">Thursday</div>
-        <div class="schedule-row">
-          <div class="schedule-card">
-            <h3>Biology</h3>
-            <p class="time">8:00 AM - 9:00 AM</p>
-            <p class="details">Lab 110 • Instructor: Dr. Green</p>
-          </div>
-          <div class="schedule-card">
-            <h3>Geography</h3>
-            <p class="time">9:15 AM - 10:15 AM</p>
-            <p class="details">Room 309 • Instructor: Mr. Brown</p>
-          </div>
-          <div class="schedule-card">
-            <h3>Drama</h3>
-            <p class="time">10:30 AM - 11:30 AM</p>
-            <p class="details">Auditorium • Instructor: Mrs. White</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Friday -->
-      <div class="schedule-day hidden" id="friday">
-        <div class="week-day-label">Friday</div>
-        <div class="schedule-row">
-          <div class="schedule-card">
-            <h3>Economics</h3>
-            <p class="time">8:00 AM - 9:00 AM</p>
-            <p class="details">Room 207 • Instructor: Mr. Gray</p>
-          </div>
-          <div class="schedule-card">
-            <h3>French</h3>
-            <p class="time">9:15 AM - 10:15 AM</p>
-            <p class="details">Room 210 • Instructor: Ms. Martin</p>
-          </div>
-          <div class="schedule-card">
-            <h3>Philosophy</h3>
-            <p class="time">10:30 AM - 11:30 AM</p>
-            <p class="details">Room 402 • Instructor: Dr. Clark</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Footer -->
-    <footer style="margin-top:2rem;text-align:center;font-size:0.85rem;color:#aaa;">
-      <p>Made with ❤️ by Liam — <span id="footerYear"></span></p>
-    </footer>
-
+  <!-- Progress Bar -->
+  <div id="progress-bar-container" class="relative w-3/4 h-6 rounded-full overflow-hidden">
+    <div id="progress-bar" class="h-full rounded-full transition-all duration-700 ease-in-out"></div>
+    <span id="progress-text" class="absolute inset-0 flex items-center justify-center text-sm font-medium text-white"></span>
   </div>
 
-  <!-- Script -->
-  <script src="site-script.js"></script>
-  <script>lucide.createIcons();</script>
+  <!-- Progress Widgets -->
+  <div id="progress-widgets" class="mt-6 flex flex-col sm:flex-row sm:space-x-4 justify-center">
+    <div class="widget-card">
+      <div class="widget-title">Estimated School Days:</div>
+      <div id="weekdays-left" class="widget-number">--</div>
+    </div>
+    <div class="widget-card">
+      <div class="widget-title">Total Days:</div>
+      <div id="total-days" class="widget-number">--</div>
+    </div>
+  </div>
+</div>
+  <!-- Canvas for particle background -->
+  <canvas id="bgCanvas" class="fixed top-0 left-0 w-full h-full -z-10"></canvas>
+
+  <div class="container mx-auto px-4 py-8 max-w-7xl relative z-10">
+
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold text-white">Semester <span class="text-purple-500">1</span></h1>
+      <span class="text-gray-300 font-medium">SIHS</span>
+    </header>
+
+    <!-- Day Dropdown -->
+    <div class="mb-6 relative w-64">
+      <button id="dayDropdownBtn" class="w-full bg-slate-800 px-4 py-2 rounded-lg text-white font-medium text-left">
+        Select Day ▾
+      </button>
+      <div id="dayDropdown" class="absolute w-full bg-slate-800 rounded-lg mt-1 hidden shadow-lg">
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="A">A Day</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="B">B Day</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="C">C Day</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="D">D Day</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="E">E Day</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="F">F Day</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="G">G Day</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="WED">Wednesday</div>
+        <div class="dropdown-item px-4 py-2 cursor-pointer" data-day="WEEK">Week View</div>
+      </div>
+    </div>
+
+    <!-- Schedules -->
+    <div id="schedule-container">
+      <!-- Each day uses the same row structure (2 cards per row; last centered if alone) -->
+
+      <!-- A Day -->
+      <div class="schedule-day" id="A-day">
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>A Class</h3><p class="time">8:20–9:23</p><p class="subject">Chemistry</p><p class="details">SC202</p></div>
+          <div class="schedule-card"><h3>Lunch & Formation</h3><p class="time">11:40–12:52</p><p class="subject">Advisory-TUE</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>B Class</h3><p class="time">9:30–10:28</p><p class="subject">FREE</p></div>
+          <div class="schedule-card"><h3>D Class</h3><p class="time">12:57–1:55</p><p class="subject">Modern U.S. History</p><p class="details">DH225</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>C Class</h3><p class="time">10:35–11:33</p><p class="subject">Spanish II</p><p class="details">MB416</p></div>
+          <div class="schedule-card"><h3>E Class</h3><p class="time">2:02–3:05</p><p class="subject">English II</p><p class="details">MB314</p></div>
+        </div>
+      </div>
+
+      <!-- B Day -->
+      <div class="schedule-day hidden" id="B-day">
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>B Class</h3><p class="time">8:20–9:23</p><p class="subject">FREE</p></div>
+          <div class="schedule-card"><h3>D Class</h3><p class="time">11:10–12:08</p><p class="subject">Modern U.S. History</p><p class="details">DH225</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>C Class</h3><p class="time">9:30–10:28</p><p class="subject">Spanish II</p><p class="details">MB416</p></div>
+          <div class="schedule-card"><h3>Formation</h3><p class="time">12:13–12:52</p><p class="subject">Advisory-TUE</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>Lunch</h3><p class="time">10:35–11:03</p></div>
+          <div class="schedule-card"><h3>E Class</h3><p class="time">12:57–1:55</p><p class="subject">English II</p><p class="details">MB314</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>F Class</h3><p class="time">2:02–3:05</p><p class="subject">Sophomore Service</p><p class="details">LH125</p></div>
+        </div>
+      </div>
+
+      <!-- C Day -->
+      <div class="schedule-day hidden" id="C-day">
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>C Class</h3><p class="time">8:20–9:23</p><p class="subject">Spanish II</p><p class="details">MB416</p></div>
+          <div class="schedule-card"><h3>E Class</h3><p class="time">11:10–12:08</p><p class="subject">English II</p><p class="details">MB314</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>D Class</h3><p class="time">9:30–10:28</p><p class="subject">Modern U.S. History</p><p class="details">DH225</p></div>
+          <div class="schedule-card"><h3>Formation</h3><p class="time">12:13–12:52</p><p class="subject">Advisory-TUE</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>Lunch</h3><p class="time">10:35–11:03</p></div>
+          <div class="schedule-card"><h3>F Class</h3><p class="time">12:57–1:55</p><p class="subject">Sophomore Service</p><p class="details">LH125</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>G Class</h3><p class="time">2:02–3:05</p><p class="subject">Geometry</p><p class="details">LH323</p></div>
+        </div>
+      </div>
+
+      <!-- D Day -->
+      <div class="schedule-day hidden" id="D-day">
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>D Class</h3><p class="time">8:20–9:23</p><p class="subject">Modern U.S. History</p><p class="details">DH225</p></div>
+          <div class="schedule-card"><h3>F Class</h3><p class="time">11:10–12:08</p><p class="subject">Sophomore Service</p><p class="details">LH125</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>E Class</h3><p class="time">9:30–10:28</p><p class="subject">English II</p><p class="details">MB314</p></div>
+          <div class="schedule-card"><h3>Formation</h3><p class="time">12:13–12:52</p><p class="subject">Advisory-TUE</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>Lunch</h3><p class="time">10:35–11:03</p></div>
+          <div class="schedule-card"><h3>G Class</h3><p class="time">12:57–1:55</p><p class="subject">Geometry</p><p class="details">LH323</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>A Class</h3><p class="time">2:02–3:05</p><p class="subject">Chemistry</p><p class="details">SC202</p></div>
+        </div>
+      </div>
+
+      <!-- E Day -->
+      <div class="schedule-day hidden" id="E-day">
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>E Class</h3><p class="time">8:20–9:23</p><p class="subject">English II</p><p class="details">MB314</p></div>
+          <div class="schedule-card"><h3>Lunch & Formation</h3><p class="time">11:40–12:52</p><p class="subject">Advisory-TUE</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>F Class</h3><p class="time">9:30–10:28</p><p class="subject">Sophomore Service</p><p class="details">LH125</p></div>
+          <div class="schedule-card"><h3>A Class</h3><p class="time">12:57–1:55</p><p class="subject">Chemistry</p><p class="details">SC202</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>G Class</h3><p class="time">10:35–11:33</p><p class="subject">Geometry</p><p class="details">LH323</p></div>
+          <div class="schedule-card"><h3>B Class</h3><p class="time">2:02–3:05</p><p class="subject">FREE</p></div>
+        </div>
+      </div>
+
+      <!-- F Day -->
+      <div class="schedule-day hidden" id="F-day">
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>F Class</h3><p class="time">8:20–9:23</p><p class="subject">Sophomore Service</p><p class="details">LH125</p></div>
+          <div class="schedule-card"><h3>Lunch & Formation</h3><p class="time">11:40–12:52</p><p class="subject">Advisory-TUE</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>G Class</h3><p class="time">9:30–10:28</p><p class="subject">Geometry</p><p class="details">LH323</p></div>
+          <div class="schedule-card"><h3>B Class</h3><p class="time">12:57–1:55</p><p class="subject">FREE</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>A Class</h3><p class="time">10:35–11:33</p><p class="subject">Chemistry</p><p class="details">SC202</p></div>
+          <div class="schedule-card"><h3>C Class</h3><p class="time">2:02–3:05</p><p class="subject">Spanish II</p><p class="details">MB416</p></div>
+        </div>
+      </div>
+
+      <!-- G Day -->
+      <div class="schedule-day hidden" id="G-day">
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>G Class</h3><p class="time">8:20–9:23</p><p class="subject">Geometry</p><p class="details">LH323</p></div>
+          <div class="schedule-card"><h3>Lunch & Formation</h3><p class="time">11:40–12:52</p><p class="subject">Advisory-TUE</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>A Class</h3><p class="time">9:30–10:28</p><p class="subject">Chemistry</p><p class="details">SC202</p></div>
+          <div class="schedule-card"><h3>C Class</h3><p class="time">12:57–1:55</p><p class="subject">Spanish II</p><p class="details">MB416</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>B Class</h3><p class="time">10:35–11:33</p><p class="subject">FREE</p></div>
+          <div class="schedule-card"><h3>D Class</h3><p class="time">2:02–3:05</p><p class="subject">Modern U.S. History</p><p class="details">DH225</p></div>
+        </div>
+      </div>
+
+      <!-- Wednesday Delayed Start -->
+      <div class="schedule-day hidden" id="WED-day">
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>Class 1</h3><p class="time">8:50–9:53</p><p>Announcements & First Period</p></div>
+          <div class="schedule-card"><h3>Class 2</h3><p class="time">10:00–10:58</p><p>Second Period Class</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>Lunch or Class</h3><p class="time">11:05–12:03</p><p>Third Period Class - Lunch 2 Group</p></div>
+          <div class="schedule-card"><h3>Lunch or Class</h3><p class="time">11:40–12:38</p><p>Third Period Class - Lunch 1 Group</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>Break</h3><p class="time">12:38–12:57</p></div>
+          <div class="schedule-card"><h3>Class 4</h3><p class="time">12:57–1:55</p><p>Fourth Period Class</p></div>
+        </div>
+        <div class="schedule-row">
+          <div class="schedule-card"><h3>Class 5</h3><p class="time">2:02–3:05</p><p>Examen & Fifth Period Class</p></div>
+        </div>
+      </div>
+      <!-- Week View -->
+<div class="schedule-day hidden" id="WEEK-day">
+  <div class="schedule-row">
+    <div class="schedule-card"><h3>Monday</h3><p>Click your dropdown to see individual schedules</p></div>
+    <div class="schedule-card"><h3>Tuesday</h3><p>Click your dropdown to see individual schedules</p></div>
+  </div>
+  <div class="schedule-row">
+    <div class="schedule-card"><h3>Wednesday</h3><p>Click your dropdown to see the delayed start schedule</p></div>
+    <div class="schedule-card"><h3>Thursday</h3><p>Click your dropdown to see individual schedules</p></div>
+  </div>
+  <div class="schedule-row">
+    <div class="schedule-card"><h3>Friday</h3><p>Click your dropdown to see individual schedules</p></div>
+  </div>
+</div>
+
+
+    </div>
+  </div>
+<script src="script.js" defer></script>
 </body>
 </html>
