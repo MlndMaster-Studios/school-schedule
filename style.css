@@ -346,3 +346,36 @@ p {
     padding: 1rem !important;
   }
 }
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .schedule-card, .widget-card {
+    background: #fff !important;
+    color: #000 !important;
+    border: 1px solid #000 !important;
+    box-shadow: none !important;
+  }
+
+  h1, h2, h3, p {
+    color: #000 !important;
+    text-shadow: none !important;
+  }
+
+  button, #dayDropdown, #printScheduleBtn, #dayDropdownBtn, canvas {
+    display: none !important;
+  }
+
+  /* ✅ Stack schedule cards vertically for printing only */
+  #scheduleContainer {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  #scheduleContainer > * {
+    width: 100% !important;
+    page-break-inside: avoid;
+  }
+}
