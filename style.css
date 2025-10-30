@@ -1,339 +1,293 @@
-/* =====================================================================
-   OVERHAUL: site-styles.css
-   Single-file replacement CSS — cleaned, modern, accessible, responsive.
-   - Uses CSS variables for theme control
-   - Reduced reliance on !important
-   - Print-friendly layout & ordering fixes
-   - Motion-respecting animations
-   ===================================================================== */
-
-/* -------------------------
-   Theme variables
-   ------------------------- */
-:root{
-  /* Colors */
-  --bg-0: #060611;
-  --bg-1: #0f1020;
-  --panel: rgba(18, 20, 36, 0.55);
-  --panel-strong: rgba(18,20,36,0.75);
-  --muted: #c7c6f7;
-  --accent-1: #8b5cf6; /* purple */
-  --accent-2: #4f46e5; /* indigo */
-  --accent-3: #22d3ee; /* teal */
-  --glass-border: rgba(139,92,246,0.16);
-  --shadow-1: 0 6px 18px rgba(2,6,23,0.55);
-  --card-radius: 14px;
-
-  /* Layout */
-  --max-width: 1100px;
-  --container-padding: 1rem;
-
-  /* Motion */
-  --fast: 180ms;
-  --med: 360ms;
-  --slow: 900ms;
+/* ===== Body & General ===== */
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: linear-gradient(-45deg, #100018, #1e0030, #2a0050, #100018) !important;
+  background-size: 400% 400% !important;
+  animation: gradientFlow 20s ease infinite !important;
+  color: #e8e8ff !important;
+  overflow-x: hidden;
+}
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-/* Respect prefers-reduced-motion */
-@media (prefers-reduced-motion: reduce) {
-  * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+h1, h2, h3 {
+  font-weight: 600;
 }
 
-/* -------------------------
-   Base / Reset
-   ------------------------- */
-* { box-sizing: border-box; }
-html,body { height: 100%; }
-html { font-size: 16px; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
-body{
-  margin:0;
-  min-height:100%;
-  color:var(--muted);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  background:
-    radial-gradient(1200px 600px at 10% 10%, rgba(79,70,229,0.08), transparent 10%),
-    radial-gradient(800px 400px at 90% 90%, rgba(34,211,238,0.04), transparent 10%),
-    linear-gradient(180deg, var(--bg-0), var(--bg-1));
-  overflow-x:hidden;
-  -webkit-font-variant-ligatures: none;
+h1 span {
+  background: linear-gradient(270deg, #8b5cf6, #4f46e5, #0f172a);
+  background-size: 600% 600%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textGradient 8s ease infinite;
 }
 
-/* Visually-hidden helper */
-.sr-only {
-  position:absolute !important;
-  width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
+@keyframes textGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-/* -------------------------
-   Container & Grid
-   ------------------------- */
-.container {
-  width: 100%;
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: var(--container-padding);
-  position: relative;
-  z-index: 10;
+p {
+  color: #c3c1ff;
+  margin-top: 4px;
+  margin-bottom: 8px;
 }
 
-/* Header */
-.header {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:1rem;
-  margin: .6rem 0 1rem 0;
-}
-.brand {
-  display:flex;
-  gap:.75rem;
-  align-items:center;
-}
-.brand h1 {
-  font-size:1.35rem;
-  line-height:1;
-  margin:0;
-  font-weight:700;
-  letter-spacing:-0.02em;
-  color: #fff;
-}
-.brand h1 .accent {
-  background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
-  -webkit-background-clip:text;
-  background-clip:text;
-  color:transparent;
-}
-
-/* Small meta text */
-.meta {
-  color: #aeb0d6;
-  font-size: .95rem;
-}
-
-/* -------------------------
-   Day clock / top card
-   ------------------------- */
-.day-clock-wrapper {
-  display:flex;
-  justify-content:center;
-  margin: .5rem 0 1.2rem 0;
-}
-.day-clock-card {
-  width: min(100%, 360px);
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border-radius: calc(var(--card-radius) + 6px);
-  padding: 1.05rem 1.25rem;
-  text-align:center;
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(8px) saturate(120%);
-  box-shadow: var(--shadow-1);
-  transition: transform var(--med) ease, box-shadow var(--med) ease;
-}
-.day-clock-card:hover { transform: translateY(-6px); box-shadow: 0 18px 36px rgba(2,6,23,0.6); }
-.day-clock-card h2 {
-  margin:0;
-  font-size:1.5rem;
-  font-weight:700;
-  letter-spacing:-0.01em;
-  background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
-  -webkit-background-clip:text; color:transparent;
-}
-.day-clock-card p { margin: .375rem 0 0 0; color: #c6c6ff; font-size:.95rem; }
-
-/* -------------------------
-   Progress bar & widgets
-   ------------------------- */
-#progress-section { margin-top: .65rem; display:flex; flex-direction:column; align-items:center; gap:.85rem; }
-.progress-wrap { width:100%; max-width:920px; display:flex; flex-direction:column; gap:.6rem; align-items:center; }
-.progress-bar-outer {
-  width:100%;
-  height: 14px;
-  border-radius:999px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03));
-  box-shadow: inset 0 0 12px rgba(0,0,0,0.25);
-  border: 1px solid rgba(255,255,255,0.03);
-  overflow:hidden;
-  position:relative;
-}
-.progress-bar-inner {
-  height:100%;
-  width:0%;
-  background: linear-gradient(90deg, var(--accent-1), var(--accent-2), var(--accent-3));
-  transition: width 600ms cubic-bezier(.2,.9,.2,1);
-  border-radius:999px;
-}
-.progress-label {
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:.85rem;
-  font-weight:600;
-  color:white;
-  text-shadow: 0 2px 8px rgba(11,12,25,0.6);
-}
-
-/* Widgets */
-.progress-widgets {
-  display:flex;
-  gap:.7rem;
-  flex-wrap:wrap;
-  justify-content:center;
-}
-.widget-card {
-  min-width:120px;
-  padding:.7rem .9rem;
-  border-radius:12px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
-  border: 1px solid rgba(255,255,255,0.02);
-  box-shadow: 0 6px 18px rgba(2,6,23,0.45);
-  text-align:center;
-}
-.widget-title { font-size:.75rem; color:#bfc0f8; margin-bottom:.25rem; font-weight:600; }
-.widget-number { font-size:1.2rem; font-weight:800; color:#fff; }
-
-/* -------------------------
-   Dropdown & controls
-   ------------------------- */
-.controls {
-  display:flex;
-  gap:.6rem;
-  align-items:center;
-}
-.dropdown {
-  position:relative;
-  width:240px;
-}
-.btn {
-  display:inline-flex;
-  align-items:center;
-  gap:.5rem;
-  width:100%;
-  padding: .5rem .75rem;
-  border-radius:10px;
-  border: 1px solid rgba(255,255,255,0.04);
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
-  cursor:pointer;
-  color:#fff;
-  text-align:left;
-  font-weight:600;
-  transition: transform var(--fast) ease, box-shadow var(--fast) ease, filter var(--fast) ease;
-}
-.btn:focus { outline: 3px solid rgba(139,92,246,0.14); outline-offset:2px; }
-.btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(79,70,229,0.08); }
-
-.dropdown-menu {
-  position:absolute;
-  top:calc(100% + .5rem);
-  left:0;
-  min-width:100%;
-  border-radius:10px;
-  overflow:hidden;
-  z-index:50;
-  border: 1px solid rgba(255,255,255,0.03);
-  background: linear-gradient(180deg, rgba(6,8,19,0.98), rgba(8,10,30,0.98));
-  box-shadow: 0 14px 40px rgba(2,6,23,0.6);
-}
-.dropdown-item {
-  padding:.6rem .8rem;
-  cursor:pointer;
-  color:var(--muted);
-  font-weight:600;
-  transition: background var(--fast) ease, color var(--fast) ease;
-}
-.dropdown-item:hover { background: linear-gradient(90deg,var(--accent-1),var(--accent-2)); color:#fff; }
-
-/* -------------------------
-   Schedule grid & cards
-   ------------------------- */
-.schedule-day { width:100%; margin: .8rem 0; }
+/* ===== Schedule Rows ===== */
 .schedule-row {
-  display:grid;
+  display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1rem;
-  margin-bottom: .9rem;
-  align-items:stretch;
-}
-.schedule-card {
-  padding: .9rem;
-  border-radius: var(--card-radius);
-  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.03));
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 6px 20px rgba(2,6,23,0.55);
-  display:flex;
-  flex-direction:column;
-  gap:.35rem;
-  transition: transform var(--med) ease, box-shadow var(--med) ease, border-color var(--med) ease;
-}
-.schedule-card h3 { margin:0; font-size:1.05rem; color:#efefff; font-weight:700; }
-.schedule-card p { margin:0; color:#cfcfff; font-size:.92rem; }
-.schedule-card .time { font-weight:700; color:#fff; opacity:.95; }
-.schedule-card .details { font-size:.82rem; color:#bfc0f8; }
-
-/* subtle hover */
-.schedule-card:hover { transform: translateY(-6px); border-color: rgba(139,92,246,0.28); box-shadow: 0 20px 40px rgba(11,12,40,0.6); }
-
-/* Mobile stacking tweaks */
-@media (max-width:640px) {
-  .schedule-row { grid-template-columns: 1fr; }
-  .dropdown { width:100%; }
-  .brand h1 { font-size:1.1rem; }
+  margin-bottom: 1rem;
+  align-items: stretch;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s forwards;
 }
 
-/* -------------------------
-   Week view small card labels (ensures print/stack order)
-   ------------------------- */
-.week-day-label { font-weight:700; font-size:1rem; color:#fff; }
+.schedule-row:nth-child(1) { animation-delay: 0.1s; }
+.schedule-row:nth-child(2) { animation-delay: 0.2s; }
+.schedule-row:nth-child(3) { animation-delay: 0.3s; }
+.schedule-row:nth-child(4) { animation-delay: 0.4s; }
 
-/* -------------------------
-   Canvas overlay (particles) — keep pointer-events none
-   ------------------------- */
-#bgCanvas {
-  position: fixed;
-  inset:0;
-  width:100%;
-  height:100%;
-  pointer-events:none;
-  z-index:0;
-  mix-blend-mode: screen;
-  opacity:.7;
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* -------------------------
-   Utility: hidden (visually) and layout helpers
-   ------------------------- */
-.hidden { display:none !important; }
-.center { display:flex; align-items:center; justify-content:center; }
-
-/* -------------------------
-   Print styles — stack correctly & remove decorative elements
-   ------------------------- */
-@media print {
-  body { color: #000; background: white !important; }
-  #bgCanvas, .btn, .dropdown-menu, .controls, .header .meta { display:none !important; }
-  .container { max-width:100%; padding: 0.5rem; }
-  .schedule-row { display:block; break-inside: avoid; page-break-inside: avoid; margin-bottom: .2rem; }
-  .schedule-card { page-break-inside: avoid; break-inside: avoid; border:1px solid #eee; box-shadow:none; background:transparent; color:#000; }
-  .day-clock-wrapper { display:block; margin-bottom:.4rem; }
+/* ===== Schedule Cards – frosted glass + subtle neon hover ===== */
+.schedule-card, .widget-card {
+  position: relative;
+  background: rgba(30, 41, 59, 0.55) !important;
+  backdrop-filter: blur(12px) saturate(150%);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid rgba(139, 92, 246, 0.15);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: all 0.25s ease-in-out;
+  overflow: hidden;
+  z-index: 1;
+  will-change: transform, box-shadow, border-color;
+  --mouseX: 0;
+  --mouseY: 0;
 }
 
-/* -------------------------
-   Small polish: focus ring for keyboard users
-   ------------------------- */
-:focus { outline: none; }
-a:focus, button:focus, .btn:focus, .dropdown-item:focus {
-  box-shadow: 0 0 0 4px rgba(79,70,229,0.12);
+.schedule-card:hover, .widget-card:hover {
+  box-shadow: 0 8px 16px rgba(139, 92, 246, 0.15), 0 12px 24px rgba(0,0,0,0.1);
+  border-color: rgba(139, 92, 246, 0.25);
+  outline: 1px solid rgba(139,92,246,0.2);
+  outline-offset: -2px;
+  transform: translateY(-6px) translateX(calc(var(--mouseX) * 0.03)) translateY(calc(var(--mouseY) * 0.03));
 }
 
-/* -------------------------
-   Optional: compact theme toggles (light/dark) — hooks for JS
-   ------------------------- */
-.theme-light {
-  --bg-0: #f6f8fb;
-  --bg-1: #eef3ff;
-  --panel: rgba(255,255,255,0.85);
-  --muted: #2b2b3a;
-  --glass-border: rgba(79,70,229,0.08);
-  color-scheme: light;
+.schedule-card h3 {
+  color: #e0d7ff;
+  text-shadow: 0 0 4px rgba(139,92,246,0.15);
+  transition: all 0.3s ease;
+}
+
+.schedule-card:hover h3 {
+  text-shadow: 0 0 6px rgba(139,92,246,0.25);
+}
+
+.schedule-card p, .widget-card p {
+  color: #c3c1ff;
+}
+
+/* ===== Dropdown Menu & Button ===== */
+#dayDropdownBtn {
+  cursor: pointer;
+  background: linear-gradient(135deg, #8b5cf6, #4f46e5) !important;
+  background-size: 400% 400%;
+  color: #fff !important;
+  font-weight: 500;
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+  transition: all 0.3s ease;
+  animation: buttonGradient 8s ease infinite;
+}
+
+@keyframes buttonGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+#dayDropdownBtn:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 5px 15px rgba(139,92,246,0.4);
+}
+
+#dayDropdown {
+  background: rgba(30,41,59,0.95);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(139,92,246,0.3);
+  z-index: 50;
+}
+
+.dropdown-item {
+  transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background: linear-gradient(135deg, #8b5cf6, #4f46e5);
+  color: #fff;
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #8b5cf6, #4f46e5);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+/* ===== Responsive Layout ===== */
+@media (max-width: 640px) {
+  .schedule-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== Letter Day Clock (Top Center Card) ===== */
+.day-clock-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.day-clock-card {
+  background: rgba(30, 41, 59, 0.55);
+  backdrop-filter: blur(15px) saturate(180%);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  border-radius: 20px;
+  padding: 1.25rem 2rem;
+  text-align: center;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  transition: all 0.3s ease;
+  max-width: 280px;
+  width: 100%;
+}
+
+.day-clock-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(139, 92, 246, 0.35);
+  border-color: rgba(139, 92, 246, 0.4);
+}
+
+.day-clock-card h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  background: linear-gradient(90deg, #a78bfa, #4f46e5, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% 200%;
+  animation: textShift 6s ease infinite;
+  margin-bottom: 0.25rem;
+}
+
+.day-clock-card p {
+  color: #c3c1ff;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+@keyframes textShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ===== Mobile Schedule Reordering ===== */
+@media (max-width: 640px) {
+  .schedule-day {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .schedule-row {
+    display: contents;
+  }
+
+  .schedule-card {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .schedule-day {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .schedule-row {
+    display: contents;
+  }
+
+  .schedule-card {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+}
+
+/* ===== Progress Bar Section ===== */
+#progress-section {
+  font-family: 'Inter', sans-serif;
+}
+
+#progress-bar-container {
+  background: rgba(30, 41, 59, 0.55);
+  border-radius: 9999px;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.35), inset 0 0 12px rgba(255,255,255,0.1);
+  overflow: hidden;
+  position: relative;
+}
+
+#progress-bar {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.4s ease-in-out;
+  background: linear-gradient(90deg, #8b5cf6, #6366f1, #22d3ee, #34d399);
+}
+
+
+@keyframes progressBarBlend {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+#progress-bar-container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.25);
+  animation: barGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes barGlow {
+  from { box-shadow: 0 0 8px rgba(139, 92, 246, 0.2); }
+  to { box-shadow: 0 0 20px rgba(52, 211, 153, 0.4); }
 }
