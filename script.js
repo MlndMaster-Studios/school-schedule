@@ -285,36 +285,3 @@ setInterval(updateProgress, 60 * 60 * 1000);
   bar.style.width = percent + '%';
   document.getElementById('progress-text').textContent = `${percent}%`;
 }
-
-// ===== Print Current Schedule =====
-document.getElementById("printScheduleBtn").addEventListener("click", () => {
-  const visibleDay = document.querySelector(".schedule-day:not(.hidden)");
-  if (!visibleDay) {
-    alert("No schedule is currently visible to print!");
-    return;
-  }
-
-  const printWindow = window.open("", "_blank");
-  const styles = Array.from(document.styleSheets)
-    .map(s => {
-      try {
-        return Array.from(s.cssRules).map(r => r.cssText).join("\n");
-      } catch { return ""; }
-    })
-    .join("\n");
-
-  printWindow.document.write(`
-    <html>
-      <head>
-        <title>Print Schedule</title>
-        <style>${styles}</style>
-      </head>
-      <body>
-        <h1 style="text-align:center;margin-bottom:20px;">Current Schedule</h1>
-        ${visibleDay.outerHTML}
-        <script>window.onload = () => window.print();<\/script>
-      </body>
-    </html>
-  `);
-  printWindow.document.close();
-});
