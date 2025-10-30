@@ -1,287 +1,484 @@
-// ===== Feather icons =====
-feather.replace();
+/* =====================================================================
+   site-script.js
+   Complete, self-contained JavaScript for the overhauled Day Planner.
+   - Live clock
+   - Dropdown (mouse + keyboard) with accessible controls
+   - Day switching (persists last selection to localStorage)
+   - Progress calculation (parses human time ranges in .time)
+   - Print-friendly behavior (temporarily reveals all days before print)
+   - Canvas particle background (respecting prefers-reduced-motion)
+   - Graceful, defensive code (no uncaught exceptions if HTML slightly differs)
+   ===================================================================== */
 
-// ===== Day Dropdown =====
-const dayBtn = document.getElementById("dayDropdownBtn");
-const dropdown = document.getElementById("dayDropdown");
-const items = document.querySelectorAll(".dropdown-item");
-const days = document.querySelectorAll(".schedule-day");
+(function () {
+  'use strict';
 
-dayBtn.addEventListener("click", () => {
-  dropdown.classList.toggle("hidden");
-});
+  /* ---------- Utilities ---------- */
 
-items.forEach(item => {
-  item.addEventListener("click", () => {
-    const day = item.dataset.day;
-    days.forEach(d => d.classList.add("hidden"));
-    document.getElementById(day + "-day").classList.remove("hidden");
-    dayBtn.textContent = item.textContent + " ▾";
-    dropdown.classList.add("hidden");
-  });
-});
+  // Safe query helpers
+  const $ = (sel, ctx = document) => ctx.querySelector(sel);
+  const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 
-// ===== Smooth Card Cursor-Follow Effect =====
-const cards = document.querySelectorAll(".schedule-card");
-let mouse = { x: 0, y: 0 };
-window.addEventListener("mousemove", e => {
-  mouse.x = e.clientX;
-  mouse.y = e.clientY;
-});
-
-function animateCards() {
-  cards.forEach(card => {
-    const rect = card.getBoundingClientRect();
-    const cardX = rect.left + rect.width / 2;
-    const cardY = rect.top + rect.height / 2;
-    const deltaX = mouse.x - cardX;
-    const deltaY = mouse.y - cardY;
-    const currentX = parseFloat(card.dataset.tx || 0);
-    const currentY = parseFloat(card.dataset.ty || 0);
-    const easedX = currentX + (deltaX * 0.03);
-    const easedY = currentY + (deltaY * 0.03);
-    card.dataset.tx = easedX;
-    card.dataset.ty = easedY;
-    card.style.setProperty("--mouseX", easedX);
-    card.style.setProperty("--mouseY", easedY);
-  });
-  requestAnimationFrame(animateCards);
-}
-animateCards();
-
-cards.forEach(card => {
-  card.addEventListener("mouseleave", () => {
-    card.dataset.tx = 0;
-    card.dataset.ty = 0;
-  });
-});
-
-// ===== Mouse-following particles =====
-const canvas = document.getElementById("bgCanvas");
-const ctx = canvas.getContext("2d");
-let particles = [];
-const particleCount = 60;
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-
-class Particle {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-    this.size = Math.random() * 3 + 1;
-    this.speedX = Math.random() * 2 - 1;
-    this.speedY = Math.random() * 2 - 1;
-    this.color = `rgba(139,92,246,${Math.random() * 0.5 + 0.2})`;
-  }
-  update() {
-    this.x += this.speedX;
-    this.y += this.speedY;
-    if(this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-    if(this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-  }
-  draw() {
-    ctx.fillStyle = this.color;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
-    ctx.fill();
-  }
-}
-
-for(let i = 0; i < particleCount; i++){
-  particles.push(new Particle(Math.random()*canvas.width, Math.random()*canvas.height));
-}
-
-window.addEventListener('mousemove', e => {
-  particles.push(new Particle(e.x + Math.random()*20-10, e.y + Math.random()*20-10));
-  if(particles.length > particleCount) particles.shift();
-});
-
-function animateParticles() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  particles.forEach(p => {
-    p.update();
-    p.draw();
-  });
-  requestAnimationFrame(animateParticles);
-}
-animateParticles();
-
-// ===== School Day Clock =====
-const clockDisplay = document.getElementById("school-day");
-const scheduleOrder = ["A","F","D","B","G","E","C"];
-
-const scheduleOverrides = {
-  "2025-10-17": "PAUSE",
-  "2025-10-16": "PAUSE",
-  "2025-10-15": "PAUSE"
-};
-
-const startDate = new Date("2025-10-09T00:00:00");
-
-function calculateDay(today = new Date()) {
-  today.setHours(0,0,0,0);
-  const dayMS = 1000*60*60*24;
-  let current = new Date(startDate);
-  let index = scheduleOrder.indexOf("G");
-  while(current < today) {
-    const yyyy_mm_dd = current.toISOString().slice(0,10);
-    const dayOfWeek = current.getDay();
-    if(dayOfWeek !== 0 && dayOfWeek !== 6) {
-      if(scheduleOverrides[yyyy_mm_dd] === "PAUSE") {
-      } else if(scheduleOverrides[yyyy_mm_dd]) {
-        index = scheduleOrder.indexOf(scheduleOverrides[yyyy_mm_dd]);
+  // Parse time like "8:00 AM" into today's Date object
+  function parseTimeToToday(timeStr) {
+    // Accepts "8:00 AM" or "08:00 AM" or "14:30"
+    if (!timeStr || typeof timeStr !== 'string') return null;
+    const now = new Date();
+    const cleaned = timeStr.trim();
+    const ampmMatch = cleaned.match(/(am|pm)$/i);
+    try {
+      let parts;
+      if (ampmMatch) {
+        // "h:mm AM"
+        const [timePart, ampm] = cleaned.split(/\s+/);
+        parts = timePart.split(':');
+        let hour = parseInt(parts[0], 10);
+        const minute = parseInt(parts[1] || '0', 10);
+        const ampmLower = ampm.toLowerCase();
+        if (ampmLower === 'pm' && hour !== 12) hour += 12;
+        if (ampmLower === 'am' && hour === 12) hour = 0;
+        const d = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute, 0, 0);
+        return d;
       } else {
-        index = (index + 1) % scheduleOrder.length;
+        // 24-hour fallback "14:30" or "9:00"
+        parts = cleaned.split(':');
+        if (parts.length >= 1) {
+          const hour = parseInt(parts[0], 10);
+          const minute = parseInt(parts[1] || '0', 10);
+          return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute, 0, 0);
+        }
       }
+    } catch (e) {
+      return null;
     }
-    current = new Date(current.getTime() + dayMS);
+    return null;
   }
-  const todayStr = today.toISOString().slice(0,10);
-  const todayOverride = scheduleOverrides[todayStr];
-  if(todayOverride === "PAUSE") return "No Classes 🎉";
-  if(todayOverride && todayOverride !== "PAUSE") return todayOverride + " Day";
-  return scheduleOrder[index] + " Day";
-}
 
-function updateDayDisplay() {
-  if(clockDisplay) clockDisplay.textContent = calculateDay();
-}
-updateDayDisplay();
+  // Parse a range like "8:00 AM - 9:00 AM" and return { start: Date, end: Date }
+  function parseRange(rangeStr) {
+    if (!rangeStr || typeof rangeStr !== 'string') return null;
+    const parts = rangeStr.split(/[-–—]/).map(s => s.trim());
+    if (parts.length < 2) return null;
+    const start = parseTimeToToday(parts[0]);
+    const end = parseTimeToToday(parts[1]);
+    return { start, end };
+  }
 
-setInterval(() => {
-  const now = new Date();
-  if(now.getHours() === 0 && now.getMinutes() === 1) updateDayDisplay();
-}, 60*1000);
+  // Debounce helper
+  function debounce(fn, wait = 100) {
+    let t;
+    return (...args) => {
+      clearTimeout(t);
+      t = setTimeout(() => fn(...args), wait);
+    };
+  }
 
-// ===== Redirect mobile users =====
-if (window.innerWidth <= 768) {
-  window.location.href = "https://mlndmaster-studios.github.io/school-schedule/mobile/";
-}
+  /* ---------- DOM elements ---------- */
+  const daySelectBtn = $('#daySelectBtn');
+  const dayDropdown = $('#dayDropdown');
+  const currentDayLabel = $('#currentDayLabel');
+  const dropdownItems = $$('.dropdown-item', dayDropdown);
+  const scheduleDays = $$('.schedule-day');
+  const progressBarInner = $('#progressBar');
+  const progressLabel = $('#progressLabel');
+  const classesDoneEl = $('#classesDone');
+  const classesLeftEl = $('#classesLeft');
+  const totalClassesEl = $('#totalClasses');
+  const printBtn = $('#printBtn');
+  const dayClock = $('#dayClock');
+  const clockTime = $('#clockTime');
+  const footerYear = $('#footerYear');
 
-// ===== Auto-Fill Week View with Correct Letter Days =====
-function updateWeekView() {
-  const weekSection = document.getElementById("WEEK-day");
-  if (!weekSection) return;
+  /* ---------- State ---------- */
+  let selectedDayId = localStorage.getItem('planner:lastDay') || 'monday';
+  let lastVisibleState = {}; // to restore visibility after printing
 
-  // Get Monday of this week
-  const today = new Date();
-  const monday = new Date(today);
-  monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
-  monday.setHours(0, 0, 0, 0);
+  /* ---------- Accessibility & Dropdown Behavior ---------- */
 
-  const weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-  const cards = weekSection.querySelectorAll(".schedule-card");
+  function openDropdown() {
+    dayDropdown.classList.remove('hidden');
+    dayDropdown.setAttribute('aria-expanded', 'true');
+    // focus first item
+    const first = dayDropdown.querySelector('.dropdown-item');
+    if (first) first.focus();
+  }
+  function closeDropdown() {
+    dayDropdown.classList.add('hidden');
+    dayDropdown.setAttribute('aria-expanded', 'false');
+    daySelectBtn.focus();
+  }
+  function toggleDropdown() {
+    if (dayDropdown.classList.contains('hidden')) openDropdown();
+    else closeDropdown();
+  }
 
-  weekdays.forEach((day, i) => {
-    const date = new Date(monday);
-    date.setDate(monday.getDate() + i);
-
-    const letterDay = calculateDay(date).replace(" Day", "");
-    const card = cards[i];
-    if (card) {
-      // Find or create the paragraph to update
-      let textEl = card.querySelector(".day-type");
-      if (!textEl) {
-        // Replace placeholder <p> with our dynamic one
-        card.querySelector("p").remove();
-        textEl = document.createElement("p");
-        textEl.classList.add("day-type");
-        card.appendChild(textEl);
-      }
-      textEl.textContent = `${letterDay} Day`;
+  // Close on outside click
+  document.addEventListener('click', (e) => {
+    if (!dayDropdown.contains(e.target) && !daySelectBtn.contains(e.target)) {
+      closeDropdown();
     }
   });
-}
 
-// Run every time dropdown changes
-document.querySelectorAll(".dropdown-item").forEach(item => {
-  item.addEventListener("click", e => {
-    if (e.target.dataset.day === "WEEK") {
-      updateWeekView();
-    }
-  });
-});
+  // Toggle button
+  if (daySelectBtn) {
+    daySelectBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleDropdown();
+    });
 
-// ===== Time-Based Background Gradient =====
-function updateBackgroundByTime() {
-  const now = new Date();
-  const hour = now.getHours();
-  let gradient;
-  if (hour >= 5 && hour < 10) gradient = "linear-gradient(135deg, #fbc2eb, #a6c1ee)";
-  else if (hour >= 10 && hour < 17) gradient = "linear-gradient(135deg, #89f7fe, #66a6ff)";
-  else if (hour >= 17 && hour < 20) gradient = "linear-gradient(135deg, #f6d365, #fda085)";
-  else gradient = "linear-gradient(135deg, #0b0f25, #1b1f3e, #3b3f7a, #4f46e5)";
-  document.body.style.transition = "background 2s ease";
-  document.body.style.background = gradient;
-  document.body.style.backgroundSize = "300% 300%";
-}
-updateBackgroundByTime();
-setInterval(updateBackgroundByTime, 15 * 60 * 1000);
-// ===== Progress Bar & Widgets =====
-const progressBar = document.getElementById("progress-bar");
-const progressText = document.getElementById("progress-text");
-const weekdaysLeftElem = document.getElementById("weekdays-left");
-const totalDaysElem = document.getElementById("total-days");
-
-// Start & end of school
-const schoolStart = new Date("2025-08-20T00:00:00");
-const schoolEnd = new Date("2026-05-21T00:00:00");
-
-// Paused days (YYYY-MM-DD)
-const pausedDays = ["2025-10-15", "2025-10-16", "2025-10-17"]; // example
-
-// Helper to count weekdays excluding paused days
-function countWeekdays(start, end) {
-  let count = 0;
-  let current = new Date(start);
-  while (current <= end) {
-    const dayOfWeek = current.getDay();
-    const yyyy_mm_dd = current.toISOString().slice(0,10);
-    if(dayOfWeek !== 0 && dayOfWeek !== 6 && !pausedDays.includes(yyyy_mm_dd)) {
-      count++;
-    }
-    current.setDate(current.getDate() + 1);
+    // Keyboard: Enter/Space opens; ArrowDown opens and focuses
+    daySelectBtn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleDropdown();
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        openDropdown();
+      }
+    });
   }
-  return count;
-}
 
-// Update progress
-function updateProgress() {
-  const today = new Date();
+  // Dropdown item interactions
+  dropdownItems.forEach((item, idx) => {
+    item.setAttribute('tabindex', '0');
+    item.addEventListener('click', () => {
+      const day = item.dataset.day;
+      setActiveDay(day);
+      closeDropdown();
+    });
+    item.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        item.click();
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        const next = dropdownItems[idx + 1] || dropdownItems[0];
+        next.focus();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        const prev = dropdownItems[idx - 1] || dropdownItems[dropdownItems.length - 1];
+        prev.focus();
+      } else if (e.key === 'Escape') {
+        closeDropdown();
+      }
+    });
+  });
 
-  // --- Calendar-based total days remaining ---
-  const totalCalendarDays = Math.ceil((schoolEnd - today) / (1000 * 60 * 60 * 24));
+  /* ---------- Day switching and persistence ---------- */
 
-  // --- Weekday counts ---
-  const totalWeekdays = countWeekdays(schoolStart, schoolEnd);
-  const elapsedWeekdays = countWeekdays(schoolStart, today);
-  const remainingWeekdays = totalWeekdays - elapsedWeekdays;
+  function hideAllDays() {
+    scheduleDays.forEach(d => d.classList.add('hidden'));
+  }
 
-  // --- Progress percentage based on weekdays ---
-  const percent = Math.min(Math.max((elapsedWeekdays / totalWeekdays) * 100, 0), 100);
+  function setActiveDay(dayId) {
+    if (!dayId) return;
+    // normalize ids (allow "Monday" or "monday" or "monday-day")
+    const normalized = String(dayId).toLowerCase().replace(/\s+/g, '').replace(/-day$/, '');
+    const mapping = {
+      monday: 'monday',
+      tuesday: 'tuesday',
+      wednesday: 'wednesday',
+      thursday: 'thursday',
+      friday: 'friday',
+      week: 'WEEK-day' // not used in current markup but kept for compatibility
+    };
+    const target = mapping[normalized] || normalized;
+    // Find element with id
+    const el = document.getElementById(target) || document.getElementById(normalized);
+    if (el) {
+      hideAllDays();
+      el.classList.remove('hidden');
+      selectedDayId = el.id;
+      currentDayLabel.textContent = (el.querySelector('.week-day-label') || el.querySelector('h2') || el).textContent.trim();
+      localStorage.setItem('planner:lastDay', selectedDayId);
+      // update progress view immediately
+      updateProgress();
+      // update focus for screen readers
+      el.setAttribute('tabindex', '-1');
+      el.focus();
+    } else {
+      // fallback: show first schedule day
+      hideAllDays();
+      if (scheduleDays[0]) scheduleDays[0].classList.remove('hidden');
+    }
+  }
 
-  // Update bar
-  progressBar.style.width = percent + "%";
-  progressText.textContent = Math.round(percent) + "%";
+  /* ---------- Live clock (updates every second) ---------- */
+  function updateClock() {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    let hr12 = hours % 12;
+    if (hr12 === 0) hr12 = 12;
+    const mm = minutes < 10 ? '0' + minutes : minutes;
+    if (dayClock) {
+      // If the visible day has a week-day-label, show it; otherwise keep previous
+      const visible = scheduleDays.find(d => !d.classList.contains('hidden'));
+      if (visible) {
+        const label = visible.querySelector('.week-day-label');
+        if (label) dayClock.textContent = label.textContent.trim();
+      }
+    }
+    if (clockTime) clockTime.textContent = `${hr12}:${mm} ${ampm}`;
+  }
 
-  // Update widgets
-  weekdaysLeftElem.textContent = remainingWeekdays;
-  totalDaysElem.textContent = totalCalendarDays;
-}
+  /* ---------- Progress calculation ---------- */
 
-// Run initially
-updateProgress();
+  // Given the currently visible schedule-day, count total classes and classes done.
+  function calculateProgressForVisibleDay() {
+    const visible = scheduleDays.find(d => !d.classList.contains('hidden')) || scheduleDays[0];
+    if (!visible) return { total: 0, done: 0, percent: 0 };
 
-// Optional: update every hour
-setInterval(updateProgress, 60 * 60 * 1000);
+    const cards = $$('.schedule-card', visible);
+    const total = cards.length;
+    let done = 0;
 
-  function updateProgressBar(percent) {
-  const bar = document.getElementById('progress-bar');
-  bar.style.width = percent + '%';
-  document.getElementById('progress-text').textContent = `${percent}%`;
-}
+    const now = new Date();
+
+    cards.forEach(card => {
+      const timeEl = card.querySelector('.time');
+      if (!timeEl) return;
+      const range = parseRange(timeEl.textContent || '');
+      if (!range || !range.end) return;
+      // if the current time is after the class end, it's done
+      if (now >= range.end) done += 1;
+      // if the class is currently in progress (start <= now < end) we will not count it as done (but you can change behavior)
+    });
+
+    const percent = total > 0 ? Math.round((done / total) * 100) : 0;
+    return { total, done, percent };
+  }
+
+  function updateProgress() {
+    const { total, done, percent } = calculateProgressForVisibleDay();
+    // update DOM
+    if (progressBarInner) progressBarInner.style.width = percent + '%';
+    if (progressLabel) progressLabel.textContent = percent + '%';
+    if (classesDoneEl) classesDoneEl.textContent = done;
+    if (classesLeftEl) classesLeftEl.textContent = Math.max(total - done, 0);
+    if (totalClassesEl) totalClassesEl.textContent = total;
+  }
+
+  const debouncedUpdateProgress = debounce(updateProgress, 120);
+
+  /* ---------- Print behavior: reveal all days before printing ---------- */
+
+  function beforePrintRevealAll() {
+    // save current visible map
+    lastVisibleState = {};
+    scheduleDays.forEach(d => {
+      lastVisibleState[d.id] = d.classList.contains('hidden');
+      d.classList.remove('hidden'); // show all
+    });
+    // ensure progress uses full-week totals if desired (we keep day-level progress)
+    // Add a print class to body for CSS hooks
+    document.body.classList.add('print-mode');
+  }
+
+  function afterPrintRestore() {
+    // restore visibility
+    scheduleDays.forEach(d => {
+      if (lastVisibleState[d.id]) d.classList.add('hidden');
+      else d.classList.remove('hidden');
+    });
+    document.body.classList.remove('print-mode');
+    // re-run UI updates
+    updateProgress();
+  }
+
+  // Hook into print events
+  if ('onbeforeprint' in window) {
+    window.onbeforeprint = beforePrintRevealAll;
+    window.onafterprint = afterPrintRestore;
+  } else {
+    // fallback: listen for matchMedia print
+    const mediaQueryList = window.matchMedia('print');
+    mediaQueryList.addEventListener && mediaQueryList.addEventListener('change', (mql) => {
+      if (mql.matches) beforePrintRevealAll();
+      else afterPrintRestore();
+    });
+  }
+
+  if (printBtn) {
+    printBtn.addEventListener('click', () => {
+      try {
+        window.print();
+      } catch (e) {
+        // as a fallback, open a print window with the visible schedule
+        alert('Print failed in this browser. Try using the browser Print command (Ctrl/Cmd+P).');
+      }
+    });
+  }
+
+  /* ---------- Particle canvas background (simple, performant) ---------- */
+
+  function initParticles() {
+    const canvas = document.getElementById('bgCanvas');
+    if (!canvas) return;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) {
+      // make canvas small and invisible to reduce motion
+      canvas.style.opacity = '0';
+      return;
+    }
+    const ctx = canvas.getContext('2d');
+    let width = 0;
+    let height = 0;
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', debounce(resize, 120));
+
+    // Simple particles
+    const particles = [];
+    const MAX = Math.max(Math.floor((width * height) / (1600 * 9)), 40); // scale with screen
+    for (let i = 0; i < MAX; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        r: Math.random() * 2.2 + 0.6,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        hue: 260 + Math.random() * 80,
+        alpha: 0.08 + Math.random() * 0.22
+      });
+    }
+
+    function step() {
+      ctx.clearRect(0, 0, width, height);
+      // subtle gradient background blend overlay (keeps contrast)
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < -10) p.x = width + 10;
+        if (p.x > width + 10) p.x = -10;
+        if (p.y < -10) p.y = height + 10;
+        if (p.y > height + 10) p.y = -10;
+
+        ctx.beginPath();
+        ctx.fillStyle = `hsla(${p.hue}, 70%, 60%, ${p.alpha})`;
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+
+    // add a small burst on mousemove
+    let lastBurst = 0;
+    window.addEventListener('mousemove', (e) => {
+      const now = Date.now();
+      if (now - lastBurst < 40) return;
+      lastBurst = now;
+      // spawn a few particles near pointer
+      for (let i = 0; i < 3; i++) {
+        particles.push({
+          x: e.clientX + (Math.random() - 0.5) * 20,
+          y: e.clientY + (Math.random() - 0.5) * 20,
+          r: Math.random() * 2 + 0.6,
+          vx: (Math.random() - 0.5) * 1.2,
+          vy: (Math.random() - 0.5) * 1.2,
+          hue: 220 + Math.random() * 120,
+          alpha: 0.18 + Math.random() * 0.2
+        });
+      }
+      // cap length
+      while (particles.length > MAX * 1.6) particles.shift();
+    }, { passive: true });
+  }
+
+  /* ---------- Init & lifecycle ---------- */
+
+  function initFooterYear() {
+    if (footerYear) footerYear.textContent = new Date().getFullYear();
+  }
+
+  function init() {
+    // Ensure DOM elements exist
+    if (!dayDropdown || !daySelectBtn || scheduleDays.length === 0) {
+      console.warn('site-script: core elements missing; aborting some behaviors.');
+    }
+
+    // Set initial day
+    // If last selected is present on page, use it; otherwise use the first schedule-day id
+    let initial = selectedDayId;
+    if (!document.getElementById(initial)) {
+      initial = scheduleDays[0] ? scheduleDays[0].id : null;
+    }
+    setActiveDay(initial);
+
+    // populate dropdown label if blank
+    if (currentDayLabel && currentDayLabel.textContent.trim() === '') {
+      const visible = scheduleDays.find(d => !d.classList.contains('hidden')) || scheduleDays[0];
+      if (visible) currentDayLabel.textContent = (visible.querySelector('.week-day-label') || visible).textContent.trim();
+    }
+
+    // Live clock
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    // Progress updates
+    updateProgress();
+    // Recalculate progress every 30s (classes progress slowly but this keeps things fresh)
+    setInterval(updateProgress, 30 * 1000);
+
+    // Recalculate progress on window focus (useful if tab was hidden)
+    window.addEventListener('focus', debouncedUpdateProgress);
+
+    // Keyboard shortcuts: 1..5 to switch days (1=Mon ... 5=Fri), p to print
+    window.addEventListener('keydown', (e) => {
+      if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable)) return;
+      if (e.key >= '1' && e.key <= '5') {
+        const mapping = { '1': 'monday', '2': 'tuesday', '3': 'wednesday', '4': 'thursday', '5': 'friday' };
+        setActiveDay(mapping[e.key]);
+      } else if (e.key.toLowerCase() === 'p') {
+        // quick print
+        window.print();
+      } else if (e.key === '?') {
+        // show tiny help (non-blocking)
+        // eslint-disable-next-line no-console
+        console.info('Shortcuts: 1-5 switch days, P = print, ? = this help.');
+      }
+    });
+
+    // initialize dropdown keyboard navigation focusability (already set in markup)
+    dropdownItems.forEach(item => item.setAttribute('role', 'button'));
+
+    // init print hooks already set above
+
+    // init particles (won't run if prefers-reduced-motion)
+    initParticles();
+
+    // Ensure lucide icons autopopulate if present
+    try { window.lucide && window.lucide.createIcons && window.lucide.createIcons(); } catch (e) { /* ignore */ }
+
+    initFooterYear();
+  }
+
+  // Run on DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  /* ---------- Expose a tiny API on window for debugging / testing (non-enumerable) ---------- */
+  try {
+    Object.defineProperty(window, '__planner', {
+      value: {
+        setActiveDay,
+        updateProgress,
+        parseRange,
+        parseTimeToToday
+      },
+      writable: false,
+      configurable: true,
+      enumerable: false
+    });
+  } catch (e) {
+    // ignore (some cross-origin pages restrict)
+  }
+})();
