@@ -309,3 +309,40 @@ p {
   filter: brightness(1.1);
   box-shadow: 0 5px 15px rgba(139,92,246,0.4);
 }
+
+/* ===== Print-Friendly Styles ===== */
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .schedule-card, .widget-card {
+    background: #fff !important;
+    color: #000 !important;
+    border: 1px solid #000 !important;
+    box-shadow: none !important;
+  }
+
+  h1, h2, h3, p {
+    color: #000 !important;
+    text-shadow: none !important;
+  }
+
+  button, #dayDropdown, #printScheduleBtn, #dayDropdownBtn {
+    display: none !important;
+  }
+
+  canvas {
+    display: none !important;
+  }
+
+  /* Make the layout breathe on paper */
+  .schedule-row {
+    gap: 0.75rem !important;
+  }
+
+  .schedule-day {
+    padding: 1rem !important;
+  }
+}
