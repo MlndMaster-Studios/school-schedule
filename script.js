@@ -56,7 +56,7 @@ cards.forEach(card => {
   });
 });
 
-// ===== Mouse-following particles =====
+// ===== Soft drifting particles (no mouse follow) =====
 const canvas = document.getElementById("bgCanvas");
 const ctx = canvas.getContext("2d");
 let particles = [];
@@ -74,35 +74,38 @@ class Particle {
     this.x = x;
     this.y = y;
     this.size = Math.random() * 3 + 1;
-    this.speedX = Math.random() * 2 - 1;
-    this.speedY = Math.random() * 2 - 1;
+    // Slower movement
+    this.speedX = Math.random() * 0.5 - 0.25;
+    this.speedY = Math.random() * 0.5 - 0.25;
     this.color = `rgba(139,92,246,${Math.random() * 0.5 + 0.2})`;
   }
   update() {
+    // Subtle drift variation for natural motion
+    this.speedX += (Math.random() - 0.5) * 0.01;
+    this.speedY += (Math.random() - 0.5) * 0.01;
+
     this.x += this.speedX;
     this.y += this.speedY;
-    if(this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-    if(this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+
+    // Bounce on edges
+    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
   }
   draw() {
     ctx.fillStyle = this.color;
     ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
     ctx.fill();
   }
 }
 
-for(let i = 0; i < particleCount; i++){
-  particles.push(new Particle(Math.random()*canvas.width, Math.random()*canvas.height));
+// Initialize particles at random positions
+for (let i = 0; i < particleCount; i++) {
+  particles.push(new Particle(Math.random() * canvas.width, Math.random() * canvas.height));
 }
 
-window.addEventListener('mousemove', e => {
-  particles.push(new Particle(e.x + Math.random()*20-10, e.y + Math.random()*20-10));
-  if(particles.length > particleCount) particles.shift();
-});
-
 function animateParticles() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   particles.forEach(p => {
     p.update();
     p.draw();
