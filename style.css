@@ -291,3 +291,6 @@ p {
   from { box-shadow: 0 0 8px rgba(139, 92, 246, 0.2); }
   to { box-shadow: 0 0 20px rgba(52, 211, 153, 0.4); }
 }
+
+/* footer note */
+.footer-note{ margin-top:14px; color:#bfbdf8; font-size:0.9rem; opacity:0.9; }
