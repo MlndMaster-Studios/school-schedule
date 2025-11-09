@@ -293,7 +293,24 @@ p {
 }
 
 /* footer note */
-.footer-note{ margin-top:14px; color:#bfbdf8; font-size:0.9rem; opacity:0.9; }
+.footer-note {
+  text-align: center;
+  padding: 1rem;
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  color: #c9c9ff;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px) saturate(160%);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.4);
+  font-family: "Inter", sans-serif;
+  letter-spacing: 0.4px;
+}
+
+.footer-note strong {
+  color: #9d7eff;
+  font-weight: 600;
+}
 
 /* ===== Home Button (Universal) ===== */
 .home-btn {
