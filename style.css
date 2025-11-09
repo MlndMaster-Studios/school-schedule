@@ -294,3 +294,42 @@ p {
 
 /* footer note */
 .footer-note{ margin-top:14px; color:#bfbdf8; font-size:0.9rem; opacity:0.9; }
+
+/* ===== Home Button (Universal) ===== */
+.home-btn {
+  position: fixed;
+  top: 1.2rem;
+  left: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: rgba(30, 41, 59, 0.55);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  color: #cfcaff;
+  backdrop-filter: blur(10px) saturate(160%);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 999;
+  text-decoration: none;
+}
+
+.home-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+.home-btn:hover {
+  color: #fff;
+  border-color: rgba(139, 92, 246, 0.4);
+  box-shadow: 0 6px 16px rgba(139, 92, 246, 0.25), 0 0 8px rgba(139, 92, 246, 0.3);
+  transform: translateY(-3px);
+}
+
+.home-btn:active {
+  transform: scale(0.96);
+}
+
