@@ -1,7 +1,13 @@
-/* ===== Body & General ===== */
-body {
+/* ===== Global Layout Fixes ===== */
+html, body {
+  height: 100%;
   margin: 0;
   padding: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
   background: linear-gradient(-45deg, #100018, #1e0030, #2a0050, #100018) !important;
   background-size: 400% 400% !important;
@@ -9,6 +15,12 @@ body {
   color: #e8e8ff !important;
   overflow-x: hidden;
 }
+
+main {
+  flex: 1;
+}
+
+/* ===== Background Animation ===== */
 @keyframes gradientFlow {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
@@ -43,8 +55,8 @@ p {
 .schedule-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 2rem; /* Increased vertical gap for breathing room */
+  margin-bottom: 2rem; /* Added space between row groups */
   align-items: stretch;
   opacity: 0;
   transform: translateY(20px);
@@ -272,12 +284,12 @@ p {
   background: linear-gradient(90deg, #8b5cf6, #6366f1, #22d3ee, #34d399);
 }
 
-
 @keyframes progressBarBlend {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
+
 #progress-bar-container::after {
   content: "";
   position: absolute;
@@ -292,11 +304,11 @@ p {
   to { box-shadow: 0 0 20px rgba(52, 211, 153, 0.4); }
 }
 
-/* footer note */
+/* ===== Footer Note (Sticky Bottom) ===== */
 .footer-note {
   text-align: center;
   padding: 1rem;
-  margin-top: 2rem;
+  margin-top: auto;
   font-size: 0.9rem;
   color: #c9c9ff;
   background: rgba(255, 255, 255, 0.05);
@@ -349,4 +361,3 @@ p {
 .home-btn:active {
   transform: scale(0.96);
 }
-
