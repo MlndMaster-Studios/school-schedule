@@ -1,6 +1,88 @@
 // ===== Feather icons =====
 feather.replace();
 
+(function () {
+  const overlay = document.getElementById('construction-overlay');
+
+  // Prevent scroll on page behind overlay
+  const prevDocOverflow = document.documentElement.style.overflow;
+  const prevBodyOverflow = document.body.style.overflow;
+  document.documentElement.style.overflow = 'hidden';
+  document.body.style.overflow = 'hidden';
+
+  // Hide underlying content from assistive tech and disable keyboard tabbing
+  const bodyChildren = Array.from(document.body.children);
+  const saved = [];
+  bodyChildren.forEach(el => {
+    if (el === overlay) return; // keep overlay alone
+    // store previous attributes to restore later
+    saved.push({
+      node: el,
+      ariaHidden: el.getAttribute('aria-hidden'),
+      tabIndex: el.getAttribute('tabindex')
+    });
+    try { el.setAttribute('aria-hidden', 'true'); } catch(e){}
+    // remove ability to tab into focusable elements by setting tabindex = -1
+    // but don't override if it already had tabindex saved (we store it above)
+    try { el.setAttribute('tabindex', '-1'); } catch(e){}
+  });
+
+  // Store restore info globally, so removal can restore things
+  window.__constructionOverlayRestore = {
+    saved,
+    prevDocOverflow,
+    prevBodyOverflow
+  };
+
+  // Prevent pointer events going through (overlay itself covers entire viewport,
+  // but this ensures underlying pointer-events are disabled if something odd)
+  document.body.style.pointerEvents = 'none';
+  overlay.style.pointerEvents = 'auto';
+
+  // Focus overlay to catch keyboard events (keeps focus inside)
+  overlay.setAttribute('tabindex','0');
+  overlay.focus();
+
+  // Helper to remove overlay and restore page to previous state
+  window.removeConstructionOverlay = function() {
+    try {
+      const s = window.__constructionOverlayRestore;
+      if (s && s.saved) {
+        s.saved.forEach(item => {
+          if (item.ariaHidden === null) item.node.removeAttribute('aria-hidden');
+          else item.node.setAttribute('aria-hidden', item.ariaHidden);
+          if (item.tabIndex === null) item.node.removeAttribute('tabindex');
+          else item.node.setAttribute('tabindex', item.tabIndex);
+        });
+      }
+      document.documentElement.style.overflow = (s && s.prevDocOverflow) || '';
+      document.body.style.overflow = (s && s.prevBodyOverflow) || '';
+    } catch (e) {
+      console.warn('Error restoring page after removing construction overlay', e);
+    } finally {
+      // restore pointer events and remove overlay from DOM
+      document.body.style.pointerEvents = '';
+      if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+      delete window.__constructionOverlayRestore;
+      delete window.removeConstructionOverlay;
+    }
+  };
+
+  // Optional: prevent certain user input on overlay (escape key does nothing,
+  // but you can change it to call removeConstructionOverlay() if you like)
+  overlay.addEventListener('keydown', function (ev) {
+    // prevent tab from moving focus outside overlay
+    if (ev.key === 'Tab') {
+      ev.preventDefault();
+      overlay.focus();
+    }
+    // keep ESC from doing anything by default; uncomment next lines to allow ESC to remove overlay
+    // if (ev.key === 'Escape') {
+    //   window.removeConstructionOverlay();
+    // }
+  });
+})();
+
 // ===== Day Dropdown =====
 const dayBtn = document.getElementById("dayDropdownBtn");
 const dropdown = document.getElementById("dayDropdown");
