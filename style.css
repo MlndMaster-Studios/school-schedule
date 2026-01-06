@@ -20,7 +20,7 @@ main {
   flex: 1;
 }
 
-/* ===== Under Construction Overlay ===== */
+/* ===== Under Construction Overlay ===== 
 #construction-overlay {
   position: fixed;
   inset: 0;
@@ -74,6 +74,8 @@ main {
     background-size: 30px 30px;
   }
 }
+
+*/
 
 /* ===== Background Animation ===== */
 @keyframes gradientFlow {
